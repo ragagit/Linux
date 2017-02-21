@@ -1,0 +1,28 @@
+How to resize hard drive in Fedora
+
+1.-Shutdown Virtual Machine
+2.- Change the size in VMWare Fusion
+3.- Check the size with df -h and fdisk -l
+4.- Add a partition 
+	fdisk /dev/sda
+Type m for help
+5.- Type n to create a  new partition an p for primary
+6.- Select first and last sector
+7.- Select partition by typing t the partition number 3 in our case
+8.- Type L to list partition type
+9.- Choose Linux LVM
+10.- Save the changes with w
+11.- Reboot and log in as root
+12.- Create the physical volume with
+	pvcreate /dev/sda3
+13.- Extend volume group but first find group name with
+	vgdisplay
+14.- Look at VGName, extend volume group
+	vgextend fedora /dev/sda3
+15. Extend logical volume, type the following to find the name
+	lvdisplay
+16.- Look at LV Path
+	lvextend /dev/fedora/root /dev/sda3
+17.- Refresh logical volume with 
+	resize2fs /dev/fedora/root
+18.- Confirm size with df -h
