@@ -1,0 +1,54 @@
+<project name="CPSDashTray" default="main" basedir=".">
+   
+   <target name="init">
+      <property name="sourceDir" value="src" />
+      <property name="outputDir" value="classes" />
+      <property name="jarDir" value="jar" />
+      <property name="lib.dir" value="lib" />
+      <property name="main-class" value="CPSDashTray"/>
+   </target>
+
+   <target name="clean" depends="init">
+      <delete dir="${outputDir}" />
+      <delete dir="${jarDir}" />
+   </target>
+
+   <target name="prepare" depends="clean">
+      <mkdir dir="${outputDir}" />
+      <mkdir dir="${jarDir}" />
+   </target>
+
+   <path id="classpath">
+	<fileset dir="lib" includes="**/*.jar" />
+   </path>
+
+   <target name="compile" depends="prepare">
+     <javac srcdir="${sourceDir}" destdir="${outputDir}" classpathref="classpath"/>
+   </target>
+
+   <target name="jar" depends="compile">
+     <jar destfile="jar/CPSDashTray.jar" basedir="classes" >
+       <manifest>
+         <attribute name="Main-Class" value="CPSDashTray"/>
+       </manifest>
+       <fileset dir="lib"/>
+       <zipfileset src="lib/log4j-1.2.9.jar" includes="**/*.class" />
+     </jar>
+   </target>
+
+   <target name="run" depends="jar">
+     <!-- <java jar="jar/CPSDashTray.jar" fork="true"/> -->
+     <java fork="true" classname="${main-class}">
+	<classpath>
+		<path refid="classpath"/>
+		<path location="${jarDir}/CPSDashTray.jar"/>
+	</classpath>
+     </java>
+   </target>
+
+
+   <target name="clean-build" depends="clean,jar"/>
+
+   <target name="main" depends="compile,jar"/>
+
+</project>

@@ -1,0 +1,4 @@
+<CPSDashConfig version="1.0">
+  <lookandfeel lnf="Java" />
+  <blinking blink="false" />
+</CPSDashConfig>
