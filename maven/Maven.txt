@@ -1,0 +1,109 @@
+Maven provides default project structure. Assuming ${basedir} denotes the project location:
+
+source code 		${basedir}/src/main/java
+resources 		${basedir}/src/main/resources
+Tests 			${basedir}/src/test
+distributable JAR 	${basedir}/target
+Complied byte code 	${basedir}/target/classes
+
+In order to build the project, Maven provides developers options to mention life-cycle goals and project dependencies (that rely on Maven pluging capabilities and on its default conventions). 
+Much of the project management and build related tasks are maintained by Maven plugins.
+
+- POM
+
+Maven requires JDK. pom.xml contains the goals and plugins.
+
+Root element of POM.xml is project and it has three major sub-nodes
+
+   <groupId>com.companyname.project-group</groupId>
+   <artifactId>project</artifactId>
+   <version>1.0</version>
+
+All POMs inherit from a parent (despite explicitly defined or not). This base POM is known as the Super POM, and contains values inherited by default. 
+An easy way to look at the default configurations of the super POM is by running the following command: mvn help:effective-pom.
+
+- Build Lifecycle
+
+A Build Lifecycle is a well defined sequence of phases which define the order in which the goals are to be executed.
+
+A typical Maven Build Lifecycle consists of following sequence of phases
+
+Phase 			Handles 		Description
+prepare-resources 	resource copying 	Resource copying can be customized in this phase.
+compile 		compilation 		Source code compilation is done in this phase.
+package 		packaging 		This phase creates the JAR / WAR package as mentioned in packaging in POM.xml.
+install			installation 		This phase installs the package in local / remote maven repository.
+
+There are always pre and post phases which can be used to register goals which must run prior to or after a particular phase.
+A goal represents a specific task which contributes to the building and managing of a project. It may be bound to zero or more build phases. 
+A goal not bound to any build phase could be executed outside of the build lifecycle by direct invocation.
+
+Maven has following three standard lifecycles:
+
+    clean
+
+    default(or build)
+
+    site
+
+- Build Profiles
+
+A Build profile is a set of configuration values which can be used to set or override default values of Maven build. 
+Using a build profile, you can customize build for different environments such as Production v/s Development environments.
+
+Build profiles are majorly of three types
+Type 		Where it is defined
+Per Project 	Defined in the project POM file, pom.xml
+Per User 	Defined in Maven settings xml file (%USER_HOME%/.m2/settings.xml)
+Global 		Defined in Maven global settings xml file (%M2_HOME%/conf/settings.xml)
+
+A Maven Build Profile can be activated in various ways.
+
+    Explicitly using command console input.
+    Through maven settings.
+    Based on environment variables (User/System variables).
+    OS Settings (for example, Windows family).
+    Present/missing files.
+
+- Maven Repository
+In Maven terminology, a repository is a place i.e. directory where all the project jars, library jar, plugins or any 
+other project specific artifacts are stored and can be used by Maven easily.
+
+Maven repository are of three types
+
+    local
+    central
+    remote
+
+Maven local repository by default get created by Maven in %USER_HOME% directory.
+
+Maven central repository is repository provided by Maven community. It contains a large number of commonly used libraries.
+When Maven does not find any dependency in local repository, it starts searching in central repository using following URL: http://repo1.maven.org/maven2/
+
+Sometime, Maven does not find a mentioned dependency in central repository 
+Maven will download dependency (not available in central repository) from Remote Repositories mentioned in the same pom.xml.
+<dependencies>
+      <dependency>
+         <groupId>com.companyname.common-lib</groupId>
+         <artifactId>common-lib</artifactId>
+         <version>1.0.0</version>
+      </dependency>
+</dependencies>
+
+- Plug-Ins
+
+Maven is actually a plugin execution framework where every task is actually done by plugins.
+
+mvn [plugin-name]:[goal-name]
+mvn compiler:compile
+
+Following is the list of few common plugins:
+Plugin 		Description
+clean 		Clean up target after the build. Deletes the target directory.
+compiler 	Compiles Java source files.
+surefire 	Run the JUnit unit tests. Creates test reports.
+jar 		Builds a JAR file from the current project.
+war 		Builds a WAR file from the current project.
+javadoc 	Generates Javadoc for the project.
+antrun 		Runs a set of ant tasks from any phase mentioned of the build.
+
