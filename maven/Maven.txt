@@ -201,4 +201,20 @@ Although, In case of SNAPSHOT, Maven automatically fetches the latest SNAPSHOT o
 
 mvn clean package -U
 
+- Web Application
+
+mvn archetype:generate 
+-DgroupId=com.companyname.automobile 
+-DartifactId=trucks
+-DarchetypeArtifactId=maven-archetype-webapp 
+-DinteractiveMode=false
+
+Maven uses a standard directory layout. Using above example, we can understand following key concepts
+Folder Structure 	Description
+trucks 			contains src folder and pom.xml
+src/main/webapp 	contains index.jsp and WEB-INF folder.
+src/main/webapp/WEB-INF contains web.xml
+src/main/resources 	it contains images/properties files .
+
+
 
