@@ -107,3 +107,98 @@ war 		Builds a WAR file from the current project.
 javadoc 	Generates Javadoc for the project.
 antrun 		Runs a set of ant tasks from any phase mentioned of the build.
 
+- Creating a Project
+
+mvn archetype:generate
+-DgroupId=com.companyname.bank 
+-DartifactId=consumerBanking 
+-DarchetypeArtifactId=maven-archetype-quickstart 
+-DinteractiveMode=false
+
+It creates a directory structure
+Folder Structure 	Description
+consumerBanking 	contains src folder and pom.xml
+src/main/java 		contains java code files under the package structure (com/companyName/bank).
+src/main/test 		contains test java code files under the package structure (com/companyName/bank).
+src/main/resources 	it contains images/properties files (In above example, we need to create this structure manually).
+
+It also creates App.java and Apptest.java
+
+- Build and Test
+
+mvn clean package
+
+You can add files
+
+mvn clean compile
+
+- External Dependencies
+
+Let's say that you need to add a lib to your project, then you add a dependecy in pom.xml
+
+      <dependency>
+         <groupId>ldapjdk</groupId>
+         <artifactId>ldapjdk</artifactId>
+         <scope>system</scope>
+         <version>1.0</version>
+         <systemPath>${basedir}\src\lib\ldapjdk.jar</systemPath>
+      </dependency>
+
+Specify groupId same as name of the library.
+Specify artifactId same as name of the library.
+Specify scope as system.
+Specify system path relative to project location. 
+
+- Project Documents
+
+mvn site
+
+Format Name	Description				Reference
+APT		A Plain Text document format		doxia format
+XDoc		A Maven 1.x documentation format	jakarta format
+FML		Used for FAQ documents			fml format
+XHTML		Extensible HTML				XHTML wiki
+
+- Project Templates
+
+Maven provides users,a very large list of different types of project templates (614 in numbers) using concept of Archetype. 
+Maven helps users to quickly start a new java project using following command
+
+mvn archetype:generate 
+
+Maven will start processing and will ask to choose required archetype.
+
+- Snapshots
+
+Two teams are working on two different modules (app-ui and data-service). They have to get the latest changes from each other. Use SNAPSHOT on pom.xml
+SNAPSHOT is a special version that indicates a current development copy. Unlike regular versions, Maven checks for a new SNAPSHOT version in a remote repository for every build.
+
+
+      <dependency>
+      <groupId>data-service</groupId>
+         <artifactId>data-service</artifactId>
+         <version>1.0-SNAPSHOT</version>
+         <scope>test</scope>
+      </dependency>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+   http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+   <groupId>data-service</groupId>
+   <artifactId>data-service</artifactId>
+   <version>1.0-SNAPSHOT</version>
+   <packaging>jar</packaging>
+   <name>health</name>
+   <url>http://maven.apache.org</url>
+   <properties>
+      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+   </properties>
+   </project>
+
+Although, In case of SNAPSHOT, Maven automatically fetches the latest SNAPSHOT on daily basis. You can force maven to download latest snapshot build using -U switch to any maven command.
+
+mvn clean package -U
+
+
