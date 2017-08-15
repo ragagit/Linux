@@ -34,8 +34,15 @@
         <%--
             <%@ directive attribute="value" %>
             <%@ page ... %>
+                The page directive is used to provide instructions to the container. 
+                These instructions pertain to the current JSP page
             <%@ include ... %>
+                The include directive is used to include a file during the translation phase
+                <%@ include file = "relative url" >
             <%@ taglib ... %>
+                The JavaServer Pages API allow you to define custom JSP tags that look like HTML or XML 
+                tags and a tag library is a set of user-defined tags that implement custom behavior.
+                <%@ taglib uri="uri" prefix = "prefixOfTag" >
         --%>
         
         <%-- JSP Actions --%>
@@ -51,6 +58,11 @@
             jsp:attribute - Defines dynamically-defined XML element's attribute.
             jsp:body - Defines dynamically-defined XML element's body.
             jsp:text - Used to write template text in JSP pages and documents.
+        
+            There are two attributes that are common to all Action elements: 
+            the id attribute and the scope attribute  (a) page, (b)request, (c)session, and (d) application
+            
+        
         --%>
         
         <%-- JSP Implicit Objects --%>
@@ -66,7 +78,7 @@
             Exception - The Exception object allows the exception data to be accessed by designated JSP.
         --%>
         
-        <%-- JSP Control Flow statements --%>
+        <%-- JSP Control Flow statements and Operators --%>
         <%-- They are the same as in Java --%>
         <%  int fontSize = 0;
             while ( fontSize <= 3){ %>
@@ -75,5 +87,13 @@
                 </font><br />
                 <%fontSize++;%>
             <%}%>
+      <center>
+         <h2>Using JavaBeans in JSP</h2>
+         <jsp:useBean id = "jspbean" class = "com.jsptutorial.TestBean" />
+         <jsp:setProperty name = "jspbean"  property = "message" 
+            value = "Hello JSP..." />          
+         <p>Got message....</p>
+         <jsp:getProperty name = "jspbean" property = "message" />
+      </center>
     </body>
 </html>
