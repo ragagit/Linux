@@ -5,6 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import = "java.io.*,java.util.*" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -15,7 +16,7 @@
         <h1>Hello JSP World!</h1>
         <%-- 
         The path follow by JSP are:
-        Compilation (Prasing the JSP, turn into Servlet, compile servlet)
+        Compilation (Parsing the JSP, turn into Servlet, compile servlet)
         Initialization public void jspInit()
         Execution - void _jspService(HttpServletRequest request, HttpServletResponse response) 
         Cleanup - public void jspDestroy()
@@ -53,14 +54,23 @@
             jsp:setProperty - Sets the property of a JavaBean.
             jsp:getProperty - Inserts the property of a JavaBean into the output.
             jsp:forward - Forwards the requester to a new page.
-            jsp:plugin - Generates browser-specific code that makes an OBJECT or EMBED tag for the Java plugin.
+                <jsp:forward page = "Relative URL" />
+            jsp:plugin - Generates browser-specific code that makes an OBJECT or EMBED tag for the Java plugin. 
+                <jsp:plugin type = "applet" codebase = "dirname" code = "MyApplet.class" width = "60" height = "80">
+                <jsp:param name = "fontcolor" value = "red" />
+                <jsp:param name = "background" value = "black" />
+                <jsp:fallback>
+                    Unable to initialize Java Plugin
+                </jsp:fallback>
+                </jsp:plugin>
             jsp:element - Defines XML elements dynamically.
             jsp:attribute - Defines dynamically-defined XML element's attribute.
             jsp:body - Defines dynamically-defined XML element's body.
             jsp:text - Used to write template text in JSP pages and documents.
         
             There are two attributes that are common to all Action elements: 
-            the id attribute and the scope attribute  (a) page, (b)request, (c)session, and (d) application
+            the id attribute and the scope attribute defines the lifespan it may have
+            for attributes (a) page, (b)request, (c)session, and (d) application
             
         
         --%>
@@ -95,5 +105,145 @@
          <p>Got message....</p>
          <jsp:getProperty name = "jspbean" property = "message" />
       </center>
+    <jsp:text>Template data</jsp:text>
+    
+    <%-- Request Methods
+    Cookie[] getCookies()
+    Enumeration getAttributeNames()
+    Enumeration getHeaderNames()
+    Enumeration getParameterNames()
+    HttpSession getSession()
+    HttpSession getSession(boolean create)
+    Locale getLocale()
+    Object getAttribute(String name)
+    ServletInputStream getInputStream()
+    String getAuthType()
+    String getCharacterEncoding()
+    String getContentType()
+    String getContextPath()
+    String getHeader(String name)
+    String getMethod()
+    String getParameter(String name)
+    String getPathInfo()
+    String getProtocol()
+    String getQueryString()
+    String getRemoteAddr()
+    String getRemoteHost()
+    String getRemoteUser()
+    String getRequestURI()
+    String getRequestedSessionId()
+    String getServletPath()
+    String[] getParameterValues(String name)
+    boolean isSecure()
+    int getContentLength()
+    int getIntHeader(String name)
+    int getServerPort()  
+    --%>
+    
+    <%-- Response method
+    String encodeRedirectURL(String url)
+    String encodeURL(String url)
+    boolean containsHeader(String name)
+    boolean isCommitted()
+    void addCookie(Cookie cookie)
+    void addDateHeader(String name, long date)
+    void addHeader(String name, String value)
+    void addIntHeader(String name, int value)
+    void flushBuffer()
+    void resetBuffer()
+    void sendError(int sc)
+    void sendError(int sc, String msg)
+    void sendRedirect(String location)
+    void setBufferSize(int size)
+    void setCharacterEncoding(String charset)
+    void setContentLength(int len)
+    void setContentType(String type)
+    void setDateHeader(String name, long date)
+    void setHeader(String name, String value)
+    void setIntHeader(String name, int value)
+    void setLocale(Locale loc)
+    void setStatus(int sc)
+    --%>
+<center>
+         <h2>HTTP Header Request Example</h2>
+         
+         <table width = "100%" border = "1" align = "center">
+            <tr bgcolor = "#949494">
+               <th>Header Name</th>
+               <th>Header Value(s)</th>
+            </tr>
+            <%
+               Enumeration headerNames = request.getHeaderNames();
+               while(headerNames.hasMoreElements()) {
+                  String paramName = (String)headerNames.nextElement();
+                  out.print("<tr><td>" + paramName + "</td>\n");
+                  String paramValue = request.getHeader(paramName);
+                  out.println("<td> " + paramValue + "</td></tr>\n");
+               }
+            %>
+         </table>
+      </center>  
+    <%-- Response method
+    String encodeRedirectURL(String url)
+    String encodeURL(String url)
+    boolean containsHeader(String name)
+    boolean isCommitted()
+    void addCookie(Cookie cookie)
+    void addDateHeader(String name, long date)
+    void addHeader(String name, String value)
+    void addIntHeader(String name, int value)
+    void flushBuffer()
+    void resetBuffer()
+    void sendError(int sc)
+    void sendError(int sc, String msg)
+    void sendRedirect(String location)
+    void setBufferSize(int size)
+    void setCharacterEncoding(String charset)
+    void setContentLength(int len)
+    void setContentType(String type)
+    void setDateHeader(String name, long date)
+    void setHeader(String name, String value)
+    void setIntHeader(String name, int value)
+    void setLocale(Locale loc)
+    void setStatus(int sc)
+    --%>         
+      <center>
+         <h2>Auto Refresh Header Example</h2>
+         <%
+            // Set refresh, autoload time as 5 seconds
+            response.setIntHeader("Refresh", 5);
+            
+            // Get current time
+            Calendar calendar = new GregorianCalendar();
+            
+            String am_pm;
+            int hour = calendar.get(Calendar.HOUR);
+            int minute = calendar.get(Calendar.MINUTE);
+            int second = calendar.get(Calendar.SECOND);
+            
+            if(calendar.get(Calendar.AM_PM) == 0) 
+               am_pm = "AM";
+            else
+               am_pm = "PM";
+               String CT = hour+":"+ minute +":"+ second +" "+ am_pm;
+               out.println("Current Time is: " + CT + "\n");
+         %>
+      </center>
+        <%-- HTTP Status Codes
+        It consists of :
+        An initial status line + CRLF (Carriage Return + Line Feed ie. New Line)
+        Zero or more header lines + CRLF
+        A blank line ie. a CRLF
+        An optional message body like file, query data or query output.
+        
+        public void setStatus ( int statusCode )
+        public void sendRedirect(String url)
+        public void sendError(int code, String message)      
+        --%>
+        <%--
+         // Set error code and reason.
+         response.sendError(407, "Need authentication!!!" );
+        --%>  
+        
     </body>
 </html>
