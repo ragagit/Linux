@@ -10,6 +10,9 @@ import command.Light;
 import command.Switcher;
 import command.TurnOffCommand;
 import command.TurnOnCommand;
+import commandII.Algorithm;
+import iterator.Iterator;
+import iterator.NameRepository;
 import liskov.ElectricCar;
 import liskov.ElectricVehicle;
 import liskov.Vehicle;
@@ -23,6 +26,8 @@ import openclosed.Sorter;
 import strategy.Add;
 import strategy.Manager;
 import strategy.Multiply;
+import template.Algorithm_;
+import template.BubbleSort;
 
 /**
  *
@@ -106,6 +111,11 @@ import strategy.Multiply;
  * 4) The client decides which commands to execute at which points to execute a command, it
  * passes the command object to the invoker.
  * 
+ * -- Template --
+ * In template pattern an abstract class exposes a defined way/template to execute its methods
+ * The subclass can override the methods but the invocation needs to be as described in the abstract class
+ * 
+ * -- Null object pattern --
  * 
  */
 public class solid {
@@ -187,8 +197,46 @@ public class solid {
         switcher.addCommand(turnOnCommand);
         switcher.addCommand(turnOffCommand);
         switcher.executeCommand();
+         
+        // -- Command Pattern Queue model --
+        Algorithm algorithm = new Algorithm();
         
-
+        Thread t1 = new Thread( new Runnable()
+           {
+            @Override
+            public void run(){
+                algorithm.producer();
+            }
+        });
+        
+        Thread t2 = new Thread( new Runnable()
+           {
+            @Override
+            public void run(){
+                algorithm.consumer();
+            }
+        });
+        
+        t1.start();
+        t2.start();
+        
+        // --- Iterator ---
+        NameRepository nameRepository = new NameRepository();
+        
+        for( Iterator it = nameRepository.getIterator(); it.hasNext(); ){
+            String name = (String)it.next();
+            System.out.println(name);
+        }
+        
+        // -- Template --
+        int []numbers = { 4, 7, 8, 1, 3, -1 };
+        
+        Algorithm_ bubble = new BubbleSort(numbers);
+        bubble.sort();
+        
+        
+        // -- Null object pattern --
+        
     }
 
 }
