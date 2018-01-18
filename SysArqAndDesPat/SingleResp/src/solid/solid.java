@@ -16,6 +16,7 @@ import iterator.NameRepository;
 import liskov.ElectricCar;
 import liskov.ElectricVehicle;
 import liskov.Vehicle;
+import nullobject.CustomerFactory;
 import observer.WeatherObserver;
 import observer.WeatherStation;
 import openclosed.Insertsort;
@@ -116,6 +117,12 @@ import template.BubbleSort;
  * The subclass can override the methods but the invocation needs to be as described in the abstract class
  * 
  * -- Null object pattern --
+ * Motivation: reference may be null
+ * It can be very elaborate to deal with null references
+ * We have to check whether a reference is null or not -> NullPointerException if we call methods on null objects
+ * Solution. The null pointer design. Create an abstract class specifying several operations to be done.
+ * Concrete classes extending this class and a null object class providing "do nothing implementation"
+ * 
  * 
  */
 public class solid {
@@ -236,6 +243,9 @@ public class solid {
         
         
         // -- Null object pattern --
+        CustomerFactory custFact = new CustomerFactory();
+        
+        System.out.println(custFact.getCustomer("Tom").getCustomer());
         
     }
 
