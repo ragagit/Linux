@@ -13,6 +13,8 @@ import command.TurnOnCommand;
 import commandII.Algorithm;
 import iterator.Iterator;
 import iterator.NameRepository;
+import java.util.ArrayList;
+import java.util.List;
 import liskov.ElectricCar;
 import liskov.ElectricVehicle;
 import liskov.Vehicle;
@@ -29,6 +31,11 @@ import strategy.Manager;
 import strategy.Multiply;
 import template.Algorithm_;
 import template.BubbleSort;
+import visitor.Chair;
+import visitor.ShoppingCart;
+import visitor.ShoppingCartVisitor;
+import visitor.ShoppingItem;
+import visitor.Table;
 
 /**
  *
@@ -82,7 +89,7 @@ import template.BubbleSort;
  * 
  * Principle #2 Program to an interface not an implementation.
  * Dog dog = new Dog(); // Not good; programming to an implementation
- * Animal dog = new Doc(); // Good programming 
+ * Animal dog = new Dog(); // Good programming 
  * Sometimes is easier to separate behavior from implementation: easier to reuse + we can add
  * different behavior without affecting the existing one.
  * 
@@ -123,6 +130,14 @@ import template.BubbleSort;
  * Solution. The null pointer design. Create an abstract class specifying several operations to be done.
  * Concrete classes extending this class and a null object class providing "do nothing implementation"
  * 
+ * -- Visitor --
+ * Way to separate an algorithm from the object structure on within it operates.
+ * As a result of this separation is the ability of adding new operations to existing object structures
+ * without modifying those structures.
+ * 
+ * -- Single Pattern --
+ * Restrict the instantiation of a class to a one single instance.
+ * This is useful when exactly one object is needed to coordinate actions across the system
  * 
  */
 public class solid {
@@ -131,7 +146,7 @@ public class solid {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        BookInt bk = new Book(457, "John Smoth");
+        BookInt bk = new Book(457, "John Smith");
         bk.save();
 
         // -- Open-closed principle --
@@ -246,6 +261,24 @@ public class solid {
         CustomerFactory custFact = new CustomerFactory();
         
         System.out.println(custFact.getCustomer("Tom").getCustomer());
+        
+        // -- Visitor --
+        List<ShoppingItem> items = new ArrayList<>();
+        items.add(new Table("Desk", 20));
+        items.add(new Chair("Chair1", 10));
+        items.add(new Chair("Chair2", 10));
+        
+        ShoppingCartVisitor shoppingCart = new ShoppingCart();
+        
+        double sum = 0;
+        
+        for( ShoppingItem sh : items ){
+            sum = sum + sh.accept(shoppingCart);
+        }
+              
+        System.out.println(sum);
+        
+        // -- Single Pattern --
         
     }
 
