@@ -26,6 +26,8 @@ import openclosed.Mergesort;
 import openclosed.Quicksort;
 import openclosed.SortManager;
 import openclosed.Sorter;
+import singleton.Downloader;
+import singleton.SingletonClass;
 import strategy.Add;
 import strategy.Manager;
 import strategy.Multiply;
@@ -279,6 +281,15 @@ public class solid {
         System.out.println(sum);
         
         // -- Single Pattern --
+        //Downloader downloader = new Downloader(); You can't as the constructor is private
+        Downloader downloader = Downloader.getInstance();
+        downloader.startDownloading(); //NOT therad safe
+        
+        //This is thread safe
+        SingletonClass.INSTANCE.setCounter(10);
+        System.out.println(SingletonClass.INSTANCE.getCounter());
+        
+        
         
     }
 
