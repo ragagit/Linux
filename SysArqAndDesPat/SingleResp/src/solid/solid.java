@@ -11,6 +11,7 @@ import command.Switcher;
 import command.TurnOffCommand;
 import command.TurnOnCommand;
 import commandII.Algorithm;
+import factory.AlgorithmFactory;
 import iterator.Iterator;
 import iterator.NameRepository;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ import visitor.ShoppingCart;
 import visitor.ShoppingCartVisitor;
 import visitor.ShoppingItem;
 import visitor.Table;
+import factory.Algorithmm;
 
 /**
  *
@@ -140,6 +142,14 @@ import visitor.Table;
  * -- Single Pattern --
  * Restrict the instantiation of a class to a one single instance.
  * This is useful when exactly one object is needed to coordinate actions across the system
+ * 
+ * -- Factory pattern --
+ * Helps to create loosely coupled OO design
+ * We should not program to an implementation but to an interface, but every time we use new we do so.
+ * In Java if we program to an interface our program will work for any class implementing that 
+ * interface ( because of polymorphism ).
+ * We have to find the part of our code that will change and separate it.
+ * WE MAY ENCAPSULATE OBJECT CREATION.
  * 
  */
 public class solid {
@@ -289,6 +299,9 @@ public class solid {
         SingletonClass.INSTANCE.setCounter(10);
         System.out.println(SingletonClass.INSTANCE.getCounter());
         
+        // -- Factory pattern --
+        Algorithmm algorithmm = AlgorithmFactory.createAlgorithm(AlgorithmFactory.SHORTEST_PATH);
+        algorithmm.solve();
         
         
     }
