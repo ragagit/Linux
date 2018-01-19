@@ -6,6 +6,8 @@ import DepInv.OracleDatabase;
 import IntSeg.BalancedTree;
 import IntSeg.BinarySearchTree;
 import IntSeg.Tree;
+import builder.Person;
+import builder.Person.Builder;
 import command.Light;
 import command.Switcher;
 import command.TurnOffCommand;
@@ -151,6 +153,14 @@ import factory.Algorithmm;
  * We have to find the part of our code that will change and separate it.
  * WE MAY ENCAPSULATE OBJECT CREATION.
  * 
+ * -- Builder pattern --
+ * If one application has a lot of parameters we would end up with telescopic constructor. With builder
+ * we just add another method. 
+ * Immutable property: The best is to use objects that can't be modified after they are created "Immutable objects".
+ * This way won't be any concurrency problems when threads want to update them. 
+ * 
+ * -- Data Access Object pattern --
+ * For instance when we are in the MVC and want to separate the module from the view
  */
 public class solid {
 
@@ -251,8 +261,8 @@ public class solid {
             }
         });
         
-        t1.start();
-        t2.start();
+        //t1.start();
+        //t2.start();
         
         // --- Iterator ---
         NameRepository nameRepository = new NameRepository();
@@ -303,7 +313,14 @@ public class solid {
         Algorithmm algorithmm = AlgorithmFactory.createAlgorithm(AlgorithmFactory.SHORTEST_PATH);
         algorithmm.solve();
         
+        // -- Builder pattern
+        Person person = new Person.Builder("Kevin", "kevin@gmail.com").setAge(15).setAddress("123 Fake Str").build();
+        Person.Builder pb = new Person.Builder("Laura", "laura@server.com");
+        System.out.println(pb.showInfo());
+        System.out.println(person);
         
+        
+        // -- Data Access Object Example --
     }
 
 }
