@@ -15,6 +15,10 @@ import command.TurnOnCommand;
 import commandII.Algorithm;
 import dataaccessobjects.Database_;
 import dataaccessobjects.Personn;
+import decorator.Beverage;
+import decorator.Milk;
+import decorator.PlainBeverage;
+import decorator.Sugar;
 import factory.AlgorithmFactory;
 import iterator.Iterator;
 import iterator.NameRepository;
@@ -165,6 +169,14 @@ import factory.Algorithmm;
  * For instance when we are in the MVC and want to separate the module from the view
  * 
  * -- Decorator pattern --
+ * Helps to make the Open-Closed principle come true. Open for extension closed for modifications.
+ * Like Observer-Subject pattern.
+ * It attaches additional responsibility to the object dynamically. Decorators provide a flexible alternative 
+ * to sub classing for extending functionality.
+ * For example. new LineNumberInputStream(new BufferedInoutStream(new FileInoutStream()));
+ * 
+ * 
+ * 
  */
 public class solid {
 
@@ -337,6 +349,10 @@ public class solid {
         
     
         //-- Decoretor pattern --
+        Beverage beverage = new Sugar( new Milk ( new PlainBeverage() ) );
+        System.out.println(beverage.getCost());
+        System.out.println(beverage.getDescription());
+        
     }
 
 }
