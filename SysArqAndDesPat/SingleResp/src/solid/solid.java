@@ -13,6 +13,8 @@ import command.Switcher;
 import command.TurnOffCommand;
 import command.TurnOnCommand;
 import commandII.Algorithm;
+import dataaccessobjects.Database_;
+import dataaccessobjects.Personn;
 import factory.AlgorithmFactory;
 import iterator.Iterator;
 import iterator.NameRepository;
@@ -161,6 +163,8 @@ import factory.Algorithmm;
  * 
  * -- Data Access Object pattern --
  * For instance when we are in the MVC and want to separate the module from the view
+ * 
+ * -- Decorator pattern --
  */
 public class solid {
 
@@ -321,6 +325,18 @@ public class solid {
         
         
         // -- Data Access Object Example --
+        
+        Database_ database = new Database_();
+        
+        database.insert(new Personn("Jon", 12));
+        database.insert(new Personn("Mary", 23));
+        database.insert(new Personn("Luke", 34));
+        
+        for( Personn personn : database.getPeople() )
+            System.out.println(personn);
+        
+    
+        //-- Decoretor pattern --
     }
 
 }
