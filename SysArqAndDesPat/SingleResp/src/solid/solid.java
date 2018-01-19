@@ -358,7 +358,7 @@ public class solid {
         System.out.println(beverage.getCost());
         System.out.println(beverage.getDescription());
         
-        //-- Facde pattern --
+        //-- Facade pattern --
         SortingManager sortMan = new SortingManager();
         sortMan.doBubbleSort();
         
