@@ -19,6 +19,7 @@ import decorator.Beverage;
 import decorator.Milk;
 import decorator.PlainBeverage;
 import decorator.Sugar;
+import facade.SortingManager;
 import factory.AlgorithmFactory;
 import iterator.Iterator;
 import iterator.NameRepository;
@@ -174,6 +175,10 @@ import factory.Algorithmm;
  * It attaches additional responsibility to the object dynamically. Decorators provide a flexible alternative 
  * to sub classing for extending functionality.
  * For example. new LineNumberInputStream(new BufferedInoutStream(new FileInoutStream()));
+ * 
+ * -- Facade --
+ * It provides an unified interface to a set of interfaces in the system.
+ * It defines a high level interface that makes the system easier to use.
  * 
  * 
  * 
@@ -352,6 +357,10 @@ public class solid {
         Beverage beverage = new Sugar( new Milk ( new PlainBeverage() ) );
         System.out.println(beverage.getCost());
         System.out.println(beverage.getDescription());
+        
+        //-- Facde pattern --
+        SortingManager sortMan = new SortingManager();
+        sortMan.doBubbleSort();
         
     }
 
