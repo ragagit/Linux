@@ -189,6 +189,16 @@ import factory.Algorithmm;
  * It converts an interface of a class into an interface that the user is expecting.
  * It enables classes together which couldn't otherwise because of the incompatibility.
  * 
+ * -- Model View Controller --
+ * Model - represents an object or a class carrying the data. It can also have logic to update
+ * controller if the data changes.
+ * Controller - acts on model and view. It controls the data flow to the model and updates the view
+ * when the data changes.
+ * View - represents the visualization of the data that the model contains.
+ * MODEL <---> Controller <---> View <--->
+ * 
+ * 
+ * 
  * 
  */
 public class solid {
