@@ -6,6 +6,11 @@ import DepInv.OracleDatabase;
 import IntSeg.BalancedTree;
 import IntSeg.BinarySearchTree;
 import IntSeg.Tree;
+import adapter.Bicycle;
+import adapter.BicycleAdapter;
+import adapter.Bus;
+import adapter.Car;
+import adapter.Vehiculo;
 import builder.Person;
 import builder.Person.Builder;
 import command.Light;
@@ -180,6 +185,9 @@ import factory.Algorithmm;
  * It provides an unified interface to a set of interfaces in the system.
  * It defines a high level interface that makes the system easier to use.
  * 
+ * -- Adapter --
+ * It converts an interface of a class into an interface that the user is expecting.
+ * It enables classes together which couldn't otherwise because of the incompatibility.
  * 
  * 
  */
@@ -361,6 +369,15 @@ public class solid {
         //-- Facade pattern --
         SortingManager sortMan = new SortingManager();
         sortMan.doBubbleSort();
+        
+        // -- Adapter --
+        Vehiculo bus = new Bus();
+        Vehiculo car = new Car();
+        Vehiculo bicycle = new BicycleAdapter( new Bicycle() );
+        
+        bus.accelerate();
+        car.accelerate();
+        bicycle.accelerate();
         
     }
 
