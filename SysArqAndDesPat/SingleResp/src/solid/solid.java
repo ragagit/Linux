@@ -54,6 +54,8 @@ import visitor.ShoppingCartVisitor;
 import visitor.ShoppingItem;
 import visitor.Table;
 import factory.Algorithmm;
+import servicelocator.Service;
+import servicelocator.ServiceLocator;
 
 /**
  *
@@ -197,7 +199,12 @@ import factory.Algorithmm;
  * View - represents the visualization of the data that the model contains.
  * MODEL <---> Controller <---> View <--->
  * 
- * 
+ * -- Service Locator pattern --
+ * It is for obtaining the processes involved in obtaining a service with a strong abstraction layer.
+ * It is an alternative to dependency injection. We have a central registry called service locator.
+ * Advantages: Allows code to be added at run time. It can make some optimization by deciding if there is
+ * something better than the existing one like a better database library.
+ * Disadvantages: It is like a black box and difficult to recover from errors. It gives run time errors. 
  * 
  * 
  */
@@ -388,6 +395,10 @@ public class solid {
         bus.accelerate();
         car.accelerate();
         bicycle.accelerate();
+        
+        // -- Service Locator --
+        Service serv = ServiceLocator.getService("Database Service");
+        serv.execute();
         
     }
 
