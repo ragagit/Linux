@@ -39,7 +39,8 @@
  * The rule of thumb is to use EXPECT_* when you want the test to continue to reveal more errors after the assertion failure, 
  * and use ASSERT_* when continuing after failure doesn't make sense. 
  
- * 
+ * To setup gmock, you do the same but this time using gmock downlad. 
+ * IMPRTANT: You need to include gtest includes and gtest project to build gmock and test gmock
  */
 
 
