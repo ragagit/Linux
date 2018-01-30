@@ -31,6 +31,9 @@ public:
     int getLenght();
     int getBreadth();
     int getHeight();
+    void setLenght( int val );
+    void setBreadth( int val );
+    void setHeight( int val );
     long CalculateVolume();
     bool operator<(const Box &b);
 

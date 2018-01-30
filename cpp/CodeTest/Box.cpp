@@ -38,6 +38,18 @@
     int Box::getHeight() {
         return height;
     }
+    
+    void Box::setBreadth(int val){
+        breadth = val;
+    }
+    
+    void Box::setHeight(int val){
+        height = val;
+    }
+    
+    void Box::setLenght(int val){
+        length = val;
+    }
 
     long Box::CalculateVolume() {
         return length * breadth * height;
