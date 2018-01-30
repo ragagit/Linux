@@ -43,10 +43,12 @@ TESTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}/tests
 
 # Test Files
 TESTFILES= \
-	${TESTDIR}/TestFiles/f1
+	${TESTDIR}/TestFiles/f1 \
+	${TESTDIR}/TestFiles/f2
 
 # Test Object Files
 TESTOBJECTFILES= \
+	${TESTDIR}/mock_turtle_test.o \
 	${TESTDIR}/testBox.o
 
 # C Compiler Flags
@@ -90,16 +92,28 @@ ${OBJECTDIR}/main.o: main.cpp
 .build-tests-conf: .build-tests-subprojects .build-conf ${TESTFILES}
 .build-tests-subprojects:
 	cd ../../gtest/gtest && ${MAKE}  -f Makefile CONF=Release
+	cd ../../gmock/gmock && ${MAKE}  -f Makefile CONF=Debug
+	cd ../../gtest/gtest && ${MAKE}  -f Makefile CONF=Release
 
 ${TESTDIR}/TestFiles/f1: ${TESTDIR}/testBox.o ${OBJECTFILES:%.o=%_nomain.o}
 	${MKDIR} -p ${TESTDIR}/TestFiles
 	${LINK.cc} -o ${TESTDIR}/TestFiles/f1 $^ ${LDLIBSOPTIONS}   ../../gtest/gtest/dist/Release/GNU-MacOSX/libgtest.a 
+
+${TESTDIR}/TestFiles/f2: ${TESTDIR}/mock_turtle_test.o ${OBJECTFILES:%.o=%_nomain.o}
+	${MKDIR} -p ${TESTDIR}/TestFiles
+	${LINK.cc} -o ${TESTDIR}/TestFiles/f2 $^ ${LDLIBSOPTIONS}   ../../gmock/gmock/dist/Debug/GNU-MacOSX/libgmock.a ../../gtest/gtest/dist/Release/GNU-MacOSX/libgtest.a 
 
 
 ${TESTDIR}/testBox.o: testBox.cpp 
 	${MKDIR} -p ${TESTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -I. -I/usr/local/share/gtest/googletest-release-1.8.0/googletest -I/usr/local/share/gtest/googletest-release-1.8.0/googletest/include -MMD -MP -MF "$@.d" -o ${TESTDIR}/testBox.o testBox.cpp
+
+
+${TESTDIR}/mock_turtle_test.o: mock_turtle_test.cpp 
+	${MKDIR} -p ${TESTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I. -I/usr/local/share/gtest/googletest-release-1.8.0/googlemock -I/usr/local/share/gtest/googletest-release-1.8.0/googlemock/include -I/usr/local/share/gtest/googletest-release-1.8.0/googletest -I/usr/local/share/gtest/googletest-release-1.8.0/googletest/include -MMD -MP -MF "$@.d" -o ${TESTDIR}/mock_turtle_test.o mock_turtle_test.cpp
 
 
 ${OBJECTDIR}/Box_nomain.o: ${OBJECTDIR}/Box.o Box.cpp 
@@ -133,6 +147,7 @@ ${OBJECTDIR}/main_nomain.o: ${OBJECTDIR}/main.o main.cpp
 	@if [ "${TEST}" = "" ]; \
 	then  \
 	    ${TESTDIR}/TestFiles/f1 || true; \
+	    ${TESTDIR}/TestFiles/f2 || true; \
 	else  \
 	    ./${TEST} || true; \
 	fi
