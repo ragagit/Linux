@@ -43,12 +43,14 @@ TESTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}/tests
 
 # Test Files
 TESTFILES= \
+	${TESTDIR}/TestFiles/f3 \
 	${TESTDIR}/TestFiles/f1 \
 	${TESTDIR}/TestFiles/f2
 
 # Test Object Files
 TESTOBJECTFILES= \
 	${TESTDIR}/mock_turtle_test.o \
+	${TESTDIR}/testActiveDetect.o \
 	${TESTDIR}/testBox.o
 
 # C Compiler Flags
@@ -94,6 +96,12 @@ ${OBJECTDIR}/main.o: main.cpp
 	cd ../../gtest/gtest && ${MAKE}  -f Makefile CONF=Release
 	cd ../../gmock/gmock && ${MAKE}  -f Makefile CONF=Debug
 	cd ../../gtest/gtest && ${MAKE}  -f Makefile CONF=Release
+	cd ../../gmock/gmock && ${MAKE}  -f Makefile CONF=Debug
+	cd ../../gtest/gtest && ${MAKE}  -f Makefile CONF=Release
+
+${TESTDIR}/TestFiles/f3: ${TESTDIR}/testActiveDetect.o ${OBJECTFILES:%.o=%_nomain.o}
+	${MKDIR} -p ${TESTDIR}/TestFiles
+	${LINK.cc} -o ${TESTDIR}/TestFiles/f3 $^ ${LDLIBSOPTIONS}   ../../gtest/gtest/dist/Release/GNU-MacOSX/libgtest.a ../../gmock/gmock/dist/Debug/GNU-MacOSX/libgmock.a 
 
 ${TESTDIR}/TestFiles/f1: ${TESTDIR}/testBox.o ${OBJECTFILES:%.o=%_nomain.o}
 	${MKDIR} -p ${TESTDIR}/TestFiles
@@ -102,6 +110,12 @@ ${TESTDIR}/TestFiles/f1: ${TESTDIR}/testBox.o ${OBJECTFILES:%.o=%_nomain.o}
 ${TESTDIR}/TestFiles/f2: ${TESTDIR}/mock_turtle_test.o ${OBJECTFILES:%.o=%_nomain.o}
 	${MKDIR} -p ${TESTDIR}/TestFiles
 	${LINK.cc} -o ${TESTDIR}/TestFiles/f2 $^ ${LDLIBSOPTIONS}   ../../gmock/gmock/dist/Debug/GNU-MacOSX/libgmock.a ../../gtest/gtest/dist/Release/GNU-MacOSX/libgtest.a 
+
+
+${TESTDIR}/testActiveDetect.o: testActiveDetect.cpp 
+	${MKDIR} -p ${TESTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I. -I/usr/local/share/gtest/googletest-release-1.8.0/googlemock -I/usr/local/share/gtest/googletest-release-1.8.0/googlemock/include -I/usr/local/share/gtest/googletest-release-1.8.0/googletest -I/usr/local/share/gtest/googletest-release-1.8.0/googletest/include -MMD -MP -MF "$@.d" -o ${TESTDIR}/testActiveDetect.o testActiveDetect.cpp
 
 
 ${TESTDIR}/testBox.o: testBox.cpp 
@@ -146,6 +160,7 @@ ${OBJECTDIR}/main_nomain.o: ${OBJECTDIR}/main.o main.cpp
 .test-conf:
 	@if [ "${TEST}" = "" ]; \
 	then  \
+	    ${TESTDIR}/TestFiles/f3 || true; \
 	    ${TESTDIR}/TestFiles/f1 || true; \
 	    ${TESTDIR}/TestFiles/f2 || true; \
 	else  \

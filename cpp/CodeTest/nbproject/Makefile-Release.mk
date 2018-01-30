@@ -43,12 +43,14 @@ TESTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}/tests
 
 # Test Files
 TESTFILES= \
+	${TESTDIR}/TestFiles/f3 \
 	${TESTDIR}/TestFiles/f1 \
 	${TESTDIR}/TestFiles/f2
 
 # Test Object Files
 TESTOBJECTFILES= \
 	${TESTDIR}/mock_turtle_test.o \
+	${TESTDIR}/testActiveDetect.o \
 	${TESTDIR}/testBox.o
 
 # C Compiler Flags
@@ -92,6 +94,10 @@ ${OBJECTDIR}/main.o: main.cpp
 .build-tests-conf: .build-tests-subprojects .build-conf ${TESTFILES}
 .build-tests-subprojects:
 
+${TESTDIR}/TestFiles/f3: ${TESTDIR}/testActiveDetect.o ${OBJECTFILES:%.o=%_nomain.o}
+	${MKDIR} -p ${TESTDIR}/TestFiles
+	${LINK.cc} -o ${TESTDIR}/TestFiles/f3 $^ ${LDLIBSOPTIONS}   
+
 ${TESTDIR}/TestFiles/f1: ${TESTDIR}/testBox.o ${OBJECTFILES:%.o=%_nomain.o}
 	${MKDIR} -p ${TESTDIR}/TestFiles
 	${LINK.cc} -o ${TESTDIR}/TestFiles/f1 $^ ${LDLIBSOPTIONS}   
@@ -99,6 +105,12 @@ ${TESTDIR}/TestFiles/f1: ${TESTDIR}/testBox.o ${OBJECTFILES:%.o=%_nomain.o}
 ${TESTDIR}/TestFiles/f2: ${TESTDIR}/mock_turtle_test.o ${OBJECTFILES:%.o=%_nomain.o}
 	${MKDIR} -p ${TESTDIR}/TestFiles
 	${LINK.cc} -o ${TESTDIR}/TestFiles/f2 $^ ${LDLIBSOPTIONS}   
+
+
+${TESTDIR}/testActiveDetect.o: testActiveDetect.cpp 
+	${MKDIR} -p ${TESTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I. -MMD -MP -MF "$@.d" -o ${TESTDIR}/testActiveDetect.o testActiveDetect.cpp
 
 
 ${TESTDIR}/testBox.o: testBox.cpp 
@@ -143,6 +155,7 @@ ${OBJECTDIR}/main_nomain.o: ${OBJECTDIR}/main.o main.cpp
 .test-conf:
 	@if [ "${TEST}" = "" ]; \
 	then  \
+	    ${TESTDIR}/TestFiles/f3 || true; \
 	    ${TESTDIR}/TestFiles/f1 || true; \
 	    ${TESTDIR}/TestFiles/f2 || true; \
 	else  \

@@ -4,6 +4,7 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>ActiveDetectorTask.h</itemPath>
       <itemPath>Box.h</itemPath>
       <itemPath>painter.h</itemPath>
       <itemPath>turtle.h</itemPath>
@@ -22,6 +23,9 @@
                    displayName="Test Files"
                    projectFiles="false"
                    kind="TEST_LOGICAL_FOLDER">
+      <logicalFolder name="f3" displayName="HackTest" projectFiles="true" kind="TEST">
+        <itemPath>testActiveDetect.cpp</itemPath>
+      </logicalFolder>
       <logicalFolder name="f1" displayName="TestBox" projectFiles="true" kind="TEST">
         <itemPath>testBox.cpp</itemPath>
       </logicalFolder>
@@ -50,6 +54,8 @@
       </toolsSet>
       <compileType>
       </compileType>
+      <item path="ActiveDetectorTask.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="Box.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Box.h" ex="false" tool="3" flavor2="0">
@@ -130,6 +136,51 @@
           </linkerLibItems>
         </linkerTool>
       </folder>
+      <folder path="TestFiles/f3">
+        <cTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>/usr/local/share/gtest/googletest-release-1.8.0/googlemock</pElem>
+            <pElem>/usr/local/share/gtest/googletest-release-1.8.0/googlemock/include</pElem>
+            <pElem>/usr/local/share/gtest/googletest-release-1.8.0/googletest</pElem>
+            <pElem>/usr/local/share/gtest/googletest-release-1.8.0/googletest/include</pElem>
+          </incDir>
+        </ccTool>
+        <linkerTool>
+          <output>${TESTDIR}/TestFiles/f3</output>
+          <linkerLibItems>
+            <linkerLibProjectItem>
+              <makeArtifact PL="../../gtest/gtest"
+                            CT="3"
+                            CN="Release"
+                            AC="true"
+                            BL="true"
+                            WD="../../gtest/gtest"
+                            BC="${MAKE}  -f Makefile CONF=Release"
+                            CC="${MAKE}  -f Makefile CONF=Release clean"
+                            OP="${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libgtest.a">
+              </makeArtifact>
+            </linkerLibProjectItem>
+            <linkerLibProjectItem>
+              <makeArtifact PL="../../gmock/gmock"
+                            CT="3"
+                            CN="Debug"
+                            AC="true"
+                            BL="true"
+                            WD="../../gmock/gmock"
+                            BC="${MAKE}  -f Makefile CONF=Debug"
+                            CC="${MAKE}  -f Makefile CONF=Debug clean"
+                            OP="${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libgmock.a">
+              </makeArtifact>
+            </linkerLibProjectItem>
+          </linkerLibItems>
+        </linkerTool>
+      </folder>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="mock_turtle.h" ex="false" tool="3" flavor2="0">
@@ -137,6 +188,8 @@
       <item path="mock_turtle_test.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="painter.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="testActiveDetect.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="testBox.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -163,6 +216,8 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
+      <item path="ActiveDetectorTask.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="Box.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Box.h" ex="false" tool="3" flavor2="0">
@@ -197,6 +252,21 @@
           <output>${TESTDIR}/TestFiles/f2</output>
         </linkerTool>
       </folder>
+      <folder path="TestFiles/f3">
+        <cTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+        <linkerTool>
+          <output>${TESTDIR}/TestFiles/f3</output>
+        </linkerTool>
+      </folder>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="mock_turtle.h" ex="false" tool="3" flavor2="0">
@@ -204,6 +274,8 @@
       <item path="mock_turtle_test.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="painter.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="testActiveDetect.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="testBox.cpp" ex="false" tool="1" flavor2="0">
       </item>
