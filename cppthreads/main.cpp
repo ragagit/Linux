@@ -21,8 +21,90 @@
 #include <string>
 #include <thread>
 #include <chrono>
+#include <list>
 
 using namespace std;
+
+// -- pthreads ---
+//template <typename T> class wqueue
+//{
+//    list<T>   m_queue;
+//    pthread_mutex_t m_mutex;
+//    pthread_cond_t  m_condv;
+//
+//public:
+//    wqueue() {
+//        pthread_mutex_init(&m_mutex, NULL);
+//        pthread_cond_init(&m_condv, NULL);
+//    }
+//    ~wqueue() {
+//        pthread_mutex_destroy(&m_mutex);
+//        pthread_cond_destroy(&m_condv);
+//    }
+//    void add(T item) {
+//        pthread_mutex_lock(&m_mutex);
+//        m_queue.push_back(item);
+//        pthread_cond_signal(&m_condv);
+//        pthread_mutex_unlock(&m_mutex);
+//    }
+//    T remove() {
+//        pthread_mutex_lock(&m_mutex);
+//        while (m_queue.size() == 0) {
+//            pthread_cond_wait(&m_condv, &m_mutex);
+//        }
+//        T item = m_queue.front();
+//        m_queue.pop_front();
+//        pthread_mutex_unlock(&m_mutex);
+//        return item;
+//    }
+//    int size() {
+//        pthread_mutex_lock(&m_mutex);
+//        int size = m_queue.size();
+//        pthread_mutex_unlock(&m_mutex);
+//        return size;
+//    }
+//};
+//
+//class WorkItem_
+//{
+//    string m_message;
+//    int    m_number;
+//
+//  public:
+//    WorkItem_(const char* message, int number)
+//          : m_message(message), m_number(number) {}
+//    ~WorkItem_() {}
+//
+//    const char* getMessage() { return m_message.c_str(); }
+//    int getNumber() { return m_number; }
+//};
+//
+//class ConsumerThread : public Thread
+//{
+//    wqueue<WorkItem_*>& m_queue;
+//
+//  public:
+//    ConsumerThread(wqueue<WorkItem_*>& queue) : m_queue(queue) {}
+//
+//    void* run() {
+//        // Remove 1 item at a time and process it. Blocks if no items are
+//        // available to process.
+//        for (int i = 0;; i++) {
+//            printf("thread %lu, loop %d - waiting for item...\n",
+//                  (long unsigned int)self(), i);
+//            WorkItem_* item = (WorkItem_*)m_queue.remove();
+//            printf("thread %lu, loop %d - got one item\n",
+//                  (long unsigned int)self(), i);
+//            printf("thread %lu, loop %d - item: message - %s, number - %d\n",
+//                  (long unsigned int)self(), i, item->getMessage(),
+//                   item->getNumber());
+//            delete item;
+//        }
+//        return NULL;
+//    }
+//};
+
+// -- std::threads ---
 
 class IWorkItem{
 
@@ -153,13 +235,40 @@ int main(int argc, char** argv) {
         
     }
     
-    MyConsumer Con1(queue);
-
-    
+    MyConsumer Con1(queue);  
     Con1.run();
 
-    
-    
+    // -- POSIX Threads --
+//    if ( argc != 2 ) {
+//        printf("usage: %s <iterations>\n", argv[0]);
+//        exit(-1);
+//    }
+//    int iterations = atoi(argv[1]);
+//
+//    // Create the queue and consumer (worker) threads
+//    wqueue<WorkItem*>  queue;
+//    ConsumerThread* thread1 = new ConsumerThread(queue);
+//    ConsumerThread* thread2 = new ConsumerThread(queue);
+//    thread1->start();
+//    thread2->start();
+//
+//    // Add items to the queue
+//    WorkItem* item;
+//    for (int i = 0; i < iterations; i++) {
+//        item = new WorkItem("abc", 123);
+//        queue.add(item);
+//        item = new WorkItem("def", 456);
+//        queue.add(item);
+//        item = new WorkItem("ghi", 789);
+//        queue.add(item);
+//        sleep(2);
+//    }
+//
+//    // Ctrl-C to end program
+//    sleep(1)
+//    printf("Enter Ctrl-C to end the program...\n");
+//    while (1);
+//    exit(0);
    
    
     return 0;
