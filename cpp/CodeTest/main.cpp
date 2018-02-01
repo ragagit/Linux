@@ -20,6 +20,7 @@
 #include <map>
 #include <set>
 #include <deque>
+#include "AsyncFilter.h"
 
 using namespace std;
 
@@ -1287,6 +1288,27 @@ void doVariadic(){
     
 }
 
+void doAsync(){
+    
+    mutex m;
+    condition_variable cv;
+    vector<float> data;
+    AsyncFilter filter( m, cv, data );
+    filter.start();
+    
+    loadData(data);
+    filter.setData(data);
+    cv.notify_one();
+    
+    {
+        unique_lock<mutex> lock(m);
+        cv.wait(lock);
+    } 
+    
+    
+    
+}
+
 int main(int argc, char** argv) {
 
     //doScan();
@@ -1342,5 +1364,7 @@ int main(int argc, char** argv) {
     
     //Variadic
     doVariadic();
+    
+    return 0;
 }
 
