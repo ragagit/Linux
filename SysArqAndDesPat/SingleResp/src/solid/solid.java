@@ -6,11 +6,25 @@ import DepInv.OracleDatabase;
 import IntSeg.BalancedTree;
 import IntSeg.BinarySearchTree;
 import IntSeg.Tree;
+import adapter.Bicycle;
+import adapter.BicycleAdapter;
+import adapter.Bus;
+import adapter.Car;
+import adapter.Vehiculo;
+import builder.Person;
+import builder.Person.Builder;
 import command.Light;
 import command.Switcher;
 import command.TurnOffCommand;
 import command.TurnOnCommand;
 import commandII.Algorithm;
+import dataaccessobjects.Database_;
+import dataaccessobjects.Personn;
+import decorator.Beverage;
+import decorator.Milk;
+import decorator.PlainBeverage;
+import decorator.Sugar;
+import facade.SortingManager;
 import factory.AlgorithmFactory;
 import iterator.Iterator;
 import iterator.NameRepository;
@@ -40,6 +54,8 @@ import visitor.ShoppingCartVisitor;
 import visitor.ShoppingItem;
 import visitor.Table;
 import factory.Algorithmm;
+import servicelocator.Service;
+import servicelocator.ServiceLocator;
 
 /**
  *
@@ -151,6 +167,46 @@ import factory.Algorithmm;
  * We have to find the part of our code that will change and separate it.
  * WE MAY ENCAPSULATE OBJECT CREATION.
  * 
+ * -- Builder pattern --
+ * If one application has a lot of parameters we would end up with telescopic constructor. With builder
+ * we just add another method. 
+ * Immutable property: The best is to use objects that can't be modified after they are created "Immutable objects".
+ * This way won't be any concurrency problems when threads want to update them. 
+ * 
+ * -- Data Access Object pattern --
+ * For instance when we are in the MVC and want to separate the module from the view
+ * 
+ * -- Decorator pattern --
+ * Helps to make the Open-Closed principle come true. Open for extension closed for modifications.
+ * Like Observer-Subject pattern.
+ * It attaches additional responsibility to the object dynamically. Decorators provide a flexible alternative 
+ * to sub classing for extending functionality.
+ * For example. new LineNumberInputStream(new BufferedInoutStream(new FileInoutStream()));
+ * 
+ * -- Facade --
+ * It provides an unified interface to a set of interfaces in the system.
+ * It defines a high level interface that makes the system easier to use.
+ * 
+ * -- Adapter --
+ * It converts an interface of a class into an interface that the user is expecting.
+ * It enables classes together which couldn't otherwise because of the incompatibility.
+ * 
+ * -- Model View Controller --
+ * Model - represents an object or a class carrying the data. It can also have logic to update
+ * controller if the data changes.
+ * Controller - acts on model and view. It controls the data flow to the model and updates the view
+ * when the data changes.
+ * View - represents the visualization of the data that the model contains.
+ * MODEL <---> Controller <---> View <--->
+ * 
+ * -- Service Locator pattern --
+ * It is for obtaining the processes involved in obtaining a service with a strong abstraction layer.
+ * It is an alternative to dependency injection. We have a central registry called service locator.
+ * Advantages: Allows code to be added at run time. It can make some optimization by deciding if there is
+ * something better than the existing one like a better database library.
+ * Disadvantages: It is like a black box and difficult to recover from errors. It gives run time errors. 
+ * 
+ * 
  */
 public class solid {
 
@@ -251,8 +307,8 @@ public class solid {
             }
         });
         
-        t1.start();
-        t2.start();
+        //t1.start();
+        //t2.start();
         
         // --- Iterator ---
         NameRepository nameRepository = new NameRepository();
@@ -303,6 +359,46 @@ public class solid {
         Algorithmm algorithmm = AlgorithmFactory.createAlgorithm(AlgorithmFactory.SHORTEST_PATH);
         algorithmm.solve();
         
+        // -- Builder pattern
+        Person person = new Person.Builder("Kevin", "kevin@gmail.com").setAge(15).setAddress("123 Fake Str").build();
+        Person.Builder pb = new Person.Builder("Laura", "laura@server.com");
+        System.out.println(pb.showInfo());
+        System.out.println(person);
+        
+        
+        // -- Data Access Object Example --
+        
+        Database_ database = new Database_();
+        
+        database.insert(new Personn("Jon", 12));
+        database.insert(new Personn("Mary", 23));
+        database.insert(new Personn("Luke", 34));
+        
+        for( Personn personn : database.getPeople() )
+            System.out.println(personn);
+        
+    
+        //-- Decoretor pattern --
+        Beverage beverage = new Sugar( new Milk ( new PlainBeverage() ) );
+        System.out.println(beverage.getCost());
+        System.out.println(beverage.getDescription());
+        
+        //-- Facade pattern --
+        SortingManager sortMan = new SortingManager();
+        sortMan.doBubbleSort();
+        
+        // -- Adapter --
+        Vehiculo bus = new Bus();
+        Vehiculo car = new Car();
+        Vehiculo bicycle = new BicycleAdapter( new Bicycle() );
+        
+        bus.accelerate();
+        car.accelerate();
+        bicycle.accelerate();
+        
+        // -- Service Locator --
+        Service serv = ServiceLocator.getService("Database Service");
+        serv.execute();
         
     }
 
