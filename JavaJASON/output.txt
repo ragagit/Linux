@@ -1,0 +1,1 @@
+{"name":"Nataraja Gootooru","designation":"Programmer","department":"Java2Novice","salary":20000,"doj":null,"emp_id":1016}
