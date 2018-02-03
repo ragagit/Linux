@@ -1,0 +1,2 @@
+myannotdefaultvalues.MyAnnot
+myannotdefaultvalues.MyAnnotDefaultValues
