@@ -10,13 +10,24 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
 import java.sql.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import javax.json.JsonReader;
+import javax.json.JsonWriter;
 
 /**
  *
@@ -205,6 +216,69 @@ public class MyJason {
 //            // TODO Auto-generated catch block
 //            e.printStackTrace();
 //        }
+
+        // Java API for JSON Processing
+//        File jsonInputFile = new File("output.txt");
+//        InputStream is;
+//        try {
+//            is = new FileInputStream(jsonInputFile);
+//            // Create JsonReader from Json.
+//            JsonReader reader = Json.createReader(is);
+//            // Get the JsonObject structure from JsonReader.
+//            JsonObject empObj = reader.readObject();
+//            reader.close();
+//            // read string data
+//            System.out.println("Emp Name: " + empObj.getString("name"));
+//            // read integer data
+//            System.out.println("Emp Id: " + empObj.getInt("emp_id"));
+//            // read inner json element
+//            JsonObject addrObj = empObj.getJsonObject("department");
+//            System.out.println("City: " + addrObj.getString("salary"));
+//        } catch (FileNotFoundException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
+        
+        // JSON Object builder.
+//        JsonObjectBuilder jsonBuilder = Json.createObjectBuilder();
+//        jsonBuilder.add("emp_name", "Nataraj G");
+//        jsonBuilder.add("emp_id", 1016);
+//        jsonBuilder.add("salary", 20000);
+//         
+//        JsonObject empObj = jsonBuilder.build();
+//        // here we are writing to String writer. 
+//        // if you want you can write it to a file as well
+//        StringWriter strWtr = new StringWriter();
+//        JsonWriter jsonWtr = Json.createWriter(strWtr);
+//        jsonWtr.writeObject(empObj);
+//        jsonWtr.close();
+//         
+//        System.out.println(strWtr.toString());
+
+          // Google gson API
+          Employee empg = new Employee();
+        empg.setEmpId(1016);
+        empg.setName("Alex G");
+        empg.setSalary(20000);
+        empg.setDepartment("Accounting");
+        //empg.setDesignation("Manager");
+        //empg.setDepartment("Accounts");
+         
+        Gson gsonObj = new Gson();
+        // converts object to json string
+        String jsonStrg = gsonObj.toJson(empg);
+        System.out.println(jsonStrg);
+        System.out.println("End");
+        
+        //gson pretty printing
+        Map<String, String> inputMapg = new HashMap<String, String>();
+        inputMapg.put("name", "Java2Novice");
+        inputMapg.put("site", "http://java2novice.com");
+        // convert map to JSON String
+        // notice that we enabled pretty printing in the below line
+        Gson gsonObjg = new GsonBuilder().setPrettyPrinting().create();
+        String jsonStrgg = gsonObj.toJson(inputMapg);
+        System.out.println(jsonStrgg);
         
     }
 }
