@@ -18,8 +18,8 @@ import org.springframework.core.env.Environment;
  */
 @Configuration
 @ComponentScan
-//@PropertySource("classpath:/db.properties")
-//@PropertySource("./db.properties")
+@PropertySource("classpath:db.config")
+
 public class MyAppConfig {
     
     @Autowired
