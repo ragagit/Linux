@@ -266,7 +266,53 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
         mailSender.send(message);
     }
 }
- */
+* 
+* - spring JDBC
+*       < dependency>
+            < groupId>mysql< /groupId>
+            < artifactId>mysql-connector-java< /artifactId>
+            < version>5.1.31< /version>
+        < /dependency>
+ *  < dependency>
+            < groupId>org.springframework</groupId>
+            < artifactId>spring-jdbc</artifactId>
+            < version>${spring.version}</version>
+        < /dependency>
+        
+* - spring JDBC template
+* - Spring JDBC  with JdbcDaoSupport
+* 
+*   public class EmployeeDaoImpl extends JdbcDaoSupport implements EmployeeDao{
+
+* - Spring JDBC with JdbcDaoSupport and BeanPropertyRowMapper
+* - Spring JDBC batch updates using JdbcTemplate
+* - AOP Aspect Oriented Programming.
+*   In Spring, aspect-oriented programming (AOP) is a programming paradigm that aims to increase modularity by 
+*   allowing the separation of cross-cutting concerns. AOP forms a basis for aspect-oriented software development.
+*   a) Before advice @Before
+*   b) After @After
+*   c) After returning advice @AfterReturning
+*   d) After throwing advice @AfterThrowing
+*   e) Around advice @Around
+*   f) Pointcuts Last few pages talked about spring advices (before advice, after return advice and around advice). 
+*   The disadvantages of these are, these advices will intercept all available methods. What if we want to intercept 
+*   only one method or two specific methods and we dont want to intercept rest all methods?
+    Spring comes with a concept called Pointcuts, which allows you to intercept advices based on either method name 
+    or regular expression.
+
+*   @Aspect
+    public class RunBeforeExecution {
+ 
+    @Before("execution(* com.java2novice.bean.MyBusinessService.runMyBusinessLogic(..))")
+    public void before(JoinPoint joinPoint) throws Throwable {
+        System.out.println("Inside RunBeforeExecution.before() method...");
+        System.out.println("inserted before : " + joinPoint.getSignature().getName());
+    }
+}
+* 
+
+* 
+*/
 public class SpringDemo {
  
     static final Logger logger = Logger.getLogger(SpringDemo.class);
