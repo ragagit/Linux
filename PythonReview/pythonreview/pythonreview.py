@@ -9,6 +9,10 @@ import re
 import mysql.connector
 from mysql.connector import errorcode
 
+import numpy as np
+import matplotlib.pyplot as plt
+
+
 
 if __name__ == "__main__":
     
@@ -491,6 +495,21 @@ def doDBTables():
     # disconnect from server
     db.close()
 
+class NeuralNetwork():
+    def __init__(self):
+        self.inputLayerSize = 2
+        self.hiddenLayerSize = 3
+        self.outputLayerSize = 2
+    
+    def sigmoid(self, z):
+        return 1/(1 + np.exp(-z))
+   
+def doNN():
+    NN = NeuralNetwork()
+    testInput = np.arange(-6, 6, 0.01)
+    plt.plot(testInput, NN.sigmoid(testInput), linewidth = 2)
+    plt.grid(1)
+    
     
 #Print()
 #getUserInput()
@@ -523,8 +542,9 @@ def doDBTables():
 #doInhe()
 #doDataHide()
 #doRegExp()
-doDBVer()
+#doDBVer()
 #doDBTables()
+doNN()
 
 
 
