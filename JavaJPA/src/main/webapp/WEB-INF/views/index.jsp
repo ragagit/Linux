@@ -15,7 +15,7 @@
   <hr>
 
   <div class="form">
-    <form action="person/showPerson" method="post" >
+      <form action="person/showPerson" method="post" onsubmit="return validate()">
       <table>
         <tr>
           <td>Enter Person id</td>
