@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <title>Tutorials Point</title>
+    </head>
+
+    <body>	
+
+        <header role="banner">
+            <h1>HTML5 Document Structure Example</h1>
+            <p>This page should be tried in safari, chrome or Mozila.</p>
+        </header>
+
+        <!-- Headings -->
+        <h1>Heading One</h1>
+        <h2>Heading Two</h2>
+        <h3>Heading Two</h3>
+        <h4>Heading Two</h4>
+        <h5>Heading Two</h5>
+        <h6>Heading Two</h6>
+
+        <!-- Paragraph -->
+        <p>
+            This is just a paragraph
+            with a few text.<br/>
+            <strong>This is strong text</strong><br/>
+            <em> This is emphasized text</em><br/>
+            <a href="http://www.google.ca" target="_blank">This is a link</a>
+        </p>
+
+        <!-- Inline Level <span>,<img>,<a>
+             don't start on a new line, take only necessary width
+             Block Element <div>, <h1>,<p>,<form>
+             start on a new line, take full width available.
+        -->
+        <!-- Tags have attributes -->
+        <!-- List -->
+        <ul>
+            <li>List Item1</li>
+            <li>List Item2</li>
+            <li>List Item3</li>
+            <li>List Item4</li>
+            <li>List Item5</li>
+        </ul>
+        <ol>
+            <li>List Item1</li>
+            <li>List Item2</li>
+            <li>List Item3</li>
+            <li>List Item4</li>
+            <li>List Item5</li>
+        </ol>
+
+        <!-- Tables -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Age</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Rob Smith</td>
+                    <td>email@server.com</td>
+                    <td>35</td>
+                </tr>
+                <tr>
+                    <td>Tom</td>
+                    <td>email@server.com</td>
+                    <td>45</td>
+                </tr>
+                <tr>
+                    <td>Jon</td>
+                    <td>email@server.com</td>
+                    <td>55</td>
+                </tr>
+
+            </tbody>
+        </table>
+
+        <br>
+        <hr>
+        <br>
+
+        <!-- Forms -->
+        <form action="process.php" method="POST">
+            <!-- Text -->
+            <div>
+                <label>First Name</label>
+                <input type="text" name="first-name"
+                       placeholder="Enter First Name">
+            </div>
+            <br>
+            <div>
+                <label>Last Name</label>
+                <input type="text" name="Last-name" >
+            </div>
+            <!-- Email field -->
+            <br>
+            <div>
+                <label>Email</label>
+                <input type="email" name="email" >
+            </div>
+            <!-- Number type -->
+            <br>
+            <div>
+                <label>Age</label>
+                <input type="number" name="age" value="30">
+            </div>
+            
+            <!-- Date type -->
+            <br>
+            <div>
+                <label>Birthday</label>
+                <input type="date" name="age">
+            </div>
+            <!-- message field -->
+            <br>
+            <div>
+                <label>Message</label>
+                <textarea name="message"></textarea>
+            </div>
+            <!-- Select -->
+            <br>
+            <div>
+                <label>Gender</label>
+                <select name="gender">
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
+                    
+            </div>
+            
+            <br>
+            <div>
+                <input type="submit" name="submit" value="Submit">
+            </div>
+                
+                
+        </form>
+        
+        <br>
+        <div>
+            <button>Click me</button>
+        </div>
+        <br>
+        <div>
+            <img src="path.jpg" alt="img not found">
+        </div>
+        
+        <div style="margin-top:500px"></div>
+        <footer>
+            <p>Created by <a href="http://tutorialspoint.com/">Tutorials Point</a></p>
+        </footer>
+
+    </body>   
+</html>
