@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<!--
+Three methods for Adding CSS
+- Inline CSS: Directly in the html element (NO!)
+- Internal CSS: Using <style> tags within a single document
+- External CSS: Linking an external .css file
+
+Margine
+Border
+Padding
+
+margin-top:5px;
+margin-botton:5px;
+margin-right:10px;
+margin-left:10px     =>      margin:5px 5px 10px 10px;top right bottom left
+margin: 5px 10px
+-->
+<html>
+    <head>
+        <title>CSS Cheat Sheet</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style type="text/css">
+            h2{
+                color:blue;
+            }
+        </style>
+        <link rel="stylesheet" type="text/css"
+              href="css/style.css">
+    </head>
+    <body>
+        <h1 style="color:red">Hello World</h1>
+        <h2>Hi there!</h2>
+        <h3>Hello again!</h3>
+        <h4>Header Four</h4>
+        <div class="container">
+            <div class="box-1">
+                <h1>This is a paragraph</h1>
+                <p>
+                    To change this license header, choose License Headers in Project Properties.
+                    To change this template file, choose Tools | Templates
+                    and open the template in the editor.
+                    To change this license header, choose License Headers in Project Properties.
+                    To change this template file, choose Tools | Templates
+                    and open the template in the editor.
+                    To change this license header, choose License Headers in Project Properties.
+                    To change this template file, choose Tools | Templates
+                    and open the template in the editor.
+                    To change this license header, choose License Headers in Project Properties.
+                    To change this template file, choose Tools | Templates
+                    and open the template in the editor.
+                    To change this license header, choose License Headers in Project Properties.
+                    To change this template file, choose Tools | Templates
+                    and open the template in the editor.
+                    To change this license header, choose License Headers in Project Properties.
+                    To change this template file, choose Tools | Templates
+                    and open the template in the editor.
+                </p>
+            </div>
+            <div class="box-2">
+                <h1>This is a paragraph</h1>
+                <p>
+                    To change this license header, choose License Headers in Project Properties.
+                    To change this template file, choose Tools | Templates
+                    and open the template in the editor.
+                    To change this license header, choose License Headers in Project Properties.
+                    To change this template file, choose Tools | Templates
+                    and open the template in the editor.
+                    To change this license header, choose License Headers in Project Properties.
+                    To change this template file, choose Tools | Templates
+                    and open the template in the editor.
+                    To change this license header, choose License Headers in Project Properties.
+                    To change this template file, choose Tools | Templates
+                    and open the template in the editor.
+                    To change this license header, choose License Headers in Project Properties.
+                    To change this template file, choose Tools | Templates
+                    and open the template in the editor.
+                    To change this license header, choose License Headers in Project Properties.
+                    To change this template file, choose Tools | Templates
+                    and open the template in the editor.
+                </p>
+            </div>
+            <div class="categories">
+                <h2>Categories</h2>
+                <ul>
+                    <li><a href="#">Category 1</a></li>
+                    <li><a href="#">Category 2</a></li>
+                    <li><a href="#">Category 3</a></li>
+                </ul>
+            </div>
+
+            <!-- Forms -->
+            <form class="my-form" action="process.php" method="POST">
+                <!-- Text -->
+                <div>
+                    <label>First Name</label>
+                    <input type="text" name="first-name"
+                           placeholder="Enter First Name">
+                </div>
+                <br>
+                <div>
+                    <label>Last Name</label>
+                    <input type="text" name="Last-name" >
+                </div>
+                <!-- Email field -->
+                <br>
+                <div>
+                    <label>Email</label>
+                    <input type="email" name="email" >
+                </div>
+                <!-- Number type -->
+                <br>
+                <div>
+                    <label>Age</label>
+                    <input type="number" name="age" value="30">
+                </div>
+
+                <!-- Date type -->
+                <br>
+                <div>
+                    <label>Birthday</label>
+                    <input type="date" name="age">
+                </div>
+                <!-- message field -->
+                <br>
+                <div>
+                    <label>Message</label>
+                    <textarea name="message"></textarea>
+                </div>
+                <!-- Select -->
+                <br>
+                <div>
+                    <label>Gender</label>
+                    <select name="gender">
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+
+                </div>
+
+                <br>
+                <div>
+                    <input class="button" type="submit" name="submit" value="Submit">
+                </div>
+
+            </form>
+            <div class="block">
+                <h3>Heading</h3>
+                <p>
+                    To change this license header, choose License Headers in Project Properties.
+                    To change this template file, choose Tools | Templates
+                    and open the template in the editor.
+                    To change this license header, choose License Headers in Project Properties.
+                    To change this template file, choose Tools | Templates
+                    and open the template in the editor.
+                    To change this license header, choose License Headers in Project Properties.
+                    To change this template file, choose Tools | Templates
+                    and open the template in the editor.    
+                </p>
+            </div>
+            <div class="block">
+                <h3>Heading</h3>
+                <p>
+                    To change this license header, choose License Headers in Project Properties.
+                    To change this template file, choose Tools | Templates
+                    and open the template in the editor.
+                    To change this license header, choose License Headers in Project Properties.
+                    To change this template file, choose Tools | Templates
+                    and open the template in the editor.
+                    To change this license header, choose License Headers in Project Properties.
+                    To change this template file, choose Tools | Templates
+                    and open the template in the editor.    
+                </p>
+            </div>
+            <div class="block">
+                <h3>Heading</h3>
+                <p>
+                    To change this license header, choose License Headers in Project Properties.
+                    To change this template file, choose Tools | Templates
+                    and open the template in the editor.
+                    To change this license header, choose License Headers in Project Properties.
+                    To change this template file, choose Tools | Templates
+                    and open the template in the editor.
+                    To change this license header, choose License Headers in Project Properties.
+                    To change this template file, choose Tools | Templates
+                    and open the template in the editor.    
+                </p>
+            </div>
+            <div class="clr"></div>
+
+            <div id="main-block">
+                <h3>Heading</h3>
+                <p>
+                    To change this license header, choose License Headers in Project Properties.
+                    To change this template file, choose Tools | Templates
+                    and open the template in the editor.
+                    To change this license header, choose License Headers in Project Properties.
+                    To change this template file, choose Tools | Templates
+                    and open the template in the editor.
+                    To change this license header, choose License Headers in Project Properties.
+                    To change this template file, choose Tools | Templates
+                    and open the template in the editor.    
+                </p>               
+            </div>
+            <div id="sidebar">
+                <h3>Heading</h3>
+                <p>
+                    To change this license header, choose License Headers in Project Properties.
+                    To change this template file, choose Tools | Templates
+                    and open the template in the editor.
+                    To change this license header, choose License Headers in Project Properties.
+                        
+                </p>          
+            </div>
+            
+            <div class="clr"></div>
+            
+            <div class="p-box">
+                <h1>Hello</h1>
+                <h2>Bye</h2>
+            </div>
+
+            <ul class="my-list">
+                <li>List Item</li>
+                <li>List Item</li>
+                <li>List Item</li>
+                <li>List Item</li>
+                <li>List Item</li>
+                <li>List Item</li>
+                <li>List Item</li>
+            </ul>
+        </div><!-- Container end -->
+
+        <div style="margin-top: 500px;"></div>
+
+    </body>
+</html>

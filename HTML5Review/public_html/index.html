@@ -1,161 +1,77 @@
 <!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
 <html>
-
     <head>
-        <meta charset="utf-8">
-        <title>Tutorials Point</title>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css"
+              href="css/mystyle.css">
     </head>
-
-    <body>	
-
-        <header role="banner">
-            <h1>HTML5 Document Structure Example</h1>
-            <p>This page should be tried in safari, chrome or Mozila.</p>
+    <body>
+        <header id="main-header">
+            <div>
+                <h1>My Website</h1>
+            </div>
         </header>
-
-        <!-- Headings -->
-        <h1>Heading One</h1>
-        <h2>Heading Two</h2>
-        <h3>Heading Two</h3>
-        <h4>Heading Two</h4>
-        <h5>Heading Two</h5>
-        <h6>Heading Two</h6>
-
-        <!-- Paragraph -->
-        <p>
-            This is just a paragraph
-            with a few text.<br/>
-            <strong>This is strong text</strong><br/>
-            <em> This is emphasized text</em><br/>
-            <a href="http://www.google.ca" target="_blank">This is a link</a>
-        </p>
-
-        <!-- Inline Level <span>,<img>,<a>
-             don't start on a new line, take only necessary width
-             Block Element <div>, <h1>,<p>,<form>
-             start on a new line, take full width available.
-        -->
-        <!-- Tags have attributes -->
-        <!-- List -->
-        <ul>
-            <li>List Item1</li>
-            <li>List Item2</li>
-            <li>List Item3</li>
-            <li>List Item4</li>
-            <li>List Item5</li>
-        </ul>
-        <ol>
-            <li>List Item1</li>
-            <li>List Item2</li>
-            <li>List Item3</li>
-            <li>List Item4</li>
-            <li>List Item5</li>
-        </ol>
-
-        <!-- Tables -->
-        <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Age</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Rob Smith</td>
-                    <td>email@server.com</td>
-                    <td>35</td>
-                </tr>
-                <tr>
-                    <td>Tom</td>
-                    <td>email@server.com</td>
-                    <td>45</td>
-                </tr>
-                <tr>
-                    <td>Jon</td>
-                    <td>email@server.com</td>
-                    <td>55</td>
-                </tr>
-
-            </tbody>
-        </table>
-
-        <br>
-        <hr>
-        <br>
-
-        <!-- Forms -->
-        <form action="process.php" method="POST">
-            <!-- Text -->
-            <div>
-                <label>First Name</label>
-                <input type="text" name="first-name"
-                       placeholder="Enter First Name">
+        <nav id="navbar">
+            <div class="container">
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Services</a></li>
+                    <li><a href="#">Contact</a></li>
+                    <li><a href="#">About</a></li>
+                </ul>
             </div>
-            <br>
-            <div>
-                <label>Last Name</label>
-                <input type="text" name="Last-name" >
+        </nav>
+        <section id="showcase">
+            <div class="container">
+                <h1>
+                    To change this license header, choose License Headers in Project Properties.
+                    To change this template file, choose Tools | Templates
+                    and open the template in the editor.
+                </h1>
+
             </div>
-            <!-- Email field -->
-            <br>
-            <div>
-                <label>Email</label>
-                <input type="email" name="email" >
-            </div>
-            <!-- Number type -->
-            <br>
-            <div>
-                <label>Age</label>
-                <input type="number" name="age" value="30">
-            </div>
+        </section>
+        <div class="container">
+            <section id="main">
+                <h1>Welcome</h1>
+                <p>
+                    To change this license header, choose License Headers in Project Properties.
+                    To change this template file, choose Tools | Templates
+                    and open the template in the editor.To change this license header, choose License Headers in Project Properties.
+                    To change this template file, choose Tools | Templates
+                    and open the template in the editor.To change this license header, choose License Headers in Project Properties.
+                    To change this template file, choose Tools | Templates
+                    and open the template in the editor.To change this license header, choose License Headers in Project Properties.
+                    To change this template file, choose Tools | Templates
+                    and open the template in the editor.To change this license header, choose License Headers in Project Properties.
+                    To change this template file, choose Tools | Templates
+                    and open the template in the editor.
+                </p>
+                </section>
+                <aside id="sidebar">
+                    <p>
+                        To change this license header, choose License Headers in Project Properties.
+                        To change this template file, choose Tools | Templates
+                        and open the template in the editor.To change this license header, choose License Headers in Project Properties.
+                        To change this template file, choose Tools | Templates
+                        and open the template in the editor.To change this license header, choose License Headers in Project Properties.
+
+                    </p>
+
+                </aside>
+
             
-            <!-- Date type -->
-            <br>
-            <div>
-                <label>Birthday</label>
-                <input type="date" name="age">
-            </div>
-            <!-- message field -->
-            <br>
-            <div>
-                <label>Message</label>
-                <textarea name="message"></textarea>
-            </div>
-            <!-- Select -->
-            <br>
-            <div>
-                <label>Gender</label>
-                <select name="gender">
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="other">Other</option>
-                </select>
-                    
-            </div>
-            
-            <br>
-            <div>
-                <input type="submit" name="submit" value="Submit">
-            </div>
-                
-                
-        </form>
-        
-        <br>
-        <div>
-            <button>Click me</button>
         </div>
-        <br>
-        <div>
-            <img src="path.jpg" alt="img not found">
-        </div>
-        
-        <div style="margin-top:500px"></div>
-        <footer>
-            <p>Created by <a href="http://tutorialspoint.com/">Tutorials Point</a></p>
+
+        <footer id="main-footer">
+            <p>Copyright &copy 2018;My Website</p>
         </footer>
-
-    </body>   
+    </body>
 </html>
