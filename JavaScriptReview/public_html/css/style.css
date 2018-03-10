@@ -1,0 +1,35 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 7-Mar-2018, 2:24:18 PM
+    Author     : raga
+*/
+body{
+    text-align: center;
+    font-family: arial;
+    font-size: 18px;
+}
+
+li{
+    list-style: none;
+    line-height: 2em;
+    text-align: left;
+}
+
+.header{
+    background: #F4F4F4;
+    border-bottom: #ccc 3px solid;
+    padding: 10px;
+}
+
+h2{
+    color: appworkspace;
+}
+
+.container{
+    width: 700px;
+    margin: 30px auto;
+}
