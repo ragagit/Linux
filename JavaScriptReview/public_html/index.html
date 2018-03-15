@@ -14,23 +14,80 @@ Object based
         <link rel='stylesheet' href="css/style.css" />
         <script src="js/main.js"></script>
     </head>
-    <body>
+    <!-- <body onload="showTime()"> -->
+    <body id="body" onload="checkCookie()">
         <div class="header">
-            <h1>Learning JavaScript</h1>  
+            <h1 id="heading">Learning JavaScript</h1>  
             <h2>By raga</h2>
         </div>
         <div  class="container">
+            <!-- 
+            <button onclick="doClick()">Click me one</button>
+            <br>
+            <button onclick="this.innerHTML='You clicked'">Click me two</button> 
+            <br>
+            <button onclick="changeText(this)">Click me three</button>
+            <br>
+            <button onclick="changeHeaderText()">Click me four</button>          
+            <br>
+            <button onmouseover="showTime()" onmouseout="clearTime()">Show time</button>
+            <h2 id="time"></h2>
+            <br>
+            -->
+            <form method="POST" action="something.php" id="forms"  onsubmit="return validateForm()" name="myForm">
+                
+                <div>
+                    <label>First Name</label>
+                    <input type="text" name="firstName" id="firstName"/>
+                </div>
+                <br>
+                <div>
+                    <label>Last Name</label>
+                    <input type="text" name="lastName" id="lastName"/>
+                </div>
+                <br>
+                <div>
+                    <label>Background</label>
+                    <select name="background" id="background" onchange="changeBackground(this)">
+                        <option value="Red">Red</option>
+                        <option value="Green">Green</option>
+                        <option value="Blue">Blue</option>
+                    </select>
+                </div>
+                <br>
+                <div>
+                    <input type="submit" value="Submit"  />
+                </div>
 
+            </form>
+            
+            <br>
+            <div>
+                <button onclick="writeCookie()">Write Cookie</button>
+            </div>
+            <br>
+            <div>
+                <button onclick="readCookie()">Read Cookie</button>
+            </div>
+            <br>
+            <div>
+                <button onclick="deleteCookie()">Delete Cookie</button>
+            </div>
+            <br>
+            <div>
+                <button onclick="checkCookie()">Check Cookie</button>
+            </div>
         </div>
         <script>
-            
-           <!-- Data Types -->
-           
-            DataTypes();
-            MyArray();
+
+<!-- Data Types -->
+
+            //DataTypes();
+            //MyArray();
             //Loops();
             //Conditionals();
-            Objects();
+            //Objects();
+
         </script>
     </body>
 </html>
