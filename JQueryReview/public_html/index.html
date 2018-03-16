@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<!--
+To get JQuery links go to:
+https://developers.google.com/speed/libraries/
+get JQuery and JQuery UI
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+        <script src="js/myjq.js"></script>
+        <link rel="stylesheet" href="css/mystyle.css">
+    </head>
+    <body>
+        
+        <h1 class="topheader">JQuery Review</h1>
+        <br>
+        
+        <h1>Click Events</h1>
+        <div id="hello">Click Here</div>
+        <div id="bye">Click to hide</div>
+        
+        <br>
+        <h1>Selectors</h1>
+        <br>
+        
+        <p class="myclass"></p>
+        <p id="myid"></p>
+       
+        <br>
+        <h1>Advanced Selectors</h1>
+        <br>
+        
+        <ul>
+            <li>Pizza</li>
+            <li>Burger</li>
+            <li>Noodles</li>
+            <li>Fries</li>
+        </ul>
+       
+        <ul>
+            <li>Cricket</li>
+            <li>Football</li>
+            <li>Badminton</li>
+        </ul>
+        
+        <br>
+        <h1>Attributes</h1>
+        <br>
+        <a name="link">This link takes me nowhere</a>
+        
+        
+        <br>
+        <h1>Attribute Functions</h1>
+        <br>
+        
+        <a href="http://www.tutorialspoint.com" target="_blank" class="someclass" >Link to</a>
+        <p class="pclass">Click me to toggle class</p>
+        
+        <br>
+        <h1>DOM Traversing</h1>
+        <br>
+        <div>
+            <p>This is <span id="test">some</span>text</p>
+        </div>
+        
+        <div id="remTest" style="background:yellow;display:block;border: 2px solid #000;height: 120px">
+            <p>First element in Div</p>
+            <p>Second element in Div</p>
+            <p>Third element in Div</p>
+        </div>
+        
+        <ol>
+            <li>First Child</li>
+            <li id="second-child">Second Child</li>
+            <li>Third Child</li>
+            <ul>
+                <li class="inner-child">Inner Child</li>
+            </ul>
+        </ol>
+        
+        <br>
+        <h1>CSS Methods</h1>
+        <br>
+        <div class="mydiv" style="background-color: gray">This is a div</div>
+               
+        <br>
+        <h1>DOM Manipulation</h1>
+        <br>
+        
+        <p id="domid">This is some <b>bold</b> text <br> in a paragraph</p>
+        <p>Name: <input type="text" id="testVal" value="Practice"></p>
+        <p id="mytest"></p>
+        <div id="mytest1"></div>
+        <p>Name: <input type="text" id="mytest3"></p>
+        
+        <br>
+        <h1>Events</h1>
+        <br>
+        
+        <a id="lev" href="http://www.tutorialspoint.com" target="_blank" class="linkMod">I am a link</a>
+        <p id="lev1">Click me to toggle class</p> 
+        
+        <br>
+        <h1>Event Object</h1>
+        <br>
+        <p id="IdObj">Click me</p>
+        <input id="InIdObj" type="text" />
+        
+        <script>
+            //sayHello();
+            (function () {
+                console.log("Self calling");
+            })();
+            
+            $("#hello").click(function(){
+                alert("It was clicked");
+            });
+            
+            $("#bye").click(function(){
+                $("#bye").hide(function(){
+                    alert("Bye");                   
+                });
+            });
+            
+            doSelectors();
+            doAdvancedSelectors();
+            doAttributes();
+            doAttributeFunctions();
+            doDOMTraversing();
+            doCSSMethods();
+            doDOMManipulation();
+            doEvents();
+            doEventObjAttr();
+
+        </script>
+        <div style="margin-top:500px"></div>
+    </body>
+</html>
