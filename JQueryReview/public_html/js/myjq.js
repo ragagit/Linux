@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-function sayHello(){
+function sayHello() {
     $("#hello").html("Hello World!");
 }
 
@@ -53,12 +53,12 @@ function sayHello(){
  *      $("[Attribute"]);
  */
 
-function doSelectors(){
-    
+function doSelectors() {
+
     $(".myclass").text("class text change from jquery");
     $("#myid").text("id text change from jquery");
     //$("p").css("color", "red");
-    
+
 }
 
 //Advance selectors
@@ -73,20 +73,20 @@ function doSelectors(){
  *  $("ul li:odd") Selects all <li> with odd indexes.            
  *               
  */
-function doAdvancedSelectors(){
-    
+function doAdvancedSelectors() {
+
     $("ul li:first").css("color", "blue");
-    
+
     $("ul li:first-child").css("color", "green");
-    
+
     $("ul li:eq(2)").css("color", "orange");
-    
+
     $("ul li:nth-child(2)").css("color", "brown");
-    
+
     $("ul li:even").css("font-size", "28px");
-    
+
     //$("*").css("color", "red");
-    
+
 }
 
 //Attributes
@@ -100,15 +100,15 @@ function doAdvancedSelectors(){
  * Set Multiple attributes
  * $("selector").attr({"attribute_name" : "value", "attribute_name" : value"})
  */
-function doAttributes(){
-    
+function doAttributes() {
+
     var val = $("a").attr("name");
     console.log("attribute value of name is:" + val);
-    
+
     $("a").attr("href", "http://www.tutorialspoint.com");
-    $("a").attr({"href": "http://www.tutorialspoint.com", "target" : "_blank" });
-    
-    
+    $("a").attr({"href": "http://www.tutorialspoint.com", "target": "_blank"});
+
+
 }
 
 //Attribute Functions
@@ -119,8 +119,8 @@ function doAttributes(){
  * removeClass("class_name") Remove class from selected element
  * toggleClass("class_name") Adds the class if not present removes it if present
  */
-function doAttributeFunctions(){
-       
+function doAttributeFunctions() {
+
     $("a").removeAttr("target");
     console.log($("a").hasClass("someclass"));
 //    $("p").click(function(){
@@ -152,31 +152,31 @@ function doAttributeFunctions(){
  * eq() Returns element which matches the specified index number.
  * first()/last() Returns first/last element of selected element
  */
-function doDOMTraversing(){
-    
+function doDOMTraversing() {
+
     var parentDisp = $("#test").parent();
     var parentDisps = $("#test").parents();
     var parentsUntilDisp = $("#test").parentsUntil("div");
-    
+
     console.log("parentDisp:" + parentDisp);
     console.log("parentDisps:" + parentDisps);
     console.log("parentUntilDisp:" + parentsUntilDisp);
-    
+
     var findDemo = $("#remText").find("p");
     console.log("find", findDemo);
-    
+
     var childDemo = $("ol").children();
     console.log("children", childDemo);
-    
+
     var sibDemo = $("second-child").siblings();
     console.log("siblings", sibDemo);
-    
+
     var nextDemo = $("#second-child").next();
     console.log("Next", nextDemo);
-    
+
     var filterDemo = $("li").filter(".inner-child");
     console.log("Filter", filterDemo);
-    
+
 }
 
 //CSS Methods
@@ -188,27 +188,27 @@ function doDOMTraversing(){
  * offset() Gets or sets the coordinates of selected element.
  * 
  */
-function doCSSMethods(){
-    
+function doCSSMethods() {
+
     var retCss = $(".mydiv").css("background-color");
     console.log("background color" + retCss);
-    
+
     //$(".mydiv").css("height", '200px');
 
-    $(".mydiv").css({"height": '200px', "Width" : "300px", "font-size" : "30px", "padding" : "20px"});
-    
+    $(".mydiv").css({"height": '200px', "Width": "300px", "font-size": "30px", "padding": "20px"});
+
     var h = $(".mydiv").height();
-    console.log("Height:" + h );
-    
+    console.log("Height:" + h);
+
     var w = $(".mydiv").width();
-    console.log("Width:" + w );
-    
+    console.log("Width:" + w);
+
     var ih = $(".mydiv").innerHeight();
-    console.log("InnerHeight:" + ih );
-    
+    console.log("InnerHeight:" + ih);
+
     var myoffset = $(".mydiv").offset();
-    console.log("Offset:" + myoffset );
-    
+    console.log("Offset:" + myoffset);
+
     //$(".mydiv").offset({"top":"55", "left":"25"});
 }
 
@@ -228,26 +228,26 @@ function doCSSMethods(){
  * empty() Removes all the child elemnt of the selected element.
  * 
  */
-function doDOMManipulation(){
-    
+function doDOMManipulation() {
+
     var textDisp = $("#domid").text();
     console.log("textDisp", textDisp);
-    
+
     var htmlDisp = $("#domid").html();
     console.log("htmlDisp", htmlDisp);
-    
+
     var valDisp = $("#testVal").val();
     console.log("valDisp", valDisp);
-    
+
     $("#mytest").text("Adding some text");
     $("#mytest1").html("Adding html <b>text</b>");
     $("#mytest1").val("Prank");
-    
+
     $("#mytest").append(" Appending text");
     $("#mytest").prepend("Insering text ");
     $("#domid").remove();
     //$("#mytest").empty();
-    
+
 }
 //Events
 /*
@@ -263,16 +263,32 @@ function doDOMManipulation(){
  * 
  * 
  */
-function doEvents(){
-    
+function doEvents() {
+
 //    $("#lev1").bind("click", function(){
 //        $(".linkMod").toggleClass("imRed");
 //    });
-    
-    $("#lev1").click(function(){
+
+    $("#lev1").click(function () {
         $(".linkMod").toggleClass("imRed");
     });
-    
+
+}
+
+function echoText() {
+    var elem1 = document.getElementById("myi");
+    var elem2 = document.getElementById("myp");
+
+    elem2.innerHTML = elem1.value;
+}
+function echoText1() {
+    alert('You clicked me');
+}
+function echoText3() {
+    $("#myi").keypress(function () {
+        $("#myp").text($("#myi").val());
+    });
+
 }
 
 //Event Object Attribute
@@ -289,17 +305,17 @@ function doEvents(){
  * ctrlKey
  * 
  */
-function doEventObjAttr(){
-    
-    $("#IdObj").click(function(e){
+function doEventObjAttr() {
+
+    $("#IdObj").click(function (e) {
         console.log("Target:", e.target);
         console.log("Type:", e.type);
         console.log("TimeStamp:", e.timeStamp);
         console.log("Ctrl Key:", e.ctrlKey);
         console.log("ScreenX:", e.screenX);
     });
-    
-    $("#InIdObj").keypress(function(event){
+
+    $("#InIdObj").keypress(function (event) {
         var keyPressed = event.keyCode;
         console.log("key code:", keyPressed);
     });
