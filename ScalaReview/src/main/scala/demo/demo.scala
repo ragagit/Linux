@@ -1,5 +1,5 @@
 package demo
-import java.io.{FileNotFoundException, FileReader, IOException}
+import java.io.{File, FileNotFoundException, FileReader, IOException}
 import java.util.Date
 
 import scala.Array._
@@ -481,6 +481,30 @@ object demo {
     println((pattern findAllIn str).mkString(","))
   }
 
+  def doYield: Unit ={
+
+    val l1 = List(1,2)
+    val l2 = List(3,4)
+
+    val res = for( f1 <- l1; f2 <- l2) yield { f1*f1*f2 }
+
+    println(res)
+
+  }
+
+  def doFlat: Unit = {
+    val re = List( List(1,2), List(3,4), List(5,6)).flatten.flatMap{x=>List(x,x+1)}
+    List(1,4,9).flatMap { x => List(x,x+1) }
+  }
+
+  def doMapMatch: Unit = {
+    Map("key1" -> 1, "key2" -> 2).map { keyValue:(String,Int) =>
+      keyValue match { case (key, value) => (key, value*2) }
+    }
+    "Hello".map(c => c.toUpper)
+    "Hello".map(_.toLower)
+  }
+
   class Point(xc: Int, yc: Int) {
     val x: Int = xc
     val y: Int = yc
@@ -558,6 +582,24 @@ object demo {
 //    def incl(x:Int): IntSet = new NonEmpty(x, new Empty, new Empty)
 //
 //  }
+
+  object FileMatcher{
+    def fileList = (new File(".")).listFiles()
+
+    def filesMatching(matcher: (String)=>Boolean) ={
+      for( file<-fileList; if matcher(file.getName) ) yield file
+    }
+
+    def filesEnding(query: String) =
+      filesMatching( _.endsWith(query))
+
+    def filesEnding1( query: String) = filesMatching( c => c.endsWith(query))
+
+    def filesContaining(query: String) =
+      filesMatching( (fileName: String)=>fileName.contains(query))
+
+  }
+
   def main(args: Array[String]) {
 
     doStringInterpolation
