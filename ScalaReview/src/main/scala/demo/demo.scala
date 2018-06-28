@@ -4,6 +4,8 @@ import java.util.Date
 
 import scala.Array._
 import scala.util.matching.Regex
+import spray.json._
+import DefaultJsonProtocol._
 
 object demo {
 
@@ -600,28 +602,103 @@ object demo {
 
   }
 
+  def doParsing(): Unit ={
+    case class IntVersion(majorV: Int, minorV: Int, releaseCode: Int)
+
+    def parseVersionFromFirmware(firmware: String): Option[IntVersion] = {
+      val r = """.+\.v(\d+)\.(\d+)\.(\d+)\..+""".r
+      firmware match {
+        case r(major, minor, release) => Some(IntVersion(major.toInt, minor.toInt, release.toInt))
+        case _                        => None
+      }
+    }
+    val ver = parseVersionFromFirmware("SW.ar7240.v1.4.1.32323.180315.1259")
+    print(ver.get.majorV)
+
+  }
+
+
+
+
+  def doJson(): Unit = {
+    case class meminfo( total: Int, free: Int, buffers: Int)
+    case class host(device_id: String, system_id: String, platform: String, uptime: String, time: String, utime: String, hostname: String, fwversion: String, loadavg: List[Double], meminfo: meminfo, cfgcrc: String)
+    case class status( host: host )
+    case class Version( host: String, device_id: String, uptime: String, fwversion: String)
+    case class Config( status: status)
+    object MyJsonProtocol extends DefaultJsonProtocol{
+      implicit val memFormat: RootJsonFormat[meminfo] = jsonFormat3(meminfo)
+      implicit val hostFormat: RootJsonFormat[host] = jsonFormat11(host)
+      implicit val statFormat: RootJsonFormat[status] = jsonFormat1(status)
+      implicit val configFormat: RootJsonFormat[Config] = jsonFormat1(Config)
+    }
+
+
+
+    val jstr = """{ "status": {
+                      "host" : {
+                          "device_id": "04:18:D6:07:89:09",
+                          "system_id": "0xe702",
+                          "platform": "EdgeSwitch 8XP",
+                          "uptime": "5945235",
+                          "time": "2018-05-23 08:26:09",
+                          "utime": "1527063969",
+                          "hostname": "AGT3WBG-SW02",
+                          "fwversion": "SW.ar7240.v1.4.1.32323.180315.1259",
+                          "loadavg": [ 0.02, 0.01, 0.00 ],
+                          "meminfo": {
+                            "total": 62036,
+                            "free": 49836,
+                            "buffers": 276
+                          },
+                          "cfgcrc": "61898825"
+                      }
+                  }
+              }"""
+
+    import MyJsonProtocol._
+    //val verStr = Version("12234", "33454", "sw.4.5.3").toJson
+    //val v = verStr.convertTo[Version]
+    //println(v.fwversion)
+
+    val jsonAst = JsonParser(jstr)
+    val statuss = jsonAst.convertTo[Config]
+    println(statuss)
+
+    //val json = jsonAst.prettyPrint
+    //val verObj = jsonAst.asJsObject.convertTo[Version]
+    //println(verObj.fwversion)
+
+  }
+
+
+
+
   def main(args: Array[String]) {
 
-    doStringInterpolation
-    doIfElse
-    doWhile
-    doFor
-    doMatch
-    doString
-    doArrays
-    doLists
-    doSets
-    doMaps
-    doTuples
-    doOption
-    doFunctions
-    doCurrying
-    doOper
-    doIterator
-    doTraits
-    doRegularExp
-    doException
-    doFractions
+//    doStringInterpolation
+//    doIfElse
+//    doWhile
+//    doFor
+//    doMatch
+//    doString
+//    doArrays
+//    doLists
+//    doSets
+//    doMaps
+//    doTuples
+//    doOption
+//    doFunctions
+//    doCurrying
+//    doOper
+//    doIterator
+//    doTraits
+//    doRegularExp
+//    doException
+//    doFractions
+    // doParsing
+     doJson
+
 
 
   }
