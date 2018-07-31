@@ -7,6 +7,8 @@ import scala.util.matching.Regex
 import spray.json._
 import DefaultJsonProtocol._
 
+import scala.util.Try
+
 object demo {
 
   def doStringInterpolation: Unit ={
@@ -671,7 +673,69 @@ object demo {
 
   }
 
+def doJason1: Unit = {
+  case class brmacs(bridge:  String, port: String, hwaddr: String, ageing: String)
+  case class addrs(brmacs: List[brmacs])
+  object LoaderProtocol extends DefaultJsonProtocol {
+    implicit val brmacsFormat: RootJsonFormat[brmacs] = jsonFormat4(brmacs)
+    implicit val configFormat: RootJsonFormat[addrs] = jsonFormat1(addrs)
+  }
 
+  val jstr =
+    """
+      |{ "brmacs": [
+      |{"bridge":"br0","port":"eth1","hwaddr":"00:0c:29:0b:4c:cf","ageing":"0.61"},
+      |{"bridge":"br0","port":"eth1","hwaddr":"00:0c:29:50:6c:1a","ageing":"24.97"},
+      |{"bridge":"br0","port":"eth1","hwaddr":"00:0c:29:53:d6:e6","ageing":"0.00"},
+      |{"bridge":"br0","port":"eth1","hwaddr":"00:0c:29:75:bc:ac","ageing":"0.17"},
+      |{"bridge":"br0","port":"eth1","hwaddr":"00:0c:29:cd:e9:24","ageing":"40.43"},
+      |{"bridge":"br0","port":"eth1","hwaddr":"00:0c:29:d7:2a:26","ageing":"2.37"},
+      |{"bridge":"br0","port":"eth1","hwaddr":"00:0c:29:eb:28:8a","ageing":"0.96"},
+      |{"bridge":"br0","port":"eth1","hwaddr":"00:0c:29:f6:50:9d","ageing":"20.92"},
+      |{"bridge":"br0","port":"eth1","hwaddr":"00:0c:29:f7:f7:d5","ageing":"5.35"},
+      |{"bridge":"br0","port":"eth1","hwaddr":"00:0c:29:ff:d1:62","ageing":"0.81"},
+      |{"bridge":"br0","port":"eth1","hwaddr":"00:12:d9:86:9a:b4","ageing":"29.86"},
+      |{"bridge":"br0","port":"eth1","hwaddr":"00:15:5d:28:c6:00","ageing":"0.03"},
+      |{"bridge":"br0","port":"eth1","hwaddr":"00:15:5d:28:c6:08","ageing":"10.93"},
+      |{"bridge":"br0","port":"eth1","hwaddr":"00:17:c5:18:9d:1d","ageing":"17.61"},
+      |{"bridge":"br0","port":"eth1","hwaddr":"00:1b:0d:49:cb:b4","ageing":"15.82"},
+      |{"bridge":"br0","port":"eth1","hwaddr":"00:1b:0d:59:08:b4","ageing":"2.99"},
+      |{"bridge":"br0","port":"eth1","hwaddr":"00:1b:ed:7c:e1:44","ageing":"1.28"},
+      |{"bridge":"br0","port":"eth1","hwaddr":"00:1d:45:dc:b7:b4","ageing":"8.96"},
+      |{"bridge":"br0","port":"eth1","hwaddr":"00:1d:aa:89:55:08","ageing":"59.20"},
+      |{"bridge":"br0","port":"eth1","hwaddr":"00:50:56:a0:49:10","ageing":"2.61"},
+      |{"bridge":"br0","port":"eth1","hwaddr":"00:50:56:a0:db:13","ageing":"0.96"},
+      |{"bridge":"br0","port":"eth1","hwaddr":"00:a0:c8:2a:ba:84","ageing":"298.72"},
+      |{"bridge":"br0","port":"eth1","hwaddr":"00:c0:b7:f2:8c:db","ageing":"50.99"},
+      |{"bridge":"br0","port":"eth1","hwaddr":"00:c0:b7:f2:8f:bb","ageing":"61.13"},
+      |{"bridge":"br0","port":"eth1","hwaddr":"18:b1:69:86:36:71","ageing":"59.47"},
+      |{"bridge":"br0","port":"eth1","hwaddr":"18:ef:63:8a:d8:97","ageing":"4.22"},
+      |{"bridge":"br0","port":"eth1","hwaddr":"2c:56:dc:92:48:94","ageing":"3.71"},
+      |{"bridge":"br0","port":"eth1","hwaddr":"80:e8:6f:a5:c7:c4","ageing":"0.18"},
+      |{"bridge":"br0","port":"eth1","hwaddr":"e0:55:3d:d1:73:f0","ageing":"2.23"},
+      |{"bridge":"br0","port":"eth1","hwaddr":"e0:55:3d:d1:73:f3","ageing":"0.37"},
+      |{"bridge":"br0","port":"eth1","hwaddr":"ec:b1:d7:ac:bb:51","ageing":"1.95"},
+      |{"bridge":"br0","port":"eth1","hwaddr":"fc:a8:41:5b:48:01","ageing":"3.47"},
+      |{"bridge":"br0","port":"eth1","hwaddr":"fc:a8:41:5b:48:42","ageing":"112.93"}]}
+    """.stripMargin
+
+  import LoaderProtocol._
+
+  val jsonAst =  JsonParser(jstr)
+  //val statuss = jsonAst.convertTo[addrs]
+  val statuss = Try { JsonParser(jstr).convertTo[addrs] }.toOption
+
+  //println(statuss)
+  statuss match {
+    case Some(stat) =>
+      stat.brmacs.foreach( addr => println(addr.hwaddr) )
+      for{ addr <- stat.brmacs} yield { println(addr.hwaddr)}
+    case _ =>
+      println("Nothing to parse")
+  }
+
+
+}
 
 
   def main(args: Array[String]) {
@@ -697,7 +761,8 @@ object demo {
 //    doException
 //    doFractions
     // doParsing
-     doJson
+     //doJson
+    doJason1
 
 
 
