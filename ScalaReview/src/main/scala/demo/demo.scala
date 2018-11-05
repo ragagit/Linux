@@ -4,12 +4,234 @@ import java.util.Date
 
 import scala.Array._
 import scala.util.matching.Regex
-import spray.json._
-import DefaultJsonProtocol._
-
 import scala.util.Try
+import spray.json._
+/*
+
+- Imperative programming
+  modifying mutable variables
+  Using assignments
+  Using control structures, if-else, loop.
+  Von Neuman bottleneck
+
+- Functional programming
+  Programming without mutable variables, assignments, loops
+  Focused on functions, that can be values, that are produced, composed and consumed.
+
+- scala, sbt console
+- Evaluation (2 + 4 ) + 7
+- Substitution model SumOfSquares( 2, 3 + 5)
+  All evaluation does is reduce an expression to a value
+  It can be applied to all expressions, as long as they have no side effects (d++)
+  No all expressions reduce to a value def loop: Int = lopp
+  call-by-value, call-by-name.
+
+- Conditional used for Expressions not statements
+  def abs(x : Int): Int = if( x > 0 ) x else -x
+
+- Definitions by name or value
+  def, val
+
+- Blocks { }
+
+- @tailrec
+
+- Functional languages treat functions as a first class value. That means that like any
+other value function can be passed as a parameter or as a result.
+Functions that take other functions as parameters or return a function are called "high order functions"
+
+- Anonymous functions.
+(x: Int) => x * x
+
+- Currying
+
+- Classes
+class Rationale( x:Int, y:Int){
+  val numx = x
+  val numy = y
+
+  new Rationale(3.7)
+
+  this
+
+  data abstraction
+
+  second constructor
+  this( x: Int) = this(x, 1)
+
+- infix notation
+
+r add s equals r.add(s)
+
+- Relaxed Identifiers
+  for example instead of less name function we can use <
+
+  with unary operators you have to use
+
+  def unary_- : Rationale =  new Rationale(-number, denom)
+
+- class hierarchy
+}
+
+
+abstract class IntSet {
+
+  def incl(x: Int): IntSet
+  def contains(x: Int): Boolean
+
+}
+
+class Empty extends IntSet {
+  def contains(x: Int): Boolean = false
+  def incl(x: Int): IntSet = new NonEmpty(x, new Empty, new Empty)
+}
+
+object Hello{
+ def main(args: Array[String]) = println("Hello World")
+}
+
+
+- packages
+  import
+
+  default package scala, java.lang, scala.predef
+  scala-lang.org/api/current
+
+-  trait == interface in Java
+
+traits can have concrete methods and fields but can't have parameters like in classes.
+     Any
+AnyVal AnyRef
+
+Nothing - Tp signal abnormal termination
+As an element of empty collection
+
+def error( msg: String) = throw new Error(msg)
+
+- throw Exc
+
+- null
+for AnyRef not applicable to AnyVal
+
+- type parameters
+class[T]
+val is evaluated when the object gets initialized, def is evaluatedf every time it gets referenced.
+def singleton[T](element: T)
+
+
+- Polymorphism
+subtyping: instances of a subclass can be passed to a base class
+generics: instance of a function or class are created by type parameterization
+
+- Function types
+A => B is the same as scala.Function1[A,B]
+
+trait Function1[A,B]{
+  def apply(X: A): B
+}
+
+- Function values
+
+(x: Int) => x * x
+
+{ class AnonFun extends Function[Int, Int] {
+  def apply(x: Int) = x * x
+}
+  new AnonFun
+
+}
+
+or a shorter way
+
+new Function1[Int, Int] {
+  def apply(x: Int) = x * x
+}
+
+- Function calls
+
+A function call, such as f(a,b) can be expand to:
+
+f.apply(a,b)
+
+val f = new Function1[Int, Int] {
+  def apply(x: Int) = x * x
+}
+
+- bounds
+
+def assertAllPos[ S <: IntSet](r: S): S = ....
+
+Here "<: IntSet" is an upper bound of the type parameter S:
+
+S <: T means: S is a subtype of T, and
+S >: T means: S is a supertype of T, or T is a subtype of S.
+
+[S >: NonEmpty] lower bound. So S could be one of NonEmpty, IntSet, AnyRef, ort Any
+
+[S >: NonEmpty <: IntSet] Mixed Bounds
+
+- variance
+
+List[NonEmpty] <: List[IntSet]
+
+We call types for which this relationship holds covariant because their
+subtyping relationship varies with the type parameter.
+
+- Liskov principle
+
+if A <: B, then everything one can do with a value of type B
+one should also be able to do with a value of type A.
+
+- Variance
+C[A] <: C[B]  C is covariant
+C[A] >: C[B]  C is contravariant
+neither C[A] nor C[B] is a subtype of the other C is not variant
+
+Scala lets you declare the variance of a type by annotating the type parameter
+
+class C[+A] { .... }  C is covariant
+class C[-A] { .... }  C is contravariant
+class C[A] { .... }   C is not variant
+
+Functions are contravariant in their argument type(s) and and covariant in their result type
+
+trait Function[-T, +U]{
+  def apply(x: T): U
+}
+
+*/
 
 object demo {
+
+  def  doCurr() {
+
+    //def sum( f:Int=>Int)( a: Int, b: Int ) : Int =
+    //function is type (Int => Int) => (Int, Int) => Int
+    def sum(f: Int => Int): (Int, Int) => Int = {
+
+      def sumF(a: Int, b: Int): Int =
+        if (a > b) 0
+        else f(a) + sumF(a + 1, b)
+
+      sumF
+
+    }
+
+    def cube = (x: Int) => (x * x * x)
+
+    def sumInts = sum(x => x)
+
+    def sumCubes = sum(x => x * x * x)
+
+    val r = sum(cube)(5, 7)
+
+    println(r)
+
+    sumInts(3, 5)
+    sumCubes(2, 7)
+
+
+  }
 
   def doStringInterpolation: Unit ={
 
@@ -762,7 +984,7 @@ def doJason1: Unit = {
 //    doFractions
     // doParsing
      //doJson
-    doJason1
+    //doJason1
 
 
 

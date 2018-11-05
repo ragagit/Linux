@@ -6,11 +6,11 @@ import sys
 import time
 import calendar
 import re
-import mysql.connector
-from mysql.connector import errorcode
+#import mysql.connector
+#from mysql.connector import errorcode
 
-import numpy as np
-import matplotlib.pyplot as plt
+#import numpy as np
+#import matplotlib.pyplot as plt
 
 
 
@@ -510,8 +510,11 @@ def doNN():
     plt.plot(testInput, NN.sigmoid(testInput), linewidth = 2)
     plt.grid(1)
     
+def doQuery():
+    #models = "|".join([str(m) for m in get_modelId(name="|".join([d.modelName for d in dg]))])
+    print "Hello pyhton"
     
-#Print()
+Print()
 #getUserInput()
 #ifCondition()
 #strElements()
@@ -544,7 +547,8 @@ def doNN():
 #doRegExp()
 #doDBVer()
 #doDBTables()
-doNN()
+#doNN()
+
 
 
 
