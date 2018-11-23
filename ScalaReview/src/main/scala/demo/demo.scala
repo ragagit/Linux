@@ -1,11 +1,21 @@
 package demo
+
+
+
 import java.io.{File, FileNotFoundException, FileReader, IOException}
+import java.lang.Error
 import java.util.Date
+
+//import com.sun.codemodel.internal.util.Surrogate.Parser
+//import com.sun.tools.javac.code.Attribute.Error
 
 import scala.Array._
 import scala.util.matching.Regex
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 import spray.json._
+
+import scala.util.parsing.combinator._
+import scala.collection.mutable.ArrayBuffer
 /*
 
 - Imperative programming
@@ -199,9 +209,151 @@ trait Function[-T, +U]{
   def apply(x: T): U
 }
 
+- Decomposition-Trying to find a general and convenient way to access objects in a extensible class hierarchy.
+Scala
+x.isInstanceOf
+x.asInstanceOf
+
+Java
+x instanceOf
+(T) x
+
+- Functional Decomposition with pattern matching
+trait Expr
+case class Number(n: Int)
+
+def eval(e: Expr): Int = e match {
+  case Number(n) => n
+  case Sum(e1, e2) => eval(e1) + eval(e2)
+
+  variables always start wuth lower
+  constants with Upper
+
+- Collections
+List Immutable, recurrsive, Array flats
+val empty = List()
+val fruit = List("apples", "oranges", "pears")
+Construction operator :: (pronounce cons)
+fruit = "apples" :: ("oranges" :: ("pears" :: Nil ))
+head the first element of the list
+tail the list of all elemts but the first
+isEmpty
+List Patterns
+p :: ps A patter that matches a list with a head matching p and a tail matching ps
+
+- Vectors
+Of 32 elements. It is like ashort ttree
+Faster access
+
+val nums = Vector(1,2,3)
+x +: xs
+xs :+ x
+
+xs = (1,2,3) zip ("Hello") (1,H) (2,e) (3,l)
+xs.unzip (1,2,3) ("Hel")
+
+"Hello" flatMap (c => (".", c) = .H.e.l.l.o
+
+sum prod max min
+
+
+
+- Seq
+
+
+            Iterable
+
+   Seq         Set      Map
+
+List  Vector
+
+exists, forall, zip, unzip
+
+- for( s ) yield e
+
+- Set
+(1 to 8 by 2).toSet
+Sets are unordered
+sets don not duplicate elements
+Fundamental operation on sets is contains
+
+- Queries with for
+case class Book(title: String, authors: List[String])
+
+val books: List[Book] = List(
+Book( title = "My Book", authors = List("John Mane", Thomas")
+
+for( b <- books; a <- b.authors if a startsWith "Birds" ) yield b.title
+
+for( b <- books; a <- b.title indexOf "Program" >= 0 ) yield b.title
+
+{for{
+  b1 <- books
+  b2 <- books
+  if b1 != b2 && b1.title < b2.title
+  a1 <- b1.authors
+  a2 <- b2.authors
+  if a1 == a2
+
+} yield a1}.distinct
+
+- For-Expressions and Higher-Order Functions
+The syntax of for is closely related to map, flatMap and filter
+
+def mapFun[T, U](xs: List[T], f: T => U): List[U] =
+  for(x <- xs) yield f(x)
+
+def flatMap[T, U](xs: List[T], f: T => Iterable[U]): List[U] =
+  for(x <- xs; y <- f(x)) yield y
+
+def filter[T](xs: List[T], p: T => Boolean): List[T] =
+  for( x<- xs if p(x)) yield x
+
+for( x <- e1) yield e2 is equal e1.map(x => e2)
+
+for( x<- e1 if f; s) yield e2
+for( x <- e1.withFilter(x => f); s) yield e2
+
+for( x <- e1; y <- e2; s) yield e3
+
+e1.flatMap(x => for ( y <- e2; s) yield e3)
 */
 
 object demo {
+
+  def mapFun[T, U](xs: List[T], f: T => U): List[U] =
+    for(x <- xs) yield f(x)
+
+  def flatMap[T, U](xs: List[T], f: T => Iterable[U]): List[U] =
+    for(x <- xs; y <- f(x)) yield y
+
+  def filter[T](xs: List[T], p: T => Boolean): List[T] =
+    for( x<- xs if p(x)) yield x
+
+  case class WordFreq(word: String, count: Int) {
+    override def toString = s"Word <$word> occurs with frequency $count"
+  }
+
+  class SimpleParser extends RegexParsers {
+    def word: Parser[String]   = """[a-z]+""".r       ^^ { _.toString }
+    def number: Parser[Int]    = """(0|[1-9]\d*)""".r ^^ { _.toInt }
+    def freq: Parser[WordFreq] = word ~ number        ^^ { case wd ~ fr => WordFreq(wd,fr) }
+  }
+
+  object TestSimpleParser extends SimpleParser {
+    def myparser = {
+      parse(freq, "johnny 121") match {
+        case Success(matched,_) => println(matched)
+        case Failure(msg,_) => println(s"FAILURE: $msg")
+        case Error(msg,_) => println(s"ERROR: $msg")
+      }
+    }
+  }
+
+  def scalarProduct(xs: Vector[Double], ys: Vector[Double]): Double ={
+    (xs zip ys).map{ case (x,y) => x * y}.sum
+    // (for( (x,y) <- xs zip ys ) yield x * y).sum
+  }
 
   def  doCurr() {
 
@@ -826,23 +978,6 @@ object demo {
 
   }
 
-  def doParsing(): Unit ={
-    case class IntVersion(majorV: Int, minorV: Int, releaseCode: Int)
-
-    def parseVersionFromFirmware(firmware: String): Option[IntVersion] = {
-      val r = """.+\.v(\d+)\.(\d+)\.(\d+)\..+""".r
-      firmware match {
-        case r(major, minor, release) => Some(IntVersion(major.toInt, minor.toInt, release.toInt))
-        case _                        => None
-      }
-    }
-    val ver = parseVersionFromFirmware("SW.ar7240.v1.4.1.32323.180315.1259")
-    print(ver.get.majorV)
-
-  }
-
-
-
 
   def doJson(): Unit = {
     case class meminfo( total: Int, free: Int, buffers: Int)
@@ -959,7 +1094,61 @@ def doJason1: Unit = {
 
 }
 
+  def doParsing(): Unit ={
+    case class IntVersion(majorV: Int, minorV: Int, releaseCode: Int)
 
+    def parseVersionFromFirmware(firmware: String): Option[IntVersion] = {
+      val r = """.+\.v(\d+)\.(\d+)\.(\d+)\..+""".r
+      firmware match {
+        case r(major, minor, release) => Some(IntVersion(major.toInt, minor.toInt, release.toInt))
+        case _                        => None
+      }
+    }
+    val ver = parseVersionFromFirmware("SW.ar7240.v1.4.1.32323.180315.1259")
+    print(ver.get.majorV)
+
+  }
+
+  def expandPorts( portsLine: Option[String] ): Option[String] = {
+
+    def parsePort(portStr: String): String = {
+      val re = """(\w+)\/(\d+)-(\d+)""".r
+      portStr match {
+        case re(name, min, max) => expandPort(name, min.toInt, max.toInt)
+        case _ => portStr
+      }
+    }
+    def expandPort( name: String, min: Int, max: Int): String = {
+      val ep = for( i <- min to max) yield { "%s/%d".format(name,i) }
+      ep.mkString(",")
+    }
+
+    portsLine match {
+      case Some(ports) => {
+        val ep = for( port <- ports.split(" ") ) yield { parsePort(port) }
+        Some(ep.mkString(","))}
+      case None => None
+    }
+  }
+
+  def expandPortsMap( portsLine: String ): String = {
+
+    def parsePort(portStr: String): String = {
+      val re = """(\w+)\/(\d+)-(\d+)""".r
+      portStr match {
+        case re(name, min, max) => expandPort(name, min.toInt, max.toInt)
+        case _ => portStr
+      }
+    }
+    def expandPort( name: String, min: Int, max: Int): String = {
+      val ep = for( i <- min to max) yield { "%s/%d".format(name,i) }
+      ep.mkString(",")
+    }
+
+    val res = portsLine.split(" ").map( port => parsePort(port)).mkString(",")
+
+    res
+  }
   def main(args: Array[String]) {
 
 //    doStringInterpolation
@@ -970,24 +1159,27 @@ def doJason1: Unit = {
 //    doString
 //    doArrays
 //    doLists
+//    doYield
 //    doSets
 //    doMaps
 //    doTuples
 //    doOption
 //    doFunctions
 //    doCurrying
+//    doCurr
 //    doOper
 //    doIterator
 //    doTraits
 //    doRegularExp
 //    doException
 //    doFractions
-    // doParsing
-     //doJson
-    //doJason1
+//    doParsing
+//    doJson
+//    doJason1
+//println(expandPorts(Some("FE1/0-3 FE1/6 GE1/1-8")))
+    //println(expandPortsMap("FE1/0-3 FE1/6 GE1/1-8"))
 
-
-
+    TestSimpleParser.myparser
   }
 
 }
