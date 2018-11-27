@@ -317,18 +317,49 @@ for( x <- e1.withFilter(x => f); s) yield e2
 for( x <- e1; y <- e2; s) yield e3
 
 e1.flatMap(x => for ( y <- e2; s) yield e3)
+
+- Map[Key, Value]
+val romanNUmerals = Map("I" -> 1, "V" -> 5, "X" -> 10 )
+foldLeft
+
+- import scala.io.Source
+val in = Source.fromURL("http://lamp.epfl....")
+
 */
 
 object demo {
 
-  def mapFun[T, U](xs: List[T], f: T => U): List[U] =
-    for(x <- xs) yield f(x)
+  def Caitals = {
 
-  def flatMap[T, U](xs: List[T], f: T => Iterable[U]): List[U] =
-    for(x <- xs; y <- f(x)) yield y
+    val capitalOfTheCountry = Map("Paris" -> "France", "Washington" -> "DC")
 
-  def filter[T](xs: List[T], p: T => Boolean): List[T] =
-    for( x<- xs if p(x)) yield x
+    def showCapitalOfTheCountry(country: String) = capitalOfTheCountry get country match {
+      case Some(x) => println(x)
+      case None => println("Not found")
+    }
+
+    val fruit = List("apple", "pear", "orange")
+
+    fruit sortWith ( _.length < _.length)
+
+    fruit sorted
+
+    capitalOfTheCountry.toList.sorted.reverse
+
+  }
+
+  def myMapsFunc = {
+
+    def mapFun[T, U](xs: List[T], f: T => U): List[U] =
+      for (x <- xs) yield f(x)
+
+    def flatMap[T, U](xs: List[T], f: T => Iterable[U]): List[U] =
+      for (x <- xs; y <- f(x)) yield y
+
+    def filter[T](xs: List[T], p: T => Boolean): List[T] =
+      for (x <- xs if p(x)) yield x
+
+  }
 
   case class WordFreq(word: String, count: Int) {
     override def toString = s"Word <$word> occurs with frequency $count"
