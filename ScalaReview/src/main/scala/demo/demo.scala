@@ -325,6 +325,27 @@ foldLeft
 - import scala.io.Source
 val in = Source.fromURL("http://lamp.epfl....")
 
+- streams
+Are similar to lists, but their tail is evaluated only on demand
+Are defined from a constant Stream.empty and Stream.cons
+val xs = Stream.cons(1, Stream.cons(2, Stream.empty))
+
+Stream(1, 2, 3)
+(1 to 1000).toStream
+
+x :: xs always produces a list, never a stream
+However
+
+x #:: xs == Stream.cons(x, xs)
+
+- Lazy evaluation
+If tail is called several times, the corresponsing stream will be recouputed each time.
+This problem can be avoided by storing the result of the first eval of tsil and reusesng
+the stored result instead of recoumputing tail.
+We call this schema lazy evaluation (as opposed to by-name evaluation where everything is computed and
+strict evaluation for normal parameters and val definitions)
+
+9.4
 */
 
 object demo {
