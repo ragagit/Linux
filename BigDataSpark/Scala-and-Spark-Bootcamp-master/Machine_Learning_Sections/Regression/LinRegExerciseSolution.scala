@@ -16,7 +16,7 @@ import org.apache.spark.sql.SparkSession
 val spark = SparkSession.builder().getOrCreate()
 
 // Use Spark to read in the Ecommerce Customers csv file.
-val data = spark.read.option("header","true").option("inferSchema","true").format("csv").load("Ecommerce Customers")
+val data = spark.read.option("header","true").option("inferSchema","true").format("csv").load("Clean-Ecommerce.csv")
 
 // Print the Schema of the DataFrame
 data.printSchema()
@@ -45,6 +45,7 @@ for(ind <- Range(1,colnames.length)){
 // Import VectorAssembler and Vectors
 import org.apache.spark.ml.feature.VectorAssembler
 import org.apache.spark.ml.linalg.Vectors
+import spark.implicits._
 
 // Rename the Yearly Amount Spent Column as "label"
 // Also grab only the numerical columns from the data

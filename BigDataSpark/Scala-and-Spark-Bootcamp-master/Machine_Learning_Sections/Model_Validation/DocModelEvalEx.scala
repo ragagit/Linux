@@ -1,11 +1,14 @@
 import org.apache.spark.ml.evaluation.RegressionEvaluator
 import org.apache.spark.ml.regression.LinearRegression
 import org.apache.spark.ml.tuning.{ParamGridBuilder, TrainValidationSplit}
+import org.apache.spark.sql.SparkSession
+
+val spark = SparkSession.builder().getOrCreate()
 
 // Prepare training and test data.
 val data = spark.read.format("libsvm").load("sample_linear_regression_data.txt")
 val Array(training, test) = data.randomSplit(Array(0.9, 0.1), seed = 12345)
-//data.printSchema()
+data.printSchema()
 val lr = new LinearRegression()
 
 // We use a ParamGridBuilder to construct a grid of parameters to search over.

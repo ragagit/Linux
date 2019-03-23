@@ -34,6 +34,7 @@ val spark = SparkSession.builder().getOrCreate()
 
 // Import Kmeans clustering Algorithm
 import org.apache.spark.ml.clustering.KMeans
+import spark.implicits._
 
 // Load the Wholesale Customers Data
 val dataset = spark.read.option("header","true").option("inferSchema","true").csv("Wholesale customers data.csv")
@@ -58,7 +59,7 @@ val assembler = new VectorAssembler().setInputCols(Array("Fresh", "Milk", "Groce
 val training_data = assembler.transform(feature_data).select("features")
 
 // Create a Kmeans Model with K=3
-val kmeans = new KMeans().setK(3).setSeed(1L)
+val kmeans = new KMeans().setK(6).setSeed(1L)
 
 // Fit that model to the training_data
 val model = kmeans.fit(training_data)

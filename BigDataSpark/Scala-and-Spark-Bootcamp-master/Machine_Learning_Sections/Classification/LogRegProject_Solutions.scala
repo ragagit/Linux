@@ -28,6 +28,8 @@
 // Import SparkSession and Logisitic Regression
 import org.apache.spark.ml.classification.LogisticRegression
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions.hour
+import spark.implicits._
 
 // Optional: Use the following code below to set the Error reporting
 import org.apache.log4j._

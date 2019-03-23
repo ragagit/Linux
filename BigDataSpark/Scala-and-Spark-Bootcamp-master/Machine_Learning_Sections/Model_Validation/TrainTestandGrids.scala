@@ -1,6 +1,7 @@
 import org.apache.spark.ml.evaluation.RegressionEvaluator
 import org.apache.spark.ml.regression.LinearRegression
 import org.apache.spark.ml.tuning.{ParamGridBuilder, TrainValidationSplit}
+import spark.implicits._
 
 import org.apache.log4j._
 Logger.getLogger("org").setLevel(Level.ERROR)
@@ -11,7 +12,7 @@ import org.apache.spark.sql.SparkSession
 val spark = SparkSession.builder().getOrCreate()
 
 // Prepare training and test data.
-val data = spark.read.option("header","true").option("inferSchema","true").format("csv").load("../Regression/USA_Housing.csv")
+val data = spark.read.option("header","true").option("inferSchema","true").format("csv").load("../Regression/Clean-USA-Housing.csv")
 data.printSchema()
 
 // See an example of what the data looks like
