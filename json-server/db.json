@@ -1,0 +1,39 @@
+{
+  "stocks": [
+    {
+      "id": 1,
+      "stockCode": "IBM",
+      "name": "International Business Machine"
+    },
+    {
+      "id": 2,
+      "stockCode": "GOOG",
+      "name": "Google"
+    },
+    {
+      "id": 3,
+      "stockCode": "AAPL",
+      "name": "Apple Inc"
+    },
+    {
+      "name": "Tesla Motors",
+      "stockCode": "TSLA",
+      "id": 5
+    },
+    {
+      "name": "Uber Corporation",
+      "stockCode": "UBER",
+      "id": 7
+    },
+    {
+      "name": "Dell Computers",
+      "stockCode": "DEL",
+      "id": 8
+    },
+    {
+      "name": "ABC",
+      "stockCode": "ABC",
+      "id": 9
+    }
+  ]
+}

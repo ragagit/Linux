@@ -1,0 +1,215 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1561\cocoasubrtf200
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww25460\viewh11160\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs36 \cf0 - Objects\
+\
+Attributes\
+	Static\
+	Dynamic\
+\
+Identity\
+\
+Behaviour\
+\
+- Analysis\
+\
+Highest level analysis or abstraction \
+This will continue until objects are uniquely identified.\
+The objects are defined as abstractions with key characteristics\
+Emphasis on investigation rather than solution\
+\
+- Design \
+\
+Focus on object oriented decomposition\
+Uses different notations to express different models of the system\
+High level concepts of analysis are mapped into classes are designed\
+Hierarchical associations among the classes are designed\
+Results in a detailed description that specifies how the system is to be built using different technologies\
+\
+- Use Case\
+Describes a discrete unit of behaviour that has a clearly defined scope\
+Illustrate what should be done to achieve the goal of the use case\
+This ultimately maps into program code\
+Shown as an oval shape with the description of the behaviour.\
+\
+- Actor\
+\
+- Communication Line\
+\
+- System Boundaries\
+Indicates separation between actors and use cases\
+Marked by a bounded big around the use cases\
+\
+- Use Case Description\
+\
+Goal - Purpose - Remain alive as long as you can\
+Preconditions - What is required before use case execution - Player has enough health\
+Successful End Condition - System condition after successful execution - Player earns cash\
+Failed End Condition - System condition after failed execution - Player dies\
+Primary Actors - Actors that may trigger the use case - Player\
+Secondary Actors - Actors that participate but are not main players - System\
+Trigger - Event that causes the use case to execute - Player starts the game.\
+Main Flow - Important steps in a use case\'92s normal execution\
+\
+	1.- Player starts the game\
+	2.- Player smashes into the traffic car\
+	3.- Play crash audio\
+	4.- Show parks\
+	5.- Apply damage to player car & reduce health\
+	6.- Compute damage caused to traffic car\
+	7.- Accumulate damage as cash\
+\
+Extensions - Alternative steps in use case execution\
+\
+- Use Case Relationship\
+A use case may reuse all the steps from another use case. This can be depicted through <<include>>\
+\
+Including		<<include>>		Included\
+use case \'97\'97\'97\'97\'97\'97\'97\'97>	use case\
+\
+Generalization Notation\
+The cases are very similar but with slight differences. You use an hollow arrow like inheritance .\
+\
+<<extend>> Relationship\
+This is used to specify an optional behaviour.\
+It appears as an extended use case\
+Independent of the main use case but owned by it.\
+\
+- Activity Diagram\
+\
+Decision\
+Merge - brings together multiple flows and multiple output\
+Fork - Some actions can be performed parallel \
+Join - synchronize multiple flows and there is only one output\
+\
+-Partitions/Swimlanes\
+\
+- Object Oriented Decomposition\
+Locate classes in the problem domain. Look for nouns in use cases. Ex. ATM, Bank, Account\
+Find the operations. Appear as verbs in use cases. e.g. withdraw \
+Determine the responsible classes for the operations\
+Requires a few iterations\
+Identify and model associations\
+\
+- Modelling logical structure\
+Use cases describe the behaviour of the system\
+Activity diagram shows how to accomplish that behaviour.\
+\
+UML class diagram shows the relation ships between classes. Logical View.\
+\
+- Abstraction\
+Denotes essential characteristics of an object\
+It is a simplified view or specification that emphasizes some details while suppressing others.\
+Unnecessary details are left out, may not be relevant to the problem domain.\
+A class/structure/interface is an abstraction.\
+\
+- Encapsulation\
+Every class will have two parts: an interface and a implementation\
+Interface captures the outside view and provides the behaviour\
+Clients will make assumptions based on the outside view\
+Implementation is encapsulated.\
+\
+- Hierarchy \
+Abstraction helps represent domain objects to resolve complexity\
+Encapsulation further hides the implementation details\
+Hierarchy represents relationships between abstractions\
+The import hierarchies in a complex system are:\
+inheritance \'93is a\'94\
+composition \'93has a\'94\
+\
+- Containment\
+Signifies \'93has a\'94 relationship.\
+An object may contain another object.\
+Forms of containment:\
+Composition\
+	Strong relationship & signifies a physical containment \
+	One object is part of another object\
+	The outer object is responsible for its life time\
+Aggregation\
+Association\
+Dependency\
+\
+- Aggregation\
+Weaker than composition. e.g. training has students but training doesn\'92t control the life students, they exist independently.\
+\
+- Association\
+This also implies reuse of objects\
+Represents a semantic connection between the classes\
+A class will contain a reference of another object and use it for some time.\
+Often accompanied with phrases such as uses, controls, etc.\
+\
+- Dependency\
+Weakest form of relationship\
+This relationship is formed when an object works with another object briefly.\
+For example passing an object to a function which uses it briefly\
+\
+- Polymorphism\
+Means different forms.\
+They are several forms:\
+Compile time or parametric polymorphism, overloading, templates\
+Dynamic polymorphism methods are resolved at runtime (virtual mechanism)\
+Promotes reuse\
+\
+- Abstract Class\
+Some methods in the base class may not have an implementation.\
+It provides only the behaviour that the subclasses must implement.\
+It can have non-abstract methods, fields, static members, etc.\
+The subclass will become abstract if it doesn\'92t implement all the abstract methods.\
+In the class UML diagram an abstract class name is written in Italics\
+\
+-Interface\
+Collection of operations that don not have any implementation\
+Methods have to be implemented by the child class\
+Interfaces are used as connections between applications or libraries or components.\
+\
+- Communication Diagram\
+It is a view of the interaction of different objects of the system.\
+Focuses on link rather than the order.\
+\
+Contains three elements:\
+	Participants - Obj1:class \
+	Communication link - represented by a line\
+	Messages that can be passed along the link - represented by a line and an arrow. There can be nested messages.\
+	Concurrent messages represented represented by a notation message number plus consecutive letters. 2a, 2b, 2c\
+	Or by by an open arrow\
+\
+Conditional Message\
+Some messages have to be sent based on a condition. Square brackets are use to specify the condition.\
+Looping message represented by \
+*[I = 0 .. 9 ] : Message, \
+*[I < 9] : Message or \
+infinite loop *:Message\
+*||[I=1..5]:Message in parallel\
+Message to itself \
+Create message <<create>> this message creates an ins\
+Destroy message <<destroy>>\
+\
+- Sequence Diagrams\
+Participant Object:class in a box\
+Message types\
+	Synchronous message\
+	Asynchronous message\
+	Return message\
+	<<create>>\
+	<<destroy>>\
+\
+Fragments\
+Sequence diagrams also depict loops, conditional execution, alternative execution, etc\
+can grow quickly and become unmanageable. This interaction can be shown through fragments\
+\
+Fragment types\
+ref - Used to represent an interaction that is define elsewhere in the model\
+loop - loops through interactions within the fragment any number of times\
+break - used to break out of a loop fragment\
+opt - the interaction in this fragment is executed only if the guard condition is true\
+\
+\
+\
+\
+\
+\
+}

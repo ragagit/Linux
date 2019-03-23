@@ -1,0 +1,53 @@
+<div *ngIf="!submitted" class="container">
+  <h2>Add New Stock</h2>
+  <div class="row">
+    <form #stockForm="ngForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="stockName">Stock Name:</label>
+        <input type="text" id="stockName" name="stockName" [(ngModel)]="newStock.stockName" class="form-control" #stockName="ngModel" required />
+        The Entered Name:{{stockName.value}}<br>
+        CSS Class:{{stockName.valid}}, {{stockName.pristine}}
+        <div class="alert alert-danger" [hidden]="stockName.valid || stockName.pristine">
+          Please enter the value for the stockName.
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="stockCode">Stock Code:</label>
+        <input ty
+        pe="text" id="stockCode" name="stockCode" [(ngModel)]="newStock.stockCode" class="form-control" ref-stockCode="ngModel" required />
+        The Stock Code:{{stockCode.value}}<br>
+        CSS Class:{{stockCode.valid}}, {{stockCode.pristine}}
+        <div class="alert alert-danger" [hidden]="stockCode.valid || stockCode.pristine">
+            Please enter the value for the stockCode.
+          </div>
+      </div>
+
+      <button class="btn btn-primary" type="submit" [disabled]="!stockForm.form.valid">Submit</button>
+    </form>
+
+  </div>
+
+</div>
+
+<hr>
+
+<div class="container" *ngIf="submitted">
+  <div class="form-group row">
+    <label class="col-md-2 col-form-label">Stock Name:</label>
+    <div class="col-md-10">
+      <input type="text" class="form-control" placeholder="{{newStock.stockName}}" readonly/>
+      
+    </div>
+  </div>
+
+  <div class="form-group row">
+      <label class="col-md-2 col-form-label">Stock Code</label>
+      <div class="col-md-10">
+        <input type="text" class="form-control" placeholder="{{newStock.stockCode}}" readonly/>
+      </div>
+    </div>
+
+    <div class="form-group row">
+     <button class="btn btn-primary mt-2" (click)="cancel()">Cancel</button>
+    </div>
+</div>

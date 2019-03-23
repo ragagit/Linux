@@ -1,0 +1,11 @@
+#spring:
+#  application:
+#    name: itemservice
+#  profiles:
+#    active: default
+#  zipkin:
+#    baseUrl: http://54.172.185.62:9411
+#  cloud:
+#    config:
+#      uri: http://54.172.185.62:8888
+#    
