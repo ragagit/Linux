@@ -1,0 +1,6 @@
+[0m[[0m[0minfo[0m] [0m[0m[32mSuite Starting - StackSpec[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mScope Opened - StackSpec: A Stack[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mTest Starting - StackSpec: A Stack should pop values in last-in-first-out order[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mTest Succeeded - StackSpec: A Stack should pop values in last-in-first-out order (20 milliseconds)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mScope Closed - StackSpec: A Stack[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mSuite Completed - StackSpec (99 milliseconds)[0m[0m
