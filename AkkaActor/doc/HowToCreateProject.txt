@@ -1,0 +1,43 @@
+- Open IntelliJ
+- New Project->Scala->sbt->path,name
+- Add object and class
+
+object AkkaActor {
+
+  def main(args: Array[String]): Unit = {
+    println("Hello there")
+  }
+
+}
+
+You can use the App trait
+
+object HelloWorld extends App {
+  println("Hello, world!")
+}
+
+
+- Add dependencies in build.sbt taken from akk.io or scala-lang.org
+
+- Use Build/Run or sbt compile, sbt run
+
+======
+
+https://www.scala-lang.org/documentation/your-first-lines-of-scala.html
+
+
+- You can use scalac AkkaActor.scala but you may have dependencies problems, that is why is better to use sbt
+scalac AkkaActor.scala
+scalac -d classes AkkaActor.scala
+scala AkkaActor
+or
+scala -cp classes AkkaActor 
+
+=====
+
+- scala REPL
+
+Just call scala
+
+
+

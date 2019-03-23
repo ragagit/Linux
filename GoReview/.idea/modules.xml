@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Basics/Basics.iml" filepath="$PROJECT_DIR$/Basics/Basics.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Concurrency/Concurrency.iml" filepath="$PROJECT_DIR$/Concurrency/Concurrency.iml" />
+      <module fileurl="file://$PROJECT_DIR$/GoReview.iml" filepath="$PROJECT_DIR$/GoReview.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MethodsAndInterfaces/MethodsAndInterfaces.iml" filepath="$PROJECT_DIR$/MethodsAndInterfaces/MethodsAndInterfaces.iml" />
+    </modules>
+  </component>
+</project>
