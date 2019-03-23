@@ -61,13 +61,13 @@ public:
 };
 
 void doSomething() {
-    bool err0 = true;
-    bool err1 = false;
+    bool err0 = false;
+    bool err1 = true;
     bool err2 = false;
 
     cout << "In doSomething()" << endl;
     if (err0) {
-        //throw myExc;
+       throw 20;
     }
     if (err1) {
         throw "Something went wrong";
@@ -82,11 +82,20 @@ void doExceptions() {
     Test test;
 
     try {
-        //doSomething();
-        test.goesWrong();
-    } catch (MyException e) {
-        cout << e.what() << endl;
+        doSomething();
+        //test.goesWrong();
+    //} catch (MyException e) {
+    }catch( int e){
+        //cout << e.what() << endl;
+            cout << e << endl;
+    }catch( char e){
+        cout << "char exception " << e << endl;
+    }catch( string e ){
+        cout << "string exception caught " << e << endl;
+    }catch(...){
+        cout << "Default catch" << endl;
     }
+    
 
     cout << "Continuing" << endl;
 }
@@ -126,8 +135,9 @@ void doInputStream() {
             //inFile >> line;
             getline(inFile, line);
             cout << line << endl;
-            inFile.close();
+            
         }
+        inFile.close();
     } else {
         cout << "Cannot open inFile";
     }
@@ -266,6 +276,26 @@ void doVector2D() {
         }
         cout << endl;
     }
+    
+    vector< vector<string> > strs(3, vector<string>(2, ""));
+    vector<string> row0, row1, row2;
+    row0.push_back("ZeroZero");
+    row0.push_back("ZeroOne");
+    strs.push_back(row0);
+    row1.push_back("OneZero");
+    row1.push_back("OneOne");
+    strs.push_back(row1);
+    row2.push_back("TwoZero");
+    row2.push_back("TwoOne");
+    strs.push_back(row2);
+    
+    for( int i=0; i < strs.size(); i++){
+        for(int j=0; j < strs[0].size(); j++){
+            cout << strs[i][j] << " ";
+        }
+        cout << endl;
+    }
+    
 }
 
 void doList() {
@@ -478,8 +508,8 @@ public:
     //        age = other.age;
     //    }
 
-    void print() const {
-        cout << name << " " << age << flush;
+    void printt() const {
+        cout << name << " " << age << endl;
     }
 
     bool operator<(const Testt &other) const {
@@ -501,7 +531,7 @@ void doSetss() {
     numbers.insert(Testt("Jane", 4));
 
     for (set<Testt>::iterator it = numbers.begin(); it != numbers.end(); it++) {
-        //cout << it->print() << endl;
+        it->printt();
     }
 
 }
@@ -566,6 +596,15 @@ void doArrays() {
         {4, 5, 7}
     };
 
+    int arr[2][3];
+    
+    arr[0][0]=0;
+    arr[0][1]=1;
+    arr[0][2]=2;
+    arr[1][0]=3;
+    arr[1][1]=4;
+    arr[1][2]=6;
+    
     cout << "Array size:" << sizeof (myArray) << endl;
     cout << "Array size:" << sizeof (myStr) << endl;
     cout << "Array size:" << sizeof (myInt) << endl;
@@ -1588,6 +1627,8 @@ void doPerfectForwarding(){
     //Reference collapsing rule
     auto &&t1 = te;
     
+    t.greet();
+    
     call(Te());
     call(te);
 }
@@ -1641,8 +1682,19 @@ void doSharedPointers(){
     
     shared_ptr<Te> pPtr(new Te);
     
+    pPtr->greet();
     
     shared_ptr<Te> pPtr1 = make_shared<Te>();
+    
+    pPtr1->greet();
+    
+    unique_ptr<int> pInt;
+    
+    pInt = unique_ptr<int>(new int);
+    
+    *pInt = 7;
+    
+    cout << "Result: " << *pInt << endl;
     
     cout << "Finished" << endl;
     
@@ -1650,6 +1702,7 @@ void doSharedPointers(){
 
 int main(int argc, char** argv) {
 
+    //doExceptions();
     //doReadSpecialFormat();
     //doStructs();
     //doBinaryFile();
@@ -1663,7 +1716,7 @@ int main(int argc, char** argv) {
     //storeObjects1();
     //doMultiMaps();
     //doSetss();
-    //doStacks();
+    doStacks();
     //doArrays();
     //doPointers();
     //doCopyConstructor();
@@ -1694,7 +1747,7 @@ int main(int argc, char** argv) {
     //doPerfectForwarding();
     //doBind();
     //doSmartPointers();
-    doSharedPointers();
+    //doSharedPointers();
 
 
     // * copy elision is a compiler optimization to get rid of unnecessay copy objects

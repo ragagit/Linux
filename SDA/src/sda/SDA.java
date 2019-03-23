@@ -376,7 +376,7 @@
             a.getB().getC().doSomething();
 
         Primitive Obsession. When you rely on primitive too much on a higher level. They can be used more at a lower level.
-            For example a psotal code as a String or create a class called PostalCode.
+            For example a postal code as a String or create a class called PostalCode.
 
         Switch Statements::
         class Animal{
@@ -402,7 +402,7 @@
             public void say(){...}
         }
 
-        Speculative Generality. Write code that is not needed ut it might in the future. Over egineering.
+        Speculative Generality. Write code that is not needed but it might in the future. Over egineering.
             with Agile dev just in time design.
 
         Refuse Bequest. When a class inherits something that is not needed.
@@ -418,7 +418,7 @@
         - Kruchten's 4 + 1 View Model
 
         1.- Logical View (UML classes/State diagram) focuses on functionality of the system and the objects that are with it to achieve requirements.
-        Class and stae diagrams.
+        Class and state diagrams.
         
         2.- Process View (UML Activity Diagram). Achieving non-functional requirements. Performance and availability. Shows execution order.
         UML Sequence diagram or Activity Diagram
@@ -814,7 +814,7 @@
         Designing REST Services
         Good practice for a REST API:
         -Use only Nouns for your URI
-        -GET method should not alter the state of your resources. Leave it to POST, PU, DELETE.
+        -GET method should not alter the state of your resources. Leave it to POST, PUT, DELETE.
         -Use plural Nouns for you URI.
         -Use sub-resources for relationships between resources. You can show the connection in the URI
             GET /students/3

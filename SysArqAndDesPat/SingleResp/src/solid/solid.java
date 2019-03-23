@@ -101,6 +101,110 @@ import servicelocator.ServiceLocator;
  * Using service locator pattern. 
  * Using dependency injection.
  *
+ * -- DESIGN PATTERNS --
+ * Design pattern is a general reusable solution or template to a commonly occurring problem in software design. 
+ * The patterns typically show relationships and interactions between classes or objects.
+ * 
+ * Goal: 
+ * Understand the problem and matching it with some pattern.
+ * Reuse of old interface or making the present design reusable for the future usage.
+ * 
+ * 1) Creational - These design patterns are all about class instantiation or object creation. These patterns can be further 
+ * categorized into Class-creational patterns and object-creational patterns. While class-creation patterns use 
+ * inheritance effectively in the instantiation process, object-creation patterns use delegation effectively to 
+ * get the job done.
+ * Creational design patterns are: 
+ * Factory Method, Abstract Factory, Builder, Singleton, Object Pool, Prototype and Singleton.
+ * 
+ * Abstract Factory
+ *  Creates an instance of several families of classes
+ * 
+ * Builder
+ *  Separates object construction from its representation
+ * 
+ * Factory Method
+ *  Creates an instance of several derived classes
+ * 
+ * Object Pool
+ *  Avoid expensive acquisition and release of resources by recycling objects that are no longer in use
+ * 
+ * Prototype
+ *  A fully initialized instance to be copied or cloned
+ * 
+ * Singleton
+ *  A class of which only a single instance can exist
+ * 
+ * 2) Structural - These design patterns are about organizing different classes and objects to form larger 
+ * structures and provide new functionality.
+ * 
+ * Structural design patterns are: Adapter, Bridge, Composite, Decorator, Facade, Flyweight, Private Class Data 
+ *
+ * Adapter
+ *  Match interfaces of different classes
+ * 
+ * Bridge
+ *  Separates an object’s interface from its implementation
+ * 
+ * Composite
+ *  A tree structure of simple and composite objects
+ * 
+ * Decorator
+ *  Add responsibilities to objects dynamically
+ * 
+ * Facade
+ *  A single class that represents an entire subsystem
+ * 
+ * Flyweight
+ *  A fine-grained instance used for efficient sharing
+ * 
+ * Private Class Data
+ *  Restricts accessor/mutator access
+ * 
+ * Proxy
+ *  An object representing another object
+ * 
+ * 3) Behavioral - Behavioral patterns are about identifying common communication patterns between objects and 
+ * realize these patterns.
+ *
+ * Behavioral patterns are Chain of responsibility, Command, Interpreter, Iterator, Mediator, Memento, Null Object, 
+ * Observer, State, Strategy, Template method, Visitor
+ * 
+ * Chain of responsibility
+ *  A way of passing a request between a chain of objects
+ * 
+ * Command
+ *  Encapsulate a command request as an object
+ * 
+ * Interpreter
+ *  A way to include language elements in a program
+ * 
+ * Iterator
+ *  Sequentially access the elements of a collection
+ * 
+ * Mediator
+ *  Defines simplified communication between classes
+ * 
+ * Memento
+ *  Capture and restore an object's internal state
+ * 
+ * Null Object
+ *  Designed to act as a default value of an object
+ * 
+ * Observer
+ *  A way of notifying change to a number of classes
+ * 
+ * State
+ *  Alter an object's behavior when its state changes
+ * 
+ * Strategy
+ *  Encapsulates an algorithm inside a class
+ * 
+ * Template method
+ *  Defer the exact steps of an algorithm to a subclass
+ * 
+ * Visitor
+ *  Defines a new operation to a class without change
+
  * -- Strategy pattern -- 
  * 
  * Principle #1 Take what changes and encapsulate it. 
