@@ -16,6 +16,7 @@ import spray.json._
 
 import scala.util.parsing.combinator._
 import scala.collection.mutable.ArrayBuffer
+
 /*
 
 - Imperative programming
@@ -346,6 +347,10 @@ We call this schema lazy evaluation (as opposed to by-name evaluation where ever
 strict evaluation for normal parameters and val definitions)
 
 9.4
+Streams, lazy
+
+
+
 */
 
 object demo {
@@ -1201,6 +1206,63 @@ def doJason1: Unit = {
 
     res
   }
+
+
+
+  trait User {
+    def name: String
+    def score: Int
+  }
+  class FreeUser(val name: String, val score: Int, val upgradeProbability: Double)
+    extends User
+  class PremiumUser(val name: String, val score: Int) extends User
+
+  object FreeUser {
+    def unapply(user: FreeUser): Option[(String, Int, Double)] =
+      Some((user.name, user.score, user.upgradeProbability))
+  }
+  object PremiumUser {
+    def unapply(user: PremiumUser): Option[(String, Int)] = Some((user.name, user.score))
+  }
+
+  trait Host{
+//    def tenant: Option[String]
+//    def device : Option[Long]
+//    def devport : Option[Int]
+//    def system: String
+//    def port : Option[String]
+        def tenant: String
+        def device : Long
+        def devicePort : Int
+        def system: String
+        def port : String
+  }
+
+    class Hostname(val tenant: String, val device: Long, val devicePort: Int, val system: String, val port: String) extends Host
+
+    object Hostname{
+
+      def apply(tenant: String, device: Long, devicePort: Int, system: String, port: String): Unit = {
+        new Hostname(tenant, device, devicePort, system, port)
+      }
+
+      def unapply( hostname: Hostname ) : Option[(String, Long, Int, String, String)] =
+        Some(hostname.tenant, hostname.device, hostname.devicePort, hostname.system, hostname.port)
+
+    }
+
+  def doApp = {
+//    val hostname = Hostname("tes1", 123456789, 4343, "my.auvik.com", "9000")
+//
+//    val Hostname(t, d, dp, s, p) = hostname
+//
+//    println( t )
+//    println( d )
+//    println( dp)
+//    println( s )
+//    println( p )
+  }
+
   def main(args: Array[String]) {
 
 //    doStringInterpolation
@@ -1231,7 +1293,8 @@ def doJason1: Unit = {
 //println(expandPorts(Some("FE1/0-3 FE1/6 GE1/1-8")))
     //println(expandPortsMap("FE1/0-3 FE1/6 GE1/1-8"))
 
-    TestSimpleParser.myparser
+    //TestSimpleParser.myparser
+    doApp
   }
 
 }

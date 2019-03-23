@@ -60,37 +60,77 @@ object AkkaActor {
         myActor ! Goodbye
   }
 
+
+  def doFuture(system: ActorSystem) = {
+
+    implicit val timeout = Timeout(5 seconds)
+
+    val myFutureActor = system.actorOf(Props[MyFutureActor], "myfutureactor")
+
+    //    val f: Future[String] = Future {
+    //      //myFutureActor ? DoOperation("myaddress")
+    //      "Hello"
+    //    }
+    //
+    //    f onComplete {
+    //      case Success(str) => for (post <- str) println(post)
+    //      case Failure(t) => println("An error has occurred: " + t.getMessage)
+    //    }
+    val future = myFutureActor ? DoOperation("myaddress") // enabled by the “ask” import
+
+    val result = Await.result(future, timeout.duration).asInstanceOf[String]
+
+    future onComplete {
+      case Success(str) =>
+        println("Success:" + str)
+      case Failure(f) =>
+        println("Failure:" + f)
+    }
+
+    println(result)
+
+  }
+
+  def retaFuture( n: Int )  = Future {
+
+    val l = List( 1 ,2 , 3, 4)
+    val n = l.fold(0)((i1,i2) => i1+i2+1)
+    println("n: " +  n)
+    val donuts = Seq("Vanilla", "Strawberry", "Chocolate")
+
+    val res = donuts.fold("")((s1,s2) => s1 + s2 + "Donuts")
+    println(res)
+    //val concatDonuts = (s1: String, s2: String) => s1 + s2 + "Donuts"
+
+//    for{
+//
+//      i <- n
+//
+//    }yield{
+//
+//      i
+//
+//    }
+
+
+  }
+
   def main(args: Array[String]): Unit = {
 
     val system = ActorSystem("mySystem")
 
     //callFirstActor(system)
 
-    implicit val timeout = Timeout(5 seconds)
+    //doFuture(system)
 
-    val myFutureActor = system.actorOf(Props[MyFutureActor], "myfutureactor")
+    val fut = retaFuture(7)
+    //println("fut: " + fut)
 
-//    val f: Future[String] = Future {
-//      //myFutureActor ? DoOperation("myaddress")
-//      "Hello"
-//    }
-//
-//    f onComplete {
-//      case Success(str) => for (post <- str) println(post)
-//      case Failure(t) => println("An error has occurred: " + t.getMessage)
-//    }
-    val future = myFutureActor ? DoOperation("myaddress") // enabled by the “ask” import
-
-//    future onComplete {
-//      case Success(str) =>
-//        println("Success:" + str)
-//      case Failure(f) =>
-//        println("Failure:" + f)
+//    fut foreach {
+//      msg => println(msg)
 //    }
 
-    val result = Await.result(future, timeout.duration).asInstanceOf[String]
 
-    println(result)
 
   }
 
