@@ -570,3 +570,45 @@ var result = prompt("what is your name")
 if(result !== null){
     alert('welcome' + result)
 }
+
+//++++ 
+//setInterval setTimeout
+//JS execution in browser is single-threaded
+//you can use setInterval or setTimeout to run the code in specific time.
+// setTimeout(function(){
+//     alert('Hello JS')
+// }, 3000);
+
+// setInterval(function(){
+//     alert('Hello JS');
+// }, 3000)
+
+//-----
+//+++++ DOM write, get attribute, set attribute, create element
+document.write('Hello World and JS');
+var div = document.getElementById('root');
+div.getAttribute('id');
+div.setAttribute('id', 'hahaha');
+alert(div.getAttribute('id'));
+
+function myClick(){
+    var div = document.createElement('h1');
+    var text = 'hello world';
+    var newH1 = document.body.appendChild(div);
+    newH1.innerText = text;
+}
+
+// DOM using selector
+document.getElementById('root'); //get by id
+document.getElementsByClassName('intro'); // class names
+document.getElementsByTagName('p'); //tags such as p or h1
+document.querySelectorAll('p.intro'); // using css selectors
+document.getElementById('root').innerHTML = 'some text'
+
+//+++++
+//JQuery and Bootstrap 
+//https://getbootstrap.com it comes with JQuery
+//For JQuery you always use $();
+$(document).ready(function(){
+
+});
