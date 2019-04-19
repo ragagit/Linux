@@ -1,0 +1,19 @@
+[0m[[0m[0minfo[0m] [0m[0mPackaging /Users/ramsesgarcia/Documents/ragagit/Linux/AkkaActor/target/scala-2.12/akkaactor_2.12-0.1.jar ...[0m
+[0m[[0m[0mdebug[0m] [0m[0mInput file mappings:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	MyActor$Goodbye$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/ramsesgarcia/Documents/ragagit/Linux/AkkaActor/target/scala-2.12/classes/MyActor$Goodbye$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	MyActor$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/ramsesgarcia/Documents/ragagit/Linux/AkkaActor/target/scala-2.12/classes/MyActor$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	AkkaActor$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/ramsesgarcia/Documents/ragagit/Linux/AkkaActor/target/scala-2.12/classes/AkkaActor$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	MyActor$Greeting$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/ramsesgarcia/Documents/ragagit/Linux/AkkaActor/target/scala-2.12/classes/MyActor$Greeting$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	MyActor$Greeting.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/ramsesgarcia/Documents/ragagit/Linux/AkkaActor/target/scala-2.12/classes/MyActor$Greeting.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	MyActor.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/ramsesgarcia/Documents/ragagit/Linux/AkkaActor/target/scala-2.12/classes/MyActor.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	MyActor$$anonfun$receive$1.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/ramsesgarcia/Documents/ragagit/Linux/AkkaActor/target/scala-2.12/classes/MyActor$$anonfun$receive$1.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	AkkaActor.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/ramsesgarcia/Documents/ragagit/Linux/AkkaActor/target/scala-2.12/classes/AkkaActor.class[0m
+[0m[[0m[0minfo[0m] [0m[0mDone packaging.[0m

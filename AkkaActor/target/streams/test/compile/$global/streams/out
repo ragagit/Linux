@@ -1,0 +1,31 @@
+[0m[[0m[33mwarn[0m] [0m[0m/Users/ramsesgarcia/Documents/ragagit/Linux/AkkaActor/src/test/scala/AkkaActorTest.scala:44:18: postfix operator millis should be enabled[0m
+[0m[[0m[33mwarn[0m] [0m[0mby making the implicit value scala.language.postfixOps visible.[0m
+[0m[[0m[33mwarn[0m] [0m[0mThis can be achieved by adding the import clause 'import scala.language.postfixOps'[0m
+[0m[[0m[33mwarn[0m] [0m[0mor by setting the compiler option -language:postfixOps.[0m
+[0m[[0m[33mwarn[0m] [0m[0mSee the Scaladoc for value scala.language.postfixOps for a discussion[0m
+[0m[[0m[33mwarn[0m] [0m[0mwhy the feature should be explicitly enabled.[0m
+[0m[[0m[33mwarn[0m] [0m[0m      within(500 millis) {[0m
+[0m[[0m[33mwarn[0m] [0m[0m                 ^[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/ramsesgarcia/Documents/ragagit/Linux/AkkaActor/src/test/scala/AkkaActorTest.scala:52:18: postfix operator millis should be enabled[0m
+[0m[[0m[33mwarn[0m] [0m[0mby making the implicit value scala.language.postfixOps visible.[0m
+[0m[[0m[33mwarn[0m] [0m[0m      within(500 millis) {[0m
+[0m[[0m[33mwarn[0m] [0m[0m                 ^[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/ramsesgarcia/Documents/ragagit/Linux/AkkaActor/src/test/scala/AkkaActorTest.scala:61:18: postfix operator millis should be enabled[0m
+[0m[[0m[33mwarn[0m] [0m[0mby making the implicit value scala.language.postfixOps visible.[0m
+[0m[[0m[33mwarn[0m] [0m[0m      within(500 millis) {[0m
+[0m[[0m[33mwarn[0m] [0m[0m                 ^[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/ramsesgarcia/Documents/ragagit/Linux/AkkaActor/src/test/scala/AkkaActorTest.scala:72:26: postfix operator millis should be enabled[0m
+[0m[[0m[33mwarn[0m] [0m[0mby making the implicit value scala.language.postfixOps visible.[0m
+[0m[[0m[33mwarn[0m] [0m[0m        receiveWhile(500 millis) {[0m
+[0m[[0m[33mwarn[0m] [0m[0m                         ^[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/ramsesgarcia/Documents/ragagit/Linux/AkkaActor/src/test/scala/AkkaActorTest.scala:82:18: postfix operator millis should be enabled[0m
+[0m[[0m[33mwarn[0m] [0m[0mby making the implicit value scala.language.postfixOps visible.[0m
+[0m[[0m[33mwarn[0m] [0m[0m      within(500 millis) {[0m
+[0m[[0m[33mwarn[0m] [0m[0m                 ^[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/ramsesgarcia/Documents/ragagit/Linux/AkkaActor/src/test/scala/AkkaActorTest.scala:65:9: method expectNoMsg in trait TestKitBase is deprecated (since 2.5.5): Use expectNoMessage instead[0m
+[0m[[0m[33mwarn[0m] [0m[0m        expectNoMsg[0m
+[0m[[0m[33mwarn[0m] [0m[0m        ^[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/ramsesgarcia/Documents/ragagit/Linux/AkkaActor/src/test/scala/AkkaActorTest.scala:91:9: method expectNoMsg in trait TestKitBase is deprecated (since 2.5.5): Use expectNoMessage instead[0m
+[0m[[0m[33mwarn[0m] [0m[0m        expectNoMsg[0m
+[0m[[0m[33mwarn[0m] [0m[0m        ^[0m
+[0m[[0m[33mwarn[0m] [0m[0m7 warnings found[0m

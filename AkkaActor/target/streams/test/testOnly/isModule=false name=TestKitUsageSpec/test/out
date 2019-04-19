@@ -1,0 +1,9 @@
+[0m[[0m[0minfo[0m] [0m[0m[32mTestKitUsageSpec:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mAn EchoActor[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should Respond with the same message it receives[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mA ForwardingActor[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should Forward a message it receives[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mA FilteringActor[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should Filter all messages, except expected messagetypes it receives[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mA SequencingActor[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should receive an interesting message at some point [0m[0m
