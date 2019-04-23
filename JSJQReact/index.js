@@ -46,7 +46,7 @@ console.log(message);
 var num = '100'
 //alert(Number(num))
 var num1 = '100hgb57'
-alert(parseInt(num1))
+//alert(parseInt(num1))
 num1.length
 var num3 = 100;
 var str = num3.toString
@@ -546,14 +546,14 @@ var object = {
         }
     }
 }
-alert(object.getName()()); //returns 'The window'
+//alert(object.getName()()); //returns 'The window'
 
 //Creating block scope using IIFE Immediatle Invoke Function Expression
 //This function is in the window scope, to avoid that wrap it in ()
-(function sayColor(){
+function sayColor(){
     var color = 'red';
     console.log(color)
-})()
+}
 //------
 //++++++ BOM
 //Windows object properties
@@ -566,9 +566,9 @@ window.history.back
 
 //Window object methods
 //alert() prompt() open/close setInterval() setTimeout()
-var result = prompt("what is your name")
+//var result = prompt("what is your name")
 if(result !== null){
-    alert('welcome' + result)
+    //alert('welcome' + result)
 }
 
 //++++ 
@@ -585,11 +585,11 @@ if(result !== null){
 
 //-----
 //+++++ DOM write, get attribute, set attribute, create element
-document.write('Hello World and JS');
+//document.write('Hello World and JS');
 var div = document.getElementById('root');
-div.getAttribute('id');
-div.setAttribute('id', 'hahaha');
-alert(div.getAttribute('id'));
+// div.getAttribute('id');
+// div.setAttribute('id', 'hahaha');
+// alert(div.getAttribute('id'));
 
 function myClick(){
     var div = document.createElement('h1');
@@ -599,16 +599,94 @@ function myClick(){
 }
 
 // DOM using selector
-document.getElementById('root'); //get by id
-document.getElementsByClassName('intro'); // class names
-document.getElementsByTagName('p'); //tags such as p or h1
-document.querySelectorAll('p.intro'); // using css selectors
-document.getElementById('root').innerHTML = 'some text'
+// document.getElementById('root'); //get by id
+// document.getElementsByClassName('intro'); // class names
+// document.getElementsByTagName('p'); //tags such as p or h1
+// document.querySelectorAll('p.intro'); // using css selectors
+// document.getElementById('root').innerHTML = 'some text'
 
 //+++++
 //JQuery and Bootstrap 
 //https://getbootstrap.com it comes with JQuery
 //For JQuery you always use $();
-$(document).ready(function(){
-
+//https://cdnjs.com/libraries/animate.css/ for animated bounce
+// Animate css https://daneden.github.io/animate.css/
+// Targeting the class use ".", targeting the id use #
+$( document ).ready(function() {
+    $('button').addClass('animated bounce');
+    $('.btn-success').addClass('shake');
+    //$('#target6').addClass('fadeOut');
+    $('button').removeClass('btn-success');
+    //css
+    $('#target1').css('color', 'red');
+    $('#target2').css({color:'green', background : 'blue'})
+    //property
+    $('#target2').prop('disabled', true);
+    $('h1').html('Learning <strong>JQuery</strong> is so much fun');
+    //Removing
+    //$('#target5').remove();
+    //Apend
+    $('#target4').appendTo('.left');
+    //Clone
+    //$('.left').clone().appendTo('.right');
+    //target parent
+    $('.heading2').parent().css('backgroundColor', 'red');
+    //target children
+    $('.heading2right').children().css('color', 'red');
+    //target child
+    $('.target:nth-child(2)').addClass('animated swing');
+    //even odd numbers
+    $('.target:odd').addClass('animated swing');
 });
+
+//Vanilla Java Script search for youmightnotneedjquery.com
+
+//++++++++ Even handling
+
+$(document).ready(function () {
+    $('.question').on('click', function () {
+        $('.answer').html('JQuery is the best!')
+    });
+    $('.question').on('mouseover', function () {
+        $('.answer').html('JQuery is the best!')
+    });
+});
+
+//Ajax request to API with JQuery
+$(document).ready(function(){
+    var url = 'https://hacker-news.firebaseio.com/v0/item/8863.json?print=pretty'
+    $.getJSON(url, function(data){
+        console.log(data);
+    });
+});
+
+//Ajax response Object or Array
+$(document).ready(function(){
+    var url = 'https://hn.algolia.com/api/v1/search?query=javascript'
+    $.getJSON(url, function(data){
+        //console.log(data instanceof Array );
+        console.log(data instanceof Object );
+        if(Array.isArray(data.hits)){
+            console.log('It is an array');
+        }else{
+            console.log('it is not an array')
+        }
+        var allNews = data.hits;
+        var eachNews = '';
+        allNews.map(function(item, index, array){
+            $('.question1').on('click', function(){
+                eachNews += '<div>';
+                eachNews += item.title;
+                eachNews += '</div>';
+                $('.answer1').html(eachNews);
+            });
+        });
+    });
+});
+
+//Geolocation data
+if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(function(position){
+        $('.answer2').html('latitude: ' + position.coords.latitude + ' longitude: ' + position.coords.longitude);
+    });
+}
