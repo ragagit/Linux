@@ -686,7 +686,150 @@ $(document).ready(function(){
 
 //Geolocation data
 if(navigator.geolocation){
-    navigator.geolocation.getCurrentPosition(function(position){
-        $('.answer2').html('latitude: ' + position.coords.latitude + ' longitude: ' + position.coords.longitude);
-    });
+    // navigator.geolocation.getCurrentPosition(function(position){
+    //     $('.answer2').html('latitude: ' + position.coords.latitude + ' longitude: ' + position.coords.longitude);
+    // });
 }
+
+// ++++ ES6 +++++
+//JavaScript is based on EcmaScript (European Computer Manufacturer Associations)
+
+//const con't be change once assigned
+const myname = 'Alex'
+
+//let unlike var it is not part of the window object
+if(true){
+    let name = 'Ryan'; //it is defined in the if scope
+}
+// Template Strings, better option to string concatenation
+let fname = 'Ryan';
+let lname = 'Dew';
+let fullName = fname + ' ' + lname + ' '
+let fullName1 = `${fname} ${lname}`
+
+//Default parameters
+function welcome(name='Sir', message='Good day'){
+    console.log(`Hello ${name} ${message}`)
+}
+
+//Arrow functions Anonymous Functions
+function greeting(message){
+    return console.log(`${message} everyone!`)
+}
+
+let greet = (message) => console.log(`${message} everyone`);
+greet("Hello");
+
+let greet1 = () => console.log('No arguments');
+greet1();
+
+//Arrow functions and this keyword
+let nepal = {
+    mountains: ['Everest', 'Fish'],
+    printWith: function(){
+        setTimeout(()=>console.log(this.mountains.join('-')), 3000);
+    }
+};
+
+nepal.printWith();
+
+//Destructing objects
+let { mountains } = nepal;
+console.log('Destructor' + mountains);
+
+//using destructing
+let uniStudent1 = student => {
+    console.log(`${student.name} from ${student.univ}`)
+}
+let uniStudent = ({name,univ}) => {
+    console.log(`${name} fron ${univ}`)
+};
+
+uniStudent({
+    name:'Ryan',
+    univ: 'Univ student'
+});
+
+//Destructing array
+let [firstM] = ['Mount1', 'Mount2'];
+console.log(firstM);
+
+//Restructuring
+var name2 = 'Ryan';
+var output2 = function(){
+    console.log(`${name2}`)
+}
+var myObj = {name2,output2};
+myObj.output2();
+
+myObj1 = {
+    name2: 'Ryan',
+    output2: function(){
+        console.log(`${name2}`)
+    },
+    //ES6
+    out3(){ console.log('ES6')}  
+}
+
+myObj1.out3()
+
+//Spread and Rest Operator.
+//Combbine two arrays or obejcts without modifying the original
+var mountains1 = ['Everets', 'Fish'];
+var mountains2 = ['Fuji'];
+var allm = [...mountains1, ...mountains2];
+console.log(allm);
+
+var night = {
+    breakfast: 'toast',
+   lunch: 'rice' 
+};
+
+var day = {
+    dinner: 'meat',
+    app: 'bread'
+};
+
+var food = {...day, ...night};
+console.log(food);
+
+var {onefood, ...rest} = food;
+console.log(rest);
+
+//Constructors
+//functions are objects
+function Holiday(destination, days){
+    this.destination = destination
+    this.days = days
+}
+Holiday.prototype.info = function(){
+    console.log(this.destination +  ' | ' + this.days);
+}
+
+var nep = new Holiday('Nepal', 30);
+console.log(nep.info());
+
+class Holi{
+    constructor(destination, days){
+        this.destination = destination;
+        this.days = days;
+    }
+    info(){
+        console.log(`${this.destination} will take ${this.days} days`)
+    }
+}
+const trip = new Holi('Katmadu', 30)
+console.log(trip.info());
+class Expedition extends Holi{
+    constructor(destination, days, gear){
+        super(destination, days);
+        this.gear = gear;
+    }
+    info(){
+        super.info();
+        console.log(`Bring your ${this.gear.join(' and your')}`);
+    }
+}
+
+const tripWithGear = new Expedition('Everest', 30, ['Sunglasses', 'Flags', 'Camera']);
+tripWithGear.info();
