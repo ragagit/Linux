@@ -652,6 +652,8 @@ $(document).ready(function () {
     });
 });
 
+//For weather API https://www.apixu.com/my/#
+//For nice backgrounds https://pixabay.com/
 //Ajax request to API with JQuery
 $(document).ready(function(){
     var url = 'https://hacker-news.firebaseio.com/v0/item/8863.json?print=pretty'
@@ -825,6 +827,7 @@ class Expedition extends Holi{
         super(destination, days);
         this.gear = gear;
     }
+    //override
     info(){
         super.info();
         console.log(`Bring your ${this.gear.join(' and your')}`);
@@ -833,3 +836,21 @@ class Expedition extends Holi{
 
 const tripWithGear = new Expedition('Everest', 30, ['Sunglasses', 'Flags', 'Camera']);
 tripWithGear.info();
+
+//Installing React
+//1.- Install nodejs.org You can type node -v To seemif npm is installed npm -v
+// brew install node  This will install node and npm
+// brea install yarn
+// To create a new application create a directory and run
+// npx create-react-app reactapp or create-react-app reactapp
+// cd reactapp npm start or yarn start
+
+//File structure. See reapp
+
+//https://github.com/axios/axios for Http client request
+// Install it with yarn add axios
+// https://randomuser.me  for random data api calls
+//https://api.randomuser.me/?nat=US&results=5
+//you can add react chrome extension for better development
+//In react everytime you want to use javascript use {}
+
