@@ -854,3 +854,39 @@ tripWithGear.info();
 //you can add react chrome extension for better development
 //In react everytime you want to use javascript use {}
 
+// React Redux Firebase
+//https://www.youtube.com/watch?v=8lwHTR1ER-Q
+//https://www.youtube.com/watch?v=8lwHTR1ER-Q&list=PL7gBJKednu-rZiR5xqJial4JdwOE2CwPB
+
+// React CDN 
+// https://reactjs.org
+// if you have an exsting a[plication you can start adding react adding script as shown in the HTML found
+// in the above link Quick Start 
+
+// let can be change
+// const can't be changed unless is an array or object
+//https://jsbin.com to run java script html css
+// react bootstrap
+// (npm install react-bootstrap bootstrap Beta)
+// (npm install --save react react-dom)
+// npm install --save react-bootstrap
+
+// Life Cycle Methos in React
+// - Mounting -
+// constructor()
+// componentWillMount()
+// render()
+// componentDidMount
+// - Updating -
+// componentWillReceiveProps()
+// shouldComponentUpdate()
+// componentWillUpdate()
+// render()
+// componentDidUpdate()
+// - Unmounting -
+// componentWillUnmount()
+
+// prop type checks the props passed from parent to children
+// npm install --save prop-types
+// PropTypes.array , bool, func, numbder, object, string
+
