@@ -890,3 +890,18 @@ tripWithGear.info();
 // npm install --save prop-types
 // PropTypes.array , bool, func, numbder, object, string
 
+// High Order Components
+// They are the same as high order functions but take and return components
+
+// Sorting
+// We can use a utility lodash
+// npm install --save lodash
+// https://lodash.com
+
+// Lifting State
+// The process of factoring substate from a component to another component is called lifting state.
+
+//react router dom
+//npm install --save react-router-dom
+//https://reacttraining.com/react-router/web/guides/quick-start
+
