@@ -1,22 +1,40 @@
 import React, { Component } from 'react';
-import axios from 'axios'
+import axios from 'axios';
 //import loading, { Loading } from './Loading'
-import Loading from './Loading'
-import { Grid, Row, Col, FormGroup } from 'react-bootstrap'
-import PropTypes from 'prop-types'
-
+import Loading from './Loading';
+import { Grid, Row, Col, FormGroup } from 'react-bootstrap';
+import PropTypes from 'prop-types';
+import { sortBy } from 'lodash';
+import { Search } from './search/index';
+import {
+  DEFAULT_QUERY, PATH_BASE, PARAM_SEARCH, SORTS
+} from './constants/index';
 // default parameters to fetch data from the api
-const DEFAULT_QUERY = 'react';
+// const DEFAULT_QUERY = 'react';
 // const PATH_BASE = 'https://hnalgolia.com/api/v1';
-const PATH_BASE = 'https://api.randomuser.me';
-const PARAM_SEARCH = '/?nat=US&results=5';
+// const PATH_BASE = 'https://api.randomuser.me';
+// const PARAM_SEARCH = '/?nat=US&results=5';
 const url = `${PATH_BASE}${PARAM_SEARCH}`;
+
+// const SORTS = {
+//   NONE: list => list,
+//   LNAME: list => sortBy(list, 'name.last'),
+//   EMAIL: list => sortBy(list, 'email'),
+// }
 
 function isSearch(searchTerm){
   return function(item){
     return !searchTerm || item.name.first.toLowerCase().includes(searchTerm.toLowerCase());
   }
 }
+
+// higher order component
+//const withLoading = (Component) => (props) =>
+const withLoading = (Component) => ({ isLoading, ...rest}) =>
+isLoading ? <Loading/> : <Component {...rest} />
+//props.isLoading ? <Loading/> : <Component {...props} />
+
+
 
 //Stateful component
 class App extends Component {
@@ -27,14 +45,22 @@ class App extends Component {
     this.state = {
       users: [],
       loading: false,
-      searchItem: ''
+      searchItem: '',
+      //sortKey: 'NONE',
+      //isSortReverse: false,
     }
     //bind new function
     this.handleSubmit = this.handleSubmit.bind(this)
     this.removeUser = this.removeUser.bind(this)
     this.searchValue = this.searchValue.bind(this)
+    //this.onSort = this.onSort.bind(this)
   }
 
+  // sorting function
+  // onSort(sortKey){
+  //   const isSortReverse = this.state.sortKey === sortKey && !this.state.isSortReverse;
+  //   this.setState({ sortKey, isSortReverse });
+  // }
   setTopUsers(results){
     console.log(results);
   }
@@ -58,7 +84,7 @@ class App extends Component {
       .catch( e => e);
 
   }
-  //React method. If you want to make API cll before the component mounts
+  //React method. If you want to make API call before the component mounts
   componentWillMount(){
     this.getUsers();
    }
@@ -131,11 +157,14 @@ class App extends Component {
     //Using the component
     )) : (<Loading message="be patient"/>)}</div> */}
 
-    <ShowUsers
+    <ShowUserss
       loading={this.state.loading}
       searchItem={this.state.searchItem}
       users={this.state.users}
       removeUser={this.removeUser}
+      //sortKey={this.state.sortKey}
+      //onSort={this.onSort}
+      //isSortReverse={this.state.isSortReverse}
     />
 
     </div>
@@ -179,26 +208,123 @@ const Button = ({onClick, children}) =>
     className: ''
   }
 
-const ShowUsers = ({ loading, searchItem, users, removeUser }) => {
+  //Sorting button
+const Sort = ({ sortKey, onSort, children, className, activeSortKey }) => {
+  const sortClass = ['btn default'];
+
+  if (sortKey === activeSortKey) {
+    sortClass.push('btn btn-primary');
+  }
   return (
-    <div>
-      {
-        !loading ? users.filter(isSearch(searchItem)).map(user => 
-        <div key={user.id.value}>
-          <h3 style={{ color: 'blue' }}>{user.name.first} {user.id.value}</h3>
-          <p>{user.email}</p>
-          {/* <button type="button" onClick={() => removeUser(user.id.value)}>Remove</button> */}
-          <Button onClick={() => removeUser(user.id.value)}>Remove</Button>
-          <hr />
-        </div>
-        //Using the component
-       ) : <Loading message="be patient" />
-      }
-    </div>
-  )
+    <Button
+      className={sortClass.join(' ')}
+      onClick={() => onSort(sortKey)}>
+      {children}
+    </Button>)
 }
 
-ShowUsers.propTypes = {
+class ShowUserss extends Component {
+
+  constructor(props){
+    super(props)
+    this.state = {
+      sortKey: 'NONE',
+      isSortReverse: false,
+    }
+    this.onSort = this.onSort.bind(this)
+  }
+
+  onSort(sortKey){
+    const isSortReverse = this.state.sortKey === sortKey && !this.state.isSortReverse;
+    this.setState({ sortKey, isSortReverse });
+  }
+
+  render(){
+    const { loading, searchItem, users, removeUser, onSort } = this.props;
+    const { sortKey, isSortReverse} = this.state
+
+    const sortedList = SORTS[sortKey](users);
+    const reversSortedList = isSortReverse ? sortedList.reverse() : sortedList
+  
+    return (
+      <div>
+  
+        <div className="text-center">
+          <Sort 
+          className="btn btn-xs btn-default sortBtn"
+          sortKey={'EMAIL'}
+          onSort={ onSort }
+          activeSortKey={ sortKey }
+          >Sort by email</Sort>
+  
+          <Sort 
+          className="btn btn-xs btn-default sortBtn"
+          sortKey={'LNAME'}
+          onSort={ onSort }
+          activeSortKey={ sortKey }
+          >Sort by Last Name</Sort>
+  
+        </div>
+        {
+          /*!loading ? users.filter(isSearch(searchItem)).map(user => */
+          /*!loading ? SORTS[sortKey](users).filter(isSearch(searchItem)).map(user => */
+            !loading ? reversSortedList.filter(isSearch(searchItem)).map(user =>
+          <div key={user.id.value}>
+            <h3 style={{ color: 'blue' }}>{user.name.first} {user.name.last} {user.id.value}</h3>
+            <p>{user.email}</p>
+            {/* <button type="button" onClick={() => removeUser(user.id.value)}>Remove</button> */}
+            <Button onClick={() => removeUser(user.id.value)}>Remove</Button>
+            <hr />
+          </div>
+          //Using the component
+         ) : <Loading message="be patient" />
+        }
+      </div>
+    )
+  }
+}
+// const ShowUsers = ({ loading, searchItem, users, removeUser, sortKey, onSort, isSortReverse }) => {
+//   const sortedList = SORTS[sortKey](users);
+//   const reversSortedList = isSortReverse ? sortedList.reverse() : sortedList
+
+//   return (
+//     <div>
+
+//       <div className="text-center">
+//         <Sort 
+//         className="btn btn-xs btn-default sortBtn"
+//         sortKey={'EMAIL'}
+//         onSort={ onSort }
+//         activeSortKey={ sortKey }
+//         >Sort by email</Sort>
+
+//         <Sort 
+//         className="btn btn-xs btn-default sortBtn"
+//         sortKey={'LNAME'}
+//         onSort={ onSort }
+//         activeSortKey={ sortKey }
+//         >Sort by Last Name</Sort>
+
+//       </div>
+//       {
+//         /*!loading ? users.filter(isSearch(searchItem)).map(user => */
+//         /*!loading ? SORTS[sortKey](users).filter(isSearch(searchItem)).map(user => */
+//           !loading ? reversSortedList.filter(isSearch(searchItem)).map(user =>
+//         <div key={user.id.value}>
+//           <h3 style={{ color: 'blue' }}>{user.name.first} {user.name.last} {user.id.value}</h3>
+//           <p>{user.email}</p>
+//           {/* <button type="button" onClick={() => removeUser(user.id.value)}>Remove</button> */}
+//           <Button onClick={() => removeUser(user.id.value)}>Remove</Button>
+//           <hr />
+//         </div>
+//         //Using the component
+//        ) : <Loading message="be patient" />
+//       }
+//     </div>
+//   )
+// }
+
+ShowUserss.propTypes = {
   users: PropTypes.arrayOf(
     PropTypes.shape({
       first: PropTypes.string,
@@ -243,39 +369,39 @@ const { onSubmit } =this.props
     )
   }
 }
-class Search extends Component {
-  componentDidMount(){
-    this.input.focus();
-  }
-  render() {
-    const { onChange, value, children } = this.props
-    return (
-      <form>
-        <FormGroup>
-          {children}
-          <div className="input-group text-center">
-            <input
-              className="form-control width100"
-              type="text"
-              onChange={onChange}
-              value={value}
-              ref={(node) => { this.input = node }}
-            />
-            <span className="inout-group-btn">
-              <button
-                className="btn btn-primary"
-                type="submit"
-              >
-                Go
-              </button>
+// class Search extends Component {
+//   componentDidMount(){
+//     this.input.focus();
+//   }
+//   render() {
+//     const { onChange, value, children } = this.props
+//     return (
+//       <form>
+//         <FormGroup>
+//           {children}
+//           <div className="input-group text-center">
+//             <input
+//               className="form-control width100"
+//               type="text"
+//               onChange={onChange}
+//               value={value}
+//               ref={(node) => { this.input = node }}
+//             />
+//             <span className="input-group-btn">
+//               <button
+//                 className="btn btn-primary"
+//                 type="submit"
+//               >
+//                 Go
+//               </button>
 
-            </span>
-          </div>
-        </FormGroup>
-      </form>
-    )
-  }
-}
+//             </span>
+//           </div>
+//         </FormGroup>
+//       </form>
+//     )
+//   }
+// }
 // function App() {
 //   return (
 //  return <div className="App">We will be back!</div>
