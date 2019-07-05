@@ -652,6 +652,8 @@ $(document).ready(function () {
     });
 });
 
+//For weather API https://www.apixu.com/my/#
+//For nice backgrounds https://pixabay.com/
 //Ajax request to API with JQuery
 $(document).ready(function(){
     var url = 'https://hacker-news.firebaseio.com/v0/item/8863.json?print=pretty'
@@ -825,6 +827,7 @@ class Expedition extends Holi{
         super(destination, days);
         this.gear = gear;
     }
+    //override
     info(){
         super.info();
         console.log(`Bring your ${this.gear.join(' and your')}`);
@@ -833,3 +836,72 @@ class Expedition extends Holi{
 
 const tripWithGear = new Expedition('Everest', 30, ['Sunglasses', 'Flags', 'Camera']);
 tripWithGear.info();
+
+//Installing React
+//1.- Install nodejs.org You can type node -v To seemif npm is installed npm -v
+// brew install node  This will install node and npm
+// brea install yarn
+// To create a new application create a directory and run
+// npx create-react-app reactapp or create-react-app reactapp
+// cd reactapp npm start or yarn start
+
+//File structure. See reapp
+
+//https://github.com/axios/axios for Http client request
+// Install it with yarn add axios
+// https://randomuser.me  for random data api calls
+//https://api.randomuser.me/?nat=US&results=5
+//you can add react chrome extension for better development
+//In react everytime you want to use javascript use {}
+
+// React Redux Firebase
+//https://www.youtube.com/watch?v=8lwHTR1ER-Q
+//https://www.youtube.com/watch?v=8lwHTR1ER-Q&list=PL7gBJKednu-rZiR5xqJial4JdwOE2CwPB
+
+// React CDN 
+// https://reactjs.org
+// if you have an exsting a[plication you can start adding react adding script as shown in the HTML found
+// in the above link Quick Start 
+
+// let can be change
+// const can't be changed unless is an array or object
+//https://jsbin.com to run java script html css
+// react bootstrap
+// (npm install react-bootstrap bootstrap Beta)
+// (npm install --save react react-dom)
+// npm install --save react-bootstrap
+
+// Life Cycle Methos in React
+// - Mounting -
+// constructor()
+// componentWillMount()
+// render()
+// componentDidMount
+// - Updating -
+// componentWillReceiveProps()
+// shouldComponentUpdate()
+// componentWillUpdate()
+// render()
+// componentDidUpdate()
+// - Unmounting -
+// componentWillUnmount()
+
+// prop type checks the props passed from parent to children
+// npm install --save prop-types
+// PropTypes.array , bool, func, numbder, object, string
+
+// High Order Components
+// They are the same as high order functions but take and return components
+
+// Sorting
+// We can use a utility lodash
+// npm install --save lodash
+// https://lodash.com
+
+// Lifting State
+// The process of factoring substate from a component to another component is called lifting state.
+
+//react router dom
+//npm install --save react-router-dom
+//https://reacttraining.com/react-router/web/guides/quick-start
+
