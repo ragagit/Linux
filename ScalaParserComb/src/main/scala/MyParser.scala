@@ -1,6 +1,10 @@
 import scala.util.matching.Regex
 import scala.util.parsing.combinator._
 import scala.util.parsing.input._
+import scala.util.parsing.input.CharSequenceReader
+import scala.util.parsing.combinator.JavaTokenParsers
+import scala.math.pow
+
 
 //object MyParser extends App {
 //
@@ -132,7 +136,6 @@ class SimpleParser extends RegexParsers {
 }
 
 
-
 object MyParser extends SimpleParser {
   def main(args: Array[String]) = {
 
@@ -180,7 +183,94 @@ object MyParser extends SimpleParser {
          |total routes shown: 5
       """.stripMargin
 
+    val output3 = """bash-2.04# cat /proc/net/vlan/config
+                    |VLAN Dev name    | VLAN ID
+                    |Name-Type: VLAN_NAME_TYPE_RAW_PLUS_VID_NO_PAD  bad_proto_recvd: 0
+                    |eth2.100       | 100  | eth2
+                    |eth2.200       | 200  | eth2
+                    |eth2.300       | 300  | eth2
+                  """.stripMargin
 
+
+    val output4 = """vpn {
+                       ipsec {
+                           auto-firewall-nat-exclude enable
+                           esp-group FOO0 {
+                               proposal 1 {
+                                   encryption aes128
+                                   hash sha1
+                               }
+                           }
+                           ike-group FOO0 {
+                               proposal 1 {
+                                   dh-group 14
+                                   encryption aes128
+                                   hash sha1
+                               }
+                           }
+                           ipsec-interfaces {
+                               interface eth0
+                           }
+                           nat-networks {
+                               allowed-network 0.0.0.0/0 {
+                               }
+                           }
+                           nat-traversal enable
+                           site-to-site {
+                               peer 192.168.0.2 {
+                                   authentication {
+                                       mode pre-shared-secret
+                                       pre-shared-secret ****************
+                                   }
+                                   connection-type initiate
+                                   description VPNForRamses
+                                   ike-group FOO0
+                                   local-address 192.168.0.1
+                                   tunnel 1 {
+                                       esp-group FOO0
+                                       local {
+                                           prefix 10.10.10.0/24
+                                       }
+                                       remote {
+                                           prefix 50.50.50.0/24
+                                       }
+                                   }
+                               }
+                           }
+                           site-to-site {
+                                peer 192.168.0.2 {
+                                    authentication {
+                                        mode pre-shared-secret
+                                        pre-shared-secret ****************
+                                    }
+                                    connection-type initiate
+                                    description VPNForRamses1
+                                    ike-group FOO0
+                                    local-address 193.168.0.1
+                                    tunnel 2 {
+                                        esp-group FOO0
+                                        local {
+                                            prefix 11.10.10.0/24
+                                        }
+                                        remote {
+                                            prefix 51.50.50.0/24
+                                        }
+                                    }
+                                }
+
+                           }
+                       }
+                    }"""
+
+    val output5 = """{
+                      "name":"John",
+                      "age":30,
+                      "cars": {
+                        "car1":"Ford",
+                        "car2":"BMW",
+                        "car3":"Fiat"
+                      }
+                     }"""
 
 //    def route = rep((uptoAndInc("VIRTUAL ROUTER:")) ~> until("total".r)) ^^ {
 //
@@ -200,13 +290,6 @@ object MyParser extends SimpleParser {
 //      case Error(msg,_) => println(s"ERROR: $msg")
 //    }
 
-    val output3 = """bash-2.04# cat /proc/net/vlan/config
-                 |VLAN Dev name    | VLAN ID
-                 |Name-Type: VLAN_NAME_TYPE_RAW_PLUS_VID_NO_PAD  bad_proto_recvd: 0
-                 |eth2.100       | 100  | eth2
-                 |eth2.200       | 200  | eth2
-                 |eth2.300       | 300  | eth2
-               """.stripMargin
 
 //    def vlans = uptoAndInc("Name-Type:") ~ eol ^^ {
 //      case vlan =>
@@ -219,23 +302,80 @@ object MyParser extends SimpleParser {
 //          case Error(msg,_) => println(s"ERROR: $msg")
 //        }
 
-    case class ShowVersion( deviceId: Long, version: String)
-    case class ShowDot11Assoc( deviceId: Long)
-    case class ShowInterface( deviceId: Long, date: java.util.Date)
+//    case class ShowVersion( deviceId: Long, version: String)
+//    case class ShowDot11Assoc( deviceId: Long)
+//    case class ShowInterface( deviceId: Long, date: java.util.Date)
+//
+//    val showVersion = ShowVersion(12345, "2.3")
+//    val showDot11Assoc1 = ShowDot11Assoc(12345)
+//    val showDot11Assoc2 = ShowDot11Assoc(12345)
+//    val showInterface = ShowInterface(12345, new java.util.Date())
+//    val mydate = new java.util.Date(2019,4,12)
+//
+//    //val myMaps = Iterable( Map( "Table1" -> List(showVersion), "Table2" -> List(showDot11Assoc1,showDot11Assoc2), "Table3" -> List(showInterface) ) )
+//    val myMaps = Option(Map( "Table1" -> List(showVersion), "Table2" -> List(showDot11Assoc1,showDot11Assoc2), "Table3" -> List(showInterface) ))
+//
+//    //val MyMapsFlat = myMaps.flatMap(x => x.values.flatMap(x => x)).map( s => if(s.isInstanceOf[ShowInterface]) s.asInstanceOf[ShowInterface].copy(date = mydate))
+//    val MyMapsFlat = myMaps.get.mapValues( v => v.map(s => if(s.isInstanceOf[ShowInterface]){ s.asInstanceOf[ShowInterface].copy(date = mydate) } else { s }))
+//
+//    MyMapsFlat.foreach(println)
+    def  remote = uptoAndInc("site-to-site {") ~> uptoAndInc("peer") ~> eow ^^ {
+      case remote =>
+        println(remote)
+    }
+    def connType = uptoAndInc("connection-type") ~> eow ^^ {
+      case conn =>
+        println(conn)
+    }
+    def tunnelName = uptoAndInc("description") ~> eow ^^ {
+      case tunnel =>
+        println(tunnel)
+    }
 
-    val showVersion = ShowVersion(12345, "2.3")
-    val showDot11Assoc1 = ShowDot11Assoc(12345)
-    val showDot11Assoc2 = ShowDot11Assoc(12345)
-    val showInterface = ShowInterface(12345, new java.util.Date())
-    val mydate = new java.util.Date(2019,4,12)
+    def local = uptoAndInc("local-address") ~> eow ^^ {
+      case local =>
+        println(local)
+    }
 
-    //val myMaps = Iterable( Map( "Table1" -> List(showVersion), "Table2" -> List(showDot11Assoc1,showDot11Assoc2), "Table3" -> List(showInterface) ) )
-    val myMaps = Option(Map( "Table1" -> List(showVersion), "Table2" -> List(showDot11Assoc1,showDot11Assoc2), "Table3" -> List(showInterface) ))
+    def tunnelId = uptoAndInc("tunnel") ~> eow ^^ {
+      case id =>
+        println(id)
+    }
 
-    //val MyMapsFlat = myMaps.flatMap(x => x.values.flatMap(x => x)).map( s => if(s.isInstanceOf[ShowInterface]) s.asInstanceOf[ShowInterface].copy(date = mydate))
-    val MyMapsFlat = myMaps.get.mapValues( v => v.map(s => if(s.isInstanceOf[ShowInterface]){ s.asInstanceOf[ShowInterface].copy(date = mydate) } else { s }))
+    def localStart = uptoAndInc("local {") ~> uptoAndInc("prefix") ~> eow ^^ {
+      case ls =>
+        println(ls)
+    }
 
-    MyMapsFlat.foreach(println)
+    def remoteStart = uptoAndInc("remote {") ~> uptoAndInc("prefix") ~> eow ^^ {
+      case ls =>
+        println(ls)
+    }
+
+    def totalExpr = remote ~ connType ~ tunnelName ~ local ~ tunnelId ~ localStart ~ remoteStart
+
+    def again = rep(totalExpr)
+
+
+    parse(again, output4) match {
+      case Success(matched,_) => println("Success")
+      case Failure(msg,_) => println(s"Failure: $msg")
+      case Error(msg,_) => println(s"ERROR: $msg")
+    }
+
+    def getBeginStartIp(ip: String): (Option[String], Option[String]) = {
+      val subn = ip.split("/")
+      val p = subn(1).toInt
+      val endn = (Math.pow(2, 32 - subn(1).toInt) - 1).toInt.toString
+      val sadd = subn(0).split("\\.")
+      val enda = sadd(0) + "." + sadd(1) + "." + sadd(2) + "." + endn
+      return (Some(subn(0)), Some(enda))
+    }
+
+
+    val dest = getBeginStartIp("192.40.35.2/24")
+    println(dest._1)
+    println(dest._2)
 
   }
 }
