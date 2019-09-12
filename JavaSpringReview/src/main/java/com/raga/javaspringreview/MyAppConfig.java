@@ -25,11 +25,15 @@ public class MyAppConfig {
     @Autowired
     Environment env;
 
-    @Bean(name = "myColorBean")
-    public MyColor getColor() {
-        return new RedColor();
-    }
-
+//    @Bean(name = "myColorRedBean")
+//    public MyColor getRedColor() {
+//        return new RedColor();
+//    }
+//
+//    @Bean(name = "myColorBlueBean")
+//    public MyColor getBlueColor(){
+//        return new BlueColor();
+//    }
     @Bean(name = "dbConfig")
     public MyDbConfig getDbConfig() {
 
