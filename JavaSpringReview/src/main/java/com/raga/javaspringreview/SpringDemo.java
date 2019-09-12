@@ -326,8 +326,8 @@ public class SpringDemo {
         
         logger.info("getting bean reference...");
         
-        MyColor color = (MyColor) context.getBean("myColorBean");
-        color.printColor();
+        //MyColor color = (MyColor) context.getBean("myColorRedBean");
+        //color.printColor();
         MyColorManager colMan = context.getBean(MyColorManager.class);
         colMan.showColor();
         colMan.showMessage();
