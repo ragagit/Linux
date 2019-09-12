@@ -9,13 +9,16 @@ package com.raga.javaspringreview;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 
 /**
  *
  * @author raga
  */
-
+@Component
+@Qualifier("redcolor")
 public class RedColor implements MyColor {
   
     @PostConstruct
