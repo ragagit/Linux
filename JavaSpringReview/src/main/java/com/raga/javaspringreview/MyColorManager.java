@@ -10,6 +10,7 @@ import javax.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  *
@@ -20,6 +21,7 @@ public class MyColorManager {
     
     //Even without using any of the @Autowire this works because of the autodetect
     @Autowired
+    @Qualifier("bluecolor")
     private MyColor color;
     
     @Value("Hello from MyColorManager")
@@ -32,9 +34,9 @@ public class MyColorManager {
     
     //Dependency Injection by Constructor
     //@Autowired
-    MyColorManager( MyColor color){
-        this.color = color;
-    }
+//    MyColorManager( MyColor color){
+//        this.color = color;
+//    }
     
     //Dependency Injection by setter
 //    @Autowired
