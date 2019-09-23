@@ -462,6 +462,137 @@ docker run -it -p 8080:8080 --name bootkafka -e ENVIRONMENT=stage -e KAFKABROKER
 docker run -it -p 8080:8080 --name bootkafka -e ENVIRONMENT=stage -e KAFKABROKER=172.17.0.3:9092  dilipthelip/learnbootkafka-manual-offset-docker
 
 
+=== Kafka Security
+
+https://github.com/dilipsundarraj1/TeachApacheKafka/blob/master/Kafka_Commands.md
+
+- Why Kafka Security?
+Sensitive information
+
+All configuration is done in server.properties broker file. TEXTPLAIN for SSL
+
+- Difference between truststore and keystore
+TrustStore and KeyStore are very much similar in terms of construct and structure as both are managed by the "keytool" command
+KeyStore:
+	The keystore file stores the certificate and private key of that certificate.
+	This is server side set up and this file is required at the server level.
+TrustStore:
+	The truststore of a client stores all the certificates that the client should trust.
+	This is required of client side.
+
+- How SSL works
+Any time a client will connect to the server, the server will present its certificate stored in the KeyStore and client will verify that certificate by comparing with certificate stored on its TrustStore.
+Once the validation is successful then the connection will be succeeded.
+
+How to enable security in Kafka using SSL ?
+
+SSL Set up in KAFKA BROKER:
+
+- Step 1:
+Generate SSL key and Certificate for broker:
+
+keystore -> which stores each machine’s own identity.
+
+Here we are creating the keystore file server.keystore.jks that stores the Certificate.
+The validity of Certificate is given as 365 days below.
+
+keytool -keystore server.keystore.jks -alias localhost -validity 365 -genkey
+
+Password: kafka123
+First and Last name: Alex Ace
+Organizational unit: raga.com
+Organization: raga
+City: Colima
+State: Colima
+Two letter country code for this unit: MX
+
+
+- Step 2:
+
+Creating your own CA:
+Here we are creating a Certificate Authority which is responsible for signing certificates.
+We will add these certs to the server.keystore.jks file and client.truststore.jks that we will be creating in a while.
+
+openssl req -new -x509 -keyout ca-key -out ca-cert -days 365
+
+- Step 3:
+
+Here we will generate the truststore and at the same time assign the ca-cert that we just created
+
+keytool -keystore server.truststore.jks -alias CARoot -import -file ca-cert
+
+- Step 4:
+
+Sign all certificates in the keystore with the CA we generated.
+
+Export the certificate in to the keystore.
+
+keytool -keystore server.keystore.jks -alias localhost -certreq -file cert-file
+Then sign it with the CA:
+
+openssl x509 -req -CA ca-cert -CAkey ca-key -in cert-file -out cert-signed -days 365 -CAcreateserial -passin pass:kafka123
+
+keytool -keystore server.keystore.jks -alias CARoot -import -file ca-cert
+keytool -keystore server.keystore.jks -alias localhost -import -file cert-signed
+
+- Step 5:
+
+Add the SSL in server.properties file of Kafka distribution
+
+The below setting will make sure that the broker will authenticate the clients (Kafka Consumers) who are trying to access the broker.
+
+listeners=SSL://localhost:9092	//
+
+advertised.listeners=SSL://localhost:9092
+
+
+security.inter.broker.protocol = SSL	//SSL or SASL or ACL
+ssl.client.auth=required	//required or requested=requested but the client can still connect not recommended
+
+ssl.keystore.location=<path>/server.keystore.jks
+ssl.keystore.password=changeit
+ssl.key.password=changeit
+ssl.truststore.location=<path>/server.truststore.jks
+ssl.truststore.password=changeit
+ssl.keystore.type = JKS
+ssl.truststore.type = JKS
+
+- Step 6:
+
+Run the below command to check servers keystore and truststore are set up correctly.
+
+openssl s_client -debug -connect localhost:9093 -tls1
+With this we came to the ends of Setting up the SSL in Kafka Broker.
+
+=== Kafka Console Producer and Consumer using SSL:
+
+---- client-ssl.properties file
+security.protocol=SSL
+ssl.truststore.location=<path>/server.truststore.jks
+ssl.truststore.password=kafka123
+ssl.keystore.location=<path>/server.keystore.jks
+ssl.keystore.password=kafka123
+ssl.key.password=kafka123
+-----
+- Console Producer:
+
+./kafka-console-producer.sh --broker-list localhost:9092 --topic test --producer.config ../client-ssl.properties
+
+- Console Consumer:
+
+./kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test --from-beginning --new-consumer --consumer.config ../client-ssl.properties
+
+- How to kill the Broker Process?
+
+Step 1:
+
+ps ax | grep -i 'kafka\.Kafka'
+Step 2:
+
+kill -9 <processId>
+
+
+
 
 
 
