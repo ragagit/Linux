@@ -1,2 +1,470 @@
 Kafka Review
 
+=== Overview 
+- Messaging is one of the popular trend in sharing the data between the applications.
+Two main popular:
+	Publish-Subscribe. Messages are publish to a message broker and distributed to  	all consumers.
+	Queue. Messages are published to a queue and the consumer will read from it. 		Limitation is one consumer per queue.
+A limitation for both is the size of message because large amount of messages may break
+the broker or make it slower.
+Fault - Tolerance. With this method once the message is read is gone, if there is a problem for instance on the db it can't be read again.
+
+- What is Kafka?
+It is a scalable, reliable, high volume and high throughput distributed system.
+It is used for sharing high volume data from one system to another and retention data.
+
+	Messages are not removed from the topic
+	it is horizontally scalable
+	Strong ordering 
+	High volume and high throughput
+	Supports loosely coupled producer/consumer
+	It can be used also as a storage system.
+
+We have Producer and Consumer. The component that holds the messages is called Topic.
+These topics live in Kafka Broker
+Kafka achieves the distributed management with clusters, which are a group of brokers.
+
+- What is a distributed system?
+The work load needs to be distributed across the cluster and there needs to be a coordination mechanism, every system in the cluster needs to talk to each other.
+In the world of distributed systems this communication is achieved using "gossip" protocol.
+There needs to be a system in place to monitor the health and metadata about the
+brokers, this is done by "zookeeper".
+
+- Zookeeper
+It maintains configuration, naming, provides distributed synchronization and group services.
+It is responsible for maintaining cluster metadata and overall health.
+
+=== Kafka Installation
+https://kafka.apache.org/downloads
+
+Download the zip file and copy it over add bin to the path.
+
+server.properties contains configuration that the server will send to zookeeper like broker metadata.
+We also have zookeeper.properties which contain zookeeper port.
+You can get Kafka through this curl command
+https://github.com/dilipsundarraj1/TeachApacheKafka/blob/master/Kafka_Commands.md
+
+- How to start zookeeper
+
+./zookeeper-server-start.sh ../config/zookeeper.properties
+
+-How to start Kafka broker
+First modify
+advertised.listeners=PLAINTEXT://your.host.name:9092
+advertised.listeners=PLAINTEXT://localhost:9092
+
+./kafka-server-start.sh ../config/server.properties
+
+=== Topics
+- The Kafka cluster stores streams of records in categories called topics.
+- A topic is a category or feed name to which records are published.
+- For each topic Kafka maintains one or more physical log file based on the number
+  of partitions in a topic.
+- Topic messages are stored sequentially in n number of partitions. This will defined during the topic creation.
+- Each record in the partition will be assigned a sequential id number called "offset" that
+uniquely identifies each record within the partition.
+
+- Each message in the partition will have the following attributes:
+	Topic name
+	Partition
+	Offset value
+	Payload (Actual Message Content)
+
+- Consumers are independent of one another.
+- When consumers are created you can either create the consumer to start reading the              message from the beginning or read it from the latest.
+- Consumers can also reset to an older offset and reposses the data.
+- In real world most of topics will have more than one partition.
+- Each and every partition maintains its own and ordering is guaranteed within the partition
+- This is the foundation for
+	Scaling
+	Fault tolerance and
+	High levels of throughput.
+
+- Retention
+The default retention period is 7 days.
+In the cluster each topic can have their own retention period.
+
+=== How to create a topic ?
+
+./kafka-topics.sh --create --topic <topic-name> -zookeeper localhost:2181 --replication-factor 1 --partitions 1
+
+./kafka-topics.sh --create --topic my-first-topic -zookeeper localhost:2181 --replication-factor 1 --partitions 1
+
+=== How to check the configuration of all the topics in a broker ?
+./kafka-topics.sh --describe --zookeeper localhost:2181
+
+
+=== How to check the configuration of a particular topic?
+./kafka-topics.sh --describe --topic my-first-topic --zookeeper localhost:2181
+
+=== How to instantiate a Console Producer?
+./kafka-console-producer.sh --broker-list localhost:9092 --topic my-first-topic
+
+=== How to instantiate a Console Consumer?
+./kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic my-first-topic --from-beginning
+
+=== How to delete a topic?
+./kafka-topics.sh --delete --zookeeper localhost:2181 --topic your_topic_name
+
+=== Commit log
+In Kafka each and every record that gets published commits the transaction to a physical commit log
+Which will have the complete list of activities in the sequence the records are published.
+
+=== Kafka Core API
+Producer API
+Consumer API
+Streams API. You don't process the data but pass it along
+Connect API. Where you need continuously pull data from another system
+
+=== Behind the scenes
+Zookeeper push metadata to brokers so each broker knows which portions belongs to.
+Brokers sends status to Zookeeper.
+One topic can have several partitions and each partition can be in a different broker.
+The producer sends the partitions as part of the record.
+The consumer pulls in formation from zookeeper to know which broker has that topic and start reading 
+messages.
+
+=== How to run multiple Kafka brokers
+You need to have  multiple server.properties with different 
+broker.id=0
+listeners=PLAINTEXT://:9092
+advertised.listeners=PLAINTEXT://localhost:9092
+log.dirs=/tmp/kafka-logs
+
+=== Leader, Replication Factor and ISR (In Sync Replica)
+
+In a distributed system each server in the cluster needs to talk to each other in order to
+maintain the state of the cluster this is called "QUORM".
+When a broker is created there will be a leader assigned to it but he zookeeper.
+This leader is responsible for communicating to other brokers about the partitions it owns.
+ 
+=== Replication factor
+Replication factor > 1 for any topic in Kafka
+Higher availability 
+Stronger Durability
+Fault Tolerance
+
+=== ISR (INSYNC REPLICA)
+Ideal Scenario ISR == REPLICATION FACTOR
+
+=== How to alter a topic configuration
+./kafka-topics.sh --zookeeper localhost:2181 --alter --topic -topic --partitions 4
+
+=== Partition Mechanism in Kafka Producer
+This determines which partitions will be allocated for every message that is published by the producer.
+The partition strategy is determined by the key value passed as part of the producer record.
+Approach 1:
+	Provide the partition number as part of the Producer Record. This is called "Direct" partitioning.
+Approach 2:
+	Round-Robin no key is provided as part of the producer record.
+Approach 3:
+	Key-Hashing. If you provide a key and there is no custom partition implementation then the
+	the partition is decided by the formula
+	key.hashcode % no of Partitions 
+	The drawback is that if the key is the same for every record then some of the partitions will
+	never received any message.
+Approach 4:
+	Custom Partition Implementation. This can be done by providing the implementation class against
+
+=== Consumer
+Consumer.poll() sends a heartbeat to the cluster which makes sure this broker is on active consumer.
+If ni heartbeat is received with the session.timeout.ms mentioned in the Kafka consumer then
+This will invalidate the consumer and rebalance will happen on the consumer end.
+By Default
+enable.auto.commit=true
+auto.commit.interval.ms=5000
+
+=== Automatic/Manual Commit Offset
+enable.auto.commit=true
+auto.commit.interval.ms=5000
+The issue with automatic offset management is if something happens for instance to the db and we didn't save the message the offset will be moved. 
+We need to set it to false.
+There are two methods to commit the offset in Kafka
+commitSync()
+commitAsync()
+
+If you don't call one of these functions the consumer will read the message again.
+
+=== Consumer group
+Consumer that have the same group id setting form the consumer group.
+
+Why consumer group?
+High Throughput
+Fault tolerance
+
+- Group Coordinator
+When Kafka determines multiple consumers that have the same group id then zookeeper employs the Group Coordinator
+
+- Role of Group Coordinator
+Rebalance the consumers if one goes down
+Rebalance if a new consumer joins
+Rebalance consumers if new partitions are added to the topics.
+
+- Re-read
+If you want to read the messages again one way is to change the group id and 
+This new consumer will think it is a new consumer and will read all the records int the topic
+
+- Reset Offset to a specific value
+You can use:
+seek
+seekToBeginning
+seekToEnd
+
+- Consumer Config Properties
+session.timeout.ms By default is 10000ms. If no heartbeat received then this will remove the consumer from the consumer group
+fetch.max.bytes The maximum amount of data the server should fetch for a poll call from the Kafka consumer
+max.poll.records The maximum number of record that should be returned in a single poll call
+ssl.*
+security.protocol: SSL
+ssl.truststore.location
+ssl.truststore.password
+ssl.keystore.location
+Ssl.keystore.password
+ssl.key.password
+
+http://kafka.apache.org/documentation/#newconsumerconfig
+
+=== Kafka GUI
+http://kafkatool.com
+
+=== Apache Camel
+Any application in an enterprise today needs to talk to different applications. It means
+There needs to be some integration in place.
+There is a pattern behind those problems. Those are grouped together as Enterprise Integration Pattern.
+Apache camel implements all those EIP's.
+Camel is a lightweight integration framework.
+Camel is open source
+Camel supports multiple DSL's programming languages such as Java, Scala, Groovy and Spring
+Supports more that 80 protocols
+It is easy configurable
+It can handle any payload.
+In Camel everything is a route from where to
+
+- Camel Architecture
+Routes
+	endpoint scheme, context path, options
+	file:data/input?noop=true
+	scheme -> file
+	context path -> data/input
+	options -> noop=true
+Components (file, jdbc, Kafka,...) there are over 80 
+Message based processor
+Context base Router Processor.
+
+=== Spark
+Apache Spark is fast and general engine for large-scale data processing
+Spark is built using Scala
+Spark is faster 100x faster than Hadoop Mapreduce in memory or 10x faster in disk
+
+Spark SQL. Query the data
+Spark Streaming. Live data streaming
+MLib (Machine Learning)
+GraphX (graph). Graph computation.
+Core It provides distributed tasks, scheduling, basic I/O functionalities. Uses a fundamental data structure called 
+RDD Resiliant Distributed Datasets.
+
+- Spark Streaming High-throughput, fault-tolerant stream processing of live data streams.
+
+The data can be from many sources such as Kafka, Flume, Twitter and will be passed to the spark engine to get the processed data out of it.
+
+The processed data will be fed to dashboards, databases etc.
+sudo hostname -s 127.0.0.1
+
+=== How to delete a topic?
+In server.properties file
+Enable "delete.topic.enable=true"
+
+=== Spring-Kafka
+
+Jersey
+Hateous
+Kafka
+
+In the application.yml file you can create profiles for dev, stage and prod and use it when calling the app as follows:
+
+java -jar -Dspring.profiles.active=stage target/jarname.jar
+
+=== Kafka Consumer in Spring
+Messages can be received by configuring a MessageListenerContainer and providing  a Message Listener or by
+Using @KafkaListener annotation
+
+There are two MessageListenerContainer
+ConcurrentKafkaListenerContainerFactory which is multithreaded
+KafkaMessageListenerContaoner which is single threaded.
+
+https://www.baeldung.com/spring-kafka
+
+-Spring Kafka Consumer set up:
+Add Spring Kafka in pom.xml
+Add the configuration details to application.yml file
+Add the Consumer Configuration using @Configuration annotation 
+Add Broker details to configuration class
+Add @KafkaListenet annotation.
+
+-Spring Kafka Producer set up:
+Instantiate the KafkaTemplate and ProducerFactory class
+KafkaTemplate.send() method actually connects to the topic and returns a ListenableFuture Object.
+
+=== Spring Boot - Manually Offset Commit
+- Managing the offsets is the safest and the recommended approach to run your consumer
+in production environment. Changes:
+
+Application.yml
+enable.auto.commit:false
+
+KafkaConfig
+factory.getContainerProperties().setAckMode(AnstractMessageListenerContainer.AckMode.MANUAL);
+
+AcknoledgingMessageListener:
+The listener which has the @KafkaListener annotation needs to implement this interface
+
+=== Consumer Group with Spring
+We can launch different instances with command
+Java -jar -Dspring.profiles.active=dev -Dserver.port8081 jar name.jar
+
+=== Docker
+
+- What is a container?
+Runtime environment
+An Application
+Dependencies and libraries
+Configuration files.
+  
+- What is Docker?
+Docker is an open source platform and it consists of two main components
+	Docker engine
+	Docker Hub
+
+- How to build a docker image?
+Include the docker-maven-plugin in the pom.xml
+Add two files in src/main/docker folder:
+	Dockerfile
+	docker-entrypoint.sh
+
+
+- To find out which application is using port 8080
+lsof -i :8080 | grep LISTEN
+ps -ef pid
+Kill -9 pid
+
+- To create a jar in Netbeans
+File -> Project Properties -> General -> Packaging jar
+Right click on the project and choose Clean and Build
+
+- Dockerfile
+FROM. //the image from dockerhub
+ADD //takes source and destination
+COPY 
+ENTRYPOINT
+RUN
+CMD
+
+To build the image right click on pom.xml Run Maven -> Goals 
+In goals type 
+clean package docker:build
+
+=== Docker commands
+
+https://github.com/dilipsundarraj1/TeachApacheKafka/blob/master/Docker-Commands.md
+
+- How to build the docker image ?
+Maven command :
+
+clean package docker:build
+
+- How to check the docker images ?
+docker images
+
+- How to run the Docker Image?
+docker run -it -p 8080:8080 --name bootkafka -e ENVIRONMENT=stage -e KAFKABROKER=localhost:9092  dilipthelip/learnbootkafka-manual-offset-docker
+
+- How to check the containers ?
+docker ps -a
+
+- How to stop a container in Docker ?
+docker stop <Container ID>
+
+- How to remove a container in Docker ?
+docker rm <Container ID>
+
+- How to delete an image in Docker ?
+docker rmi <Image Name>
+
+- How to push a docker Image:
+Step 1:
+
+Create a docker hub account using the following link https://hub.docker.com/.
+Step 2:
+
+Login in to docker and push the image. Follow the below commands.
+
+docker login
+
+docker push <image Name>
+
+- Command to run the Docker Image to connect to Kafka running in docker
+docker run --name dockerboot -p 8080:8080 -e ENVIRONMENT=stage -e KAFKABROKER=172.17.0.3:9092 ragadocker/learnsbootkafka
+
+- Url to connect to the spring boot app:
+http://localhost:8080/home?input=Hello
+Setting needs to be done in VirtualBox
+Please have this settings done in your VirtualBox to connect to the docker container using the local host.
+
+http://stackoverflow.com/questions/27471688/how-to-access-tomcat-running-in-docker-container-from-browser
+
+- How to kill a java process running on a particular port?
+sudo lsof -i :8080
+
+kill -9 [PID]
+
+=== Zookeeper and Kafka docker images
+
+https://github.com/dilipsundarraj1/TeachApacheKafka/blob/master/Kafka-Docker-Commands%20.md
+
+
+- Download Docker Images from github:
+Clone the following repo to your local.
+
+git clone https://github.com/ches/docker-kafka.git
+
+- Run the Zookeeper Docker Image:
+docker run -d --name zookeeper jplock/zookeeper:3.4.6
+
+- Check the docker zookeeper image is up by running the following command.
+
+docker ps -a
+
+- Run the Kafka Broker Docker Image:
+docker run -d --name kafka --link zookeeper:zookeeper ches/kafka
+
+- Check the docker kafka image is up by running the following command.
+
+docker ps -a
+
+=== Create a topic to the docker Kafka
+
+- Check the port of zookeeper Docker instance
+docker inspect --format '{{ .NetworkSettings.IPAddress }}' zookeeper
+
+- Check the port of kafka Docker instance
+docker inspect --format '{{ .NetworkSettings.IPAddress }}' kafka
+
+- Set the env variables:
+ZK_IP=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' zookeeper)
+KAFKA_IP=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' kafka)
+
+docker run --rm ches/kafka kafka-topics.sh --create --topic my-first-topic --replication-factor 1 --partitions 1 --zookeeper $ZK_IP:2181
+
+
+- To launch our container
+docker run -it -p 8080:8080 --name bootkafka -e ENVIRONMENT=stage -e KAFKABROKER=172.17.0.3:9092  ragadocker/learnsbootkafka
+
+docker run -it -p 8080:8080 --name bootkafka -e ENVIRONMENT=stage -e KAFKABROKER=172.17.0.3:9092  dilipthelip/learnbootkafka-manual-offset-docker
+
+
+
+
+
+
+
+
