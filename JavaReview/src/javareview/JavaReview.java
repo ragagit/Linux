@@ -2992,7 +2992,134 @@ public class ObjectToJsonEx {
 
 */
 
+/*
+//Array to list
+        String[] strArr = {"JAVA", "C++", "PERL", "STRUTS", "PLAY"};
+        List<String> strList = Arrays.asList(strArr);
 
+	//Binary search
+        char[] chrArr = {'a','c','d','y','e','q','b'};
+        int index = Arrays.binarySearch(chrArr, 0, chrArr.length-1, 'q');
+
+	//Copy
+        int[] myArr = {2,4,2,4,5,6,3};
+        int[] newArr = Arrays.copyOf(myArr, 10);
+
+	//Copy range
+	  int[] myArr = {2,4,2,4,5,6,3};
+	  int[] newArr = Arrays.copyOfRange(myArr, 1, 4);
+
+	// Compare arrays
+        String[] strArr = {"JAVA", "C++", "PERL", "STRUTS", "PLAY"};
+        String[] strArrCopy = {"JAVA", "C++", "PERL", "STRUTS", "PLAY"};
+	  Arrays.deepEquals(strArr, strArrCopy)
+
+	//Array filling
+        String[] myArr = new String[10];
+        Arrays.fill(myArr, "Assigned");
+
+	//Sorting
+        int[] myArr = {3,2,56,12,98,23,56};
+        Arrays.sort(myArr);
+
+	//Sorting with function
+	 Arrays.sort(strArr,new Comparator<String>(){ 
+            @Override
+            public int compare(String o1, String o2) {
+                return o1.compareTo(o2);
+            }});
+
+	//String
+	  String bcd = new String("this is also string object"); 
+        char[] c = {'a','b','c','d'};
+        String cdf = new String(c);
+
+	//Copy value of
+	  char ch[] = {'M','y',' ','J','a','v','a',' ','e','x','a','m','p','l','e'};
+	  String chStr = String.copyValueOf(ch);
+	  String subStr = String.copyValueOf(ch,3,4);
+
+	//Concatenate
+	  String b = "jump ";
+        String c = "No jump";
+	  d = b.concat(c);
+
+	//Compare
+        String x = "JUNK";
+        String y = "junk";
+	  x.equalsIgnoreCase(y)
+
+	//To bytes
+        String str = "core java api";
+        byte[] b = str.getBytes();
+
+	//IndexOf
+	  String str = "Use this string for testing this";
+	  str.indexOf(’s’,4)
+
+	//LastIndex
+	 str.lastIndexOf('s',24)
+
+	//Start with
+	  str.startsWith("This")
+
+	//End with
+	  str.endsWith("example”)
+
+	//split
+	  String str = "This program splits a string based on space";
+        String[] tokens = str.split(" ");
+        for(String s:tokens){
+            System.out.println(s);
+        }
+
+	//Chars from string
+        String str = "Copy chars from this string";
+        char[] ch = new char[5];
+	  str.getChars(5, 10, ch, 0);
+
+	//Replace chars
+	  String str = "This is an example string";
+	  str.replace('s', 'o')
+	 str.replaceAll("is", "no")
+
+	//Upper, Lower
+	  String str = "Change My Case";
+	  str.toUpperCase();
+	  str.toLowerCase()
+
+	//Trims
+	  String str = "  Junk   ";
+	  str.trim()
+
+	//Format
+        String str = "This is %s format example";
+        System.out.println(String.format(str, "string"));
+        String str1 = "We are displaying no %d";
+        System.out.println(String.format(str1, 10));
+
+	//Line counts
+	 text.split("[\n|\r]").length;
+
+	//Replace
+        String text = "<B>I don't want this to be bold<\\B>";
+        text = text.replaceAll("\\<.*?\\>", "");
+
+	//Matches
+	  String[] str = {"www.java2novice.com", "http://java2novice.com"};
+	  for(int i=0;i < str.length;i++){
+            if(str[i].matches("^www\\.(.+)")){
+                System.out.println(str[i]+" Starts with 'www'");
+            } else {
+                System.out.println(str[i]+" is not starts with 'www'");
+            }
+         }
+
+	//toCharArray
+	  String myStr = "Hello Java";
+        char[] arr = myStr.toCharArray();
+
+*/
 
 public class JavaReview {
 
