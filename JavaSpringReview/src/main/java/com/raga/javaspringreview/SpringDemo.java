@@ -335,7 +335,7 @@ public class SpringDemo {
         logger.info("done...");
         
         MyDbConfig dbConfig = (MyDbConfig) context.getBean("dbConfig");
-        System.out.println(dbConfig.toString());
+        System.out.println("dbHost:" + dbConfig.getDbHost());
                
     }
 }
