@@ -1,0 +1,537 @@
+Java gRPC
+
+- API you need an endpoint, with gRPCs you just need to call a server function.
+- At the core of gRPC you need to define the messages and services using Protocol Buffers
+  The rest  of the gRPC code will be generated for you and you'll have to provide an implementation for it.
+- A proto file will work for over 12 programming languages and allows you to use a framework that scales to millions of RPC per second.
+
+=== Protocol buffers
+Are language agnostic
+Code can be generated for pretty much any language
+Data is binary and efficiently serialized
+Very convenient for transporting a lot of data.
+Protocol Buffers allows for easy API evolution using rules.
+
+- Efficient PB over JSON
+
+JSON: 55 bytes
+{
+	"age": 35,
+	"first_name": "Alex",
+	"last_name": "Ace"
+}
+
+PB 20 bytes
+message Person{
+	int32 age = 1;
+	string first_name = "Alex"
+	string last_name = "Ace"
+} 
+
+Parsing JSON is actually CPU intensive
+PB is binary
+PB faster and efficient
+
+Any language can talk to other languages when using gRPC.
+
+- Building an API is hard
+Need to think about data model
+	JSON
+	XML
+	Something Binary?
+Need to think about the endpoint
+	GET /api/v1/user/123/post/457
+Need to think about how to invoke it and handle errors
+Need to think about efficiency of the API
+	How much data do I get out of one call
+	Too much data
+	Too little data -> many API calls?
+How about latency?
+How about scalability to 1000s of clients?
+How about load balancing?
+How about inter operability with many languages?
+How about authentication, monitoring, logging?
+
+- What is an API
+At its core an API is a contract saying:
+	Send me this REQUEST (Client)
+	I'll send you this RESPONSE (Server)
+
+gRPC is a free and open-source framework develop by Google
+gRPC is part of the Cloud Native Computation Foundation (CNCF) - like Docker and Kubernetes
+It allows you to define REQUEST and RESPONSE for RPC and handles all the rest for you.
+
+- Why Protocol Buffers?
+PB are language agnostic
+Code can be generated for pretty much any language
+Data is binary and efficiently serialized (small payloads)
+Very convenient for transporting a lot of data
+Protocol buffers allows for easy API evolution using rules.
+
+- gRPC Languages
+GRPC-Java Pure implementation of gRPC in Java
+GRPC-GO Pure implementation of gRPC in Go
+GRPC-C Pure implementation of gRPC in C
+	C++, Phyton, Ruby, ObjectiveC, PHP, C# rely on this C implementation.
+=== HTTP/2
+https://http2.github.io/
+
+HTTP/2 is the newer standard for internet communications
+HTTP 1.1 released in 1997
+HTTP 1.1 opens a new TCP connection to a server at each request
+	it doesn't compress headers plain text
+	GET,POST,PUT,DELETE, etc.
+HTTP 2 release 2015 Google SPDY
+	Multiplexing. Client and Server can push messages in parallel over the same TCP connection
+	Reduces latency
+	Servers can push streams (multiple messages) for one request from the client.
+	Supports header compression
+	It is binary
+	It is secured SSL
+
+=== Types of API in gRPC
+https://grpc.io/
+Unary. Clasic request-response 
+Server Streaming. Server can push streams.
+Client Streaming. Client sends multiple messages.
+Bi Directional Streaming. Server-CLient exchange multiple messages asynchronously.
+
+Service GreetService {
+//Unary
+rpc Greet(GreetRequest) returns (GreetResponse) {}
+// Streaming Server
+rpc Greet(GreetRequest) returns (stream GreetResponse) {}
+// Streaming Client
+rpc Greet(stream GreetRequest) returns (GreetResponse) {}
+//Bi-directional
+rpc Greet(stream GreetRequest) returns (stream GreetResponse) {}
+
+}
+
+=== Scalability in gRPC
+gRPC server are asynchronous by default, they don't block therefore can serve millions of requests.
+gRPC clients can be asynchronous or synchronous 
+gRPC clients can perform client side load balancing.
+
+=== Security in gRPC
+Secure by default SSL
+Each language will provide an API to load gRPC with the required certificates and provide encryption capability out of the box.
+Additionally using Interceptors, we can also provide authentication.
+
+=== REST API vs gRPC
+gRPC			REST
+PB smaller faster	JSON slower bigger
+HTTP2			HTTP1.1
+Bidirectional		Client => Server request
+Stream Support		Request/Response support only
+API Oriented - "What"	CRUD Oriented
+Code generation thru PB	Code generation thru OpenAPI/Swagger
+RPC based - gRPC does	HTTP verb based - we have to write the plumbing
+the plumbing
+
+=== Summary 
+- Easy code definition in over 11 language
+- Uses a modern, low latency HTTP/2 transport mechanism
+SSL Security is built in
+Support for streaming APIs for maximum performance
+gRPC is API oriented, instead of Resource Oriented like REST
+
+
+=== Installation
+Make sure you have JRE and JDK 8.0
+Get IntelliJ CE
+Create a Gradel Java project
+Go to this link to get gRPC grades dependencies also protobuf-base codegen
+https://github.com/grpc/grpc-java
+
+Go to preferences -> Build Execution Deployment -> Build Tools -> Gradel -> Runner
+You need to uncheck the box Delegate
+
+=== proto file
+
+Under src/main/ create a directory called proto
+Add code and test by going to Gradel on left side -> Tasks -> Others
+Convention in proto append the name of the message with Server, Request, Response
+
+=== gRPC Server Setup
+In IntelliJ once you create a Class you can type psvm and IntelliJ will add main()
+When you are typing you can press Tab to add the import
+When there is an error press Alt-Enter to get a solution
+
+Ctrl-O to override a method or method name then Tab
+
+=== Server Implementation
+
+public class GreetingServer {
+    public static void main(String[] args) throws IOException, InterruptedException {
+        System.out.println("Hello World");
+
+        Server server = ServerBuilder.forPort(50051)
+                .addService(new GreetServiceImpl())
+                .build();
+
+        server.start();
+
+        Runtime.getRuntime().addShutdownHook( new Thread( () -> {
+            System.out.println("Shutdown received");
+            server.shutdown();
+            System.out.println("Successfully stopped");
+        }));
+
+        //We need to block the main thread otherwise it will exit
+        server.awaitTermination();
+
+
+    }
+}
+
+public class GreetServiceImpl extends GreetServiceGrpc.GreetServiceImplBase {
+
+    @Override
+    public void greet(GreetRequest request, StreamObserver<GreetResponse> responseObserver) {
+//        super.greet(request, responseObserver);
+
+        // extract fields we need
+        Greeting greeting = request.getGreeting();
+        String firstName = greeting.getFirstName();
+
+        // create the response
+        String result = "Hello " + firstName;
+        GreetResponse response = GreetResponse.newBuilder()
+                .setResult(result)
+                .build();
+
+        // send the response
+        responseObserver.onNext(response);
+
+        // complete the RPC call
+        responseObserver.onCompleted();
+    }
+
+
+=== Client Implementation
+
+public class GreetingClient {
+    public static void main(String[] args) {
+
+        System.out.println("Hello I am client");
+
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50051)
+                .usePlaintext()
+                .build();
+
+        System.out.println("Creating stub");
+ 
+        GreetServiceGrpc.GreetServiceBlockingStub greetClient = GreetServiceGrpc.newBlockingStub(channel);
+
+        Greeting greeting = Greeting.newBuilder()
+                .setFirstName("Alex")
+                .setLastName("Ace")
+                .build();
+
+        GreetRequest greetRequest = GreetRequest.newBuilder()
+                .setGreeting(greeting)
+                .build();
+
+        GreetResponse greetResponse = greetClient.greet(greetRequest);
+
+        System.out.println(greetResponse.getResult());
+
+        //Shutting down
+        System.out.println("Shutting down channel");
+        channel.shutdown();
+
+    }
+}
+
+=== Server Streaming
+-Server
+        try {
+            for (int i = 0; i < 10; i++) {
+                String result = "Hello " + firstName + ", response number: " + i;
+                GreetManyTimesResponse response = GreetManyTimesResponse.newBuilder()
+                        .setResult(result)
+                        .build();
+
+                responseObserver.onNext(response);
+                Thread.sleep(1000L);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            responseObserver.onCompleted();
+        }
+
+-Client
+        GreetManyTimesRequest greetManyTimesRequest = GreetManyTimesRequest.newBuilder()
+                .setGreeting(Greeting.newBuilder().setFirstName("Alex"))
+                .build();
+
+        // We stream the response in a blocking manner
+        greetClient.greetManyTimes(greetManyTimesRequest)
+                .forEachRemaining(greetManyTimesResponse -> {
+                    System.out.println(greetManyTimesResponse.getResult());
+                });
+
+=== Client Streaming
+-Server
+@Override
+    public StreamObserver<LongGreetRequest> longGreet(StreamObserver<LongGreetResponse> responseObserver) {
+        // we create the requestObserver that we'll return in this function
+        StreamObserver<LongGreetRequest> requestObserver = new StreamObserver<LongGreetRequest>() {
+
+            String result = "";
+
+            @Override
+            public void onNext(LongGreetRequest value) {
+                // client sends a message
+                result += "Hello " + value.getGreeting().getFirstName() + "! ";
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                // client sends an error
+            }
+
+            @Override
+            public void onCompleted() {
+                // client is done
+                responseObserver.onNext(
+                        LongGreetResponse.newBuilder()
+                                .setResult(result)
+                                .build()
+                );
+                responseObserver.onCompleted();
+            }
+        };
+
+        return requestObserver;
+
+    }
+
+
+-Client
+    private void doClientStreamingCall(ManagedChannel channel) {
+        // create an asynchronous client
+        GreetServiceGrpc.GreetServiceStub asyncClient = GreetServiceGrpc.newStub(channel);
+
+        //We need a latch when dealing with asynchronous
+        CountDownLatch latch = new CountDownLatch(1);
+
+
+        StreamObserver<LongGreetRequest> requestObserver = asyncClient.longGreet(new StreamObserver<LongGreetResponse>() {
+            @Override
+            public void onNext(LongGreetResponse value) {
+                // we get a response from the server
+                System.out.println("Received a response from the server");
+                System.out.println(value.getResult());
+                // onNext will be called only once
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                // we get an error from the server
+            }
+
+            @Override
+            public void onCompleted() {
+                // the server is done sending us data
+                // onCompleted will be called right after onNext()
+                System.out.println("Server has completed sending us something");
+                latch.countDown();
+            }
+
+        });
+
+        // streaming message #1
+        System.out.println("sending message 1");
+        requestObserver.onNext(LongGreetRequest.newBuilder()
+                .setGreeting(Greeting.newBuilder()
+                        .setFirstName("Stephane")
+                        .build())
+                .build());
+
+        // streaming message #2
+        System.out.println("sending message 2");
+        requestObserver.onNext(LongGreetRequest.newBuilder()
+                .setGreeting(Greeting.newBuilder()
+                        .setFirstName("John")
+                        .build())
+                .build());
+
+        // streaming message #3
+        System.out.println("sending message 3");
+        requestObserver.onNext(LongGreetRequest.newBuilder()
+                .setGreeting(Greeting.newBuilder()
+                        .setFirstName("Marc")
+                        .build())
+                .build());
+
+        // we tell the server that the client is done sending data
+        requestObserver.onCompleted();
+
+        try {
+            latch.await(10L, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+=== Bidirectional streaming 
+-Server 
+As Server stream
+-Client
+As Client stream
+
+=== Errors codes
+https://grpc.io/docs/guides/error.html
+http://avi.im/grpc-errors
+
+-Server
+            responseObserver.onError(
+                    Status.INVALID_ARGUMENT
+                            .withDescription("The number being sent is not positive")
+                            .augmentDescription("Number sent: " + number)
+                            .asRuntimeException()
+            );
+
+
+-Client
+        try {
+            blockingStub.squareRoot(SquareRootRequest.newBuilder()
+                    .setNumber(number)
+                    .build());
+        } catch (StatusRuntimeException e) {
+            System.out.println("Got an exception for square root!");
+            e.printStackTrace();
+        }
+
+
+==== Deadlines
+
+Deadlines allow gRPC clients to specify how long they are willing to wait for an RPC to complete
+Before the ROC is terminated with the error DEADLINE_ECEEDED.
+
+It is recommended to set a deadline.
+
+https://grpc.io/blog/deadlines
+
+Deadlines are propagated across if gRPC calls are chained A=>B=>C deadlines for A is passed to B
+and then passed to C)
+
+=== SSL
+In PROD gRPC calls should be running with encryption enabled
+This is done by generating SSL certificates
+TLS (Transport Layer Security) successor of SSL encrypts the connection between 2 endpoints for secure data exchange
+Based on SSL certificates
+Two ways of using SSL (gRPC can use both):
+1-way verification, e.g. browser => WebServer (Encryption)
+2-way verification, e.g. SSL authentication (Authentication)
+
+-SSL setup for encryption
+We need to set the certificates for this we need Certificate Authority (CA)
+CA can be public if you want to use a URL or private if for example you have internal URLs
+Server needs to create the private key and certificate signed by the CA.
+On the client trust certificate from CA, for this the CA issues a CA Root Public Certificate, the client should trust this. 
+-SSL Handshake
+Server sends to the client signed SSL certificate
+gRPC from client verifies SSL certificate from server if good there will be an encrypted communication between server and client
+
+-SSL setup
+We'll setup a certificate authority
+We'll setup a server certificate
+We'll sign a server certificate
+
+We'll setup the Server to use TLS
+We'll setup the Client to connect securely over TLS.
+
+This link say that adding natty-shaded in cradle as dependency will include SSL
+https://github.com/grpc/grpc-java/blob/master/SECURITY.md
+This link has SSL example for different languages
+https://grpc.io/docs/guides/auth/
+
+Install openssl on Mac
+Follow instructions on script
+
+=== gRPC Reflection & CLI
+What APIs do you have?
+Go to https://github.com/grpc/grpc-java
+Go to Documentation server-reflection-tutorial.md
+Copy implementation "io.grpc:grpc-services:1.24.0" and put it in gradel  file.
+Copy .addService(ProtoReflectionService.newInstance()) put in server
+
+To install the CLI google evans cli grpc
+
+Run
+brew tap ktr0731/evans
+brew install evans
+
+evans -r -p 50052
+show service
+call Calculate
+
+=== gRPC CRUD with MongoDB
+
+Create, Read, Update, Delete
+Download MongoDB from this link https://www.mongodb.com/download-center/community
+Untar the file and place it in /User/raga/Applications
+Add to the path
+create data/db directory
+Run mongod --dbpath data/db
+Download  Robo 3T from https://robomongo.org and install it.
+If problem launching it go to Applications Ctrl-Click then choose open
+Create a connection, chose Direct Connection 
+Add MongoDB dependency on gradle, google MongoDB driver sync maven.
+
+Add server, client packages and classes
+
+-Server
+    private MongoClient mongoClient = MongoClients.create("mongodb://localhost:27017");
+    private MongoDatabase database = mongoClient.getDatabase("mydb");
+    private MongoCollection<Document> collection = database.getCollection("blog");
+In MongoDB tables are called collections.
+
+-create
+        Document doc = new Document("author_id", blog.getAuthorId())
+                .append("title", blog.getTitle())
+                .append("content", blog.getContent());
+
+-read
+result = collection.find(eq("_id", new ObjectId(blogId)))
+
+-update
+result = collection.find(eq("_id", new ObjectId(blogId)))
+Document replacement = new Document("author_id", blog.getAuthorId())
+collection.replaceOne(eq("_id", result.getObjectId("_id")), replacement);
+
+-delete
+result = collection.deleteOne(eq("_id", new ObjectId(blogId)));
+
+=== Next
+
+https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto
+
+https://github.com/googleapis/googleapis/blob/master/google/spanner/v1/spanner.proto
+
+Google grape-gateway for not just providing gRPC but API as well.
+
+https://github.com/grpc-ecosystem/grpc-gateway
+
+https://grpc.io/community/
+
+https://github.com/saturnism/grpc-java-by-example
+
+https://github.com/salesforce/grpc-java-contrib
+
+https://grpc.io/docs/guides/
+
+Discount
+
+BONUSGRPCJAVA
+
+
+
+
+
+
+

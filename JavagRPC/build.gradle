@@ -1,0 +1,58 @@
+group 'com.raga.javagrpc'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'com.google.protobuf'
+
+
+
+sourceCompatibility = 1.8
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.10'
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    
+    // gRPC
+    implementation 'io.grpc:grpc-netty-shaded:1.24.0'
+    implementation 'io.grpc:grpc-protobuf:1.24.0'
+    implementation 'io.grpc:grpc-stub:1.24.0'
+    implementation "io.grpc:grpc-services:1.24.0"
+    
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    // https://mvnrepository.com/artifact/org.mongodb/mongodb-driver-sync
+    compile group: 'org.mongodb', name: 'mongodb-driver-sync', version: '3.11.0'
+
+
+
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.9.0"
+    }
+    plugins {
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.24.0'
+        }
+    }
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {}
+        }
+    }
+}
+
+
