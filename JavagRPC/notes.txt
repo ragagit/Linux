@@ -143,6 +143,9 @@ Get IntelliJ CE
 Create a Gradel Java project
 Go to this link to get gRPC grades dependencies also protobuf-base codegen
 https://github.com/grpc/grpc-java
+-Gradle plugin
+https://github.com/google/protobuf-gradle-plugin
+
 
 Go to preferences -> Build Execution Deployment -> Build Tools -> Gradel -> Runner
 You need to uncheck the box Delegate
@@ -459,6 +462,8 @@ Go to https://github.com/grpc/grpc-java
 Go to Documentation server-reflection-tutorial.md
 Copy implementation "io.grpc:grpc-services:1.24.0" and put it in gradel  file.
 Copy .addService(ProtoReflectionService.newInstance()) put in server
+https://github.com/ktr0731/evans. //evans doc
+https://github.com/grpc/grpc-java/blob/master/documentation/server-reflection-tutorial.md //tutorial
 
 To install the CLI google evans cli grpc
 
@@ -528,6 +533,15 @@ https://grpc.io/docs/guides/
 Discount
 
 BONUSGRPCJAVA
+
+Trainer repos
+
+https://github.com/simplesteph
+
+Course
+https://github.com/simplesteph/grpc-java-course
+
+
 
 
 
