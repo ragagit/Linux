@@ -1,0 +1,971 @@
+AkkaStreams
+
+=== Installation
+Install IntelliJ
+Create a sbt project and add dependencies
+http://www.scalatest.org/install
+https://doc.akka.io/docs/akka/current/stream/index.html
+Code in
+https://github.com/rockthejvm/udemy-akka-streams/tree/master
+
+lazy val akkaVersion = "2.5.25"
+lazy val scalaTestVersion = "3.0.8"
+
+libraryDependencies ++= Seq(
+  "com.typesafe.akka" %% "akka-stream" % akkaVersion,
+  "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion,
+  "com.typesafe.akka" %% "akka-testkit" % akkaVersion,
+  "org.scalatest" %% "scalatest" % scalaTestVersion % "test"
+)
+
+=== First Principles
+
+ asynchronous, backpressure, incremental, potentially infinite data processing
+ This is called reactive streams
+ http://www.reactive-streams.org
+
+Source = "Publisher"
+  emits elements asynchronously
+  may or may not terminate
+Sink = "subscriber"
+  receives elements
+  terminates only when the publisher terminates
+Flow = "processor"
+  transforms elements
+Directions
+  upstream = to the source
+  downstream = to the sink
+
+  implicit val system = ActorSystem("FirstPrinciples")
+  Materializer allows the running of AkkaStream components
+  implicit val materializer = ActorMaterializer()
+
+- to, via, run()
+  val source = Source(1 to 10)
+  val sink = Sink.foreach[Int](println)
+
+  val graph = source.to(sink)
+    graph.run()
+
+  // flows transform elements
+  val flow = Flow[Int].map(x => x + 1)
+  val sourceWithFlow = source.via(flow)
+  val flowWithSink = flow.to(sink)
+
+  // These are the same thing
+  //  sourceWithFlow.to(sink).run()
+  //  source.to(flowWithSink).run()
+  //  source.via(flow).to(sink).run()
+
+  // various kinds of sources
+  val finiteSource = Source.single(1)
+  val anotherFiniteSource = Source(List(1, 2, 3))
+  val emptySource = Source.empty[Int]
+  val infiniteSource = Source(Stream.from(1)) // do not confuse an Akka stream with a "collection" Stream
+  import scala.concurrent.ExecutionContext.Implicits.global
+  val futureSource = Source.fromFuture(Future(42))
+
+  // sinks
+  val theMostBoringSink = Sink.ignore
+  val foreachSink = Sink.foreach[String](println)
+  val headSink = Sink.head[Int] // retrieves head and then closes the stream
+  val foldSink = Sink.fold[Int, Int](0)((a, b) => a + b)
+
+  // flows - usually mapped to collection operators
+  val mapFlow = Flow[Int].map(x => 2 * x)
+  val takeFlow = Flow[Int].take(5) // takes the first 5 elements and close the stream
+  // drop, filter
+  // NOT have flatMap
+
+  // source -> flow -> flow -> ... -> sink
+  val doubleFlowGraph = source.via(mapFlow).via(takeFlow).to(sink)
+    doubleFlowGraph.run()
+
+  // syntactic sugars
+  val mapSource = Source(1 to 10).map(x => x * 2) // Source(1 to 10).via(Flow[Int].map(x => x * 2))
+  // run streams directly
+    mapSource.runForeach(println) // mapSource.to(Sink.foreach[Int](println)).run()
+
+  // OPERATORS = components
+
+=== Materializing Streams
+
+  // choosing materialized values
+  val simpleSource = Source(1 to 10)
+  val simpleFlow = Flow[Int].map(x => x + 1)
+  val simpleSink = Sink.foreach[Int](println)
+  val graph = simpleSource.viaMat(simpleFlow)(Keep.right).toMat(simpleSink)(Keep.right)
+  graph.run().onComplete {
+    case Success(_) => println("Stream processing finished.")
+    case Failure(exception) => println(s"Stream processing failed with: $exception")
+  }
+
+  // sugars
+  Source(1 to 10).runWith(Sink.reduce[Int](_ + _)) // source.to(Sink.reduce)(Keep.right)
+  Source(1 to 10).runReduce[Int](_ + _) // same
+
+  // backwards
+  Sink.foreach[Int](println).runWith(Source.single(42)) // source(..).to(sink...).run()
+  // both ways
+  Flow[Int].map(x => 2 * x).runWith(simpleSource, simpleSink)
+
+=== Operator Fusion
+
+  val simpleSource = Source(1 to 1000)
+  val simpleFlow = Flow[Int].map(_ + 1)
+  val simpleFlow2 = Flow[Int].map(_ * 10)
+  val simpleSink = Sink.foreach[Int](println)
+
+  // this runs on the SAME ACTOR
+  simpleSource.via(simpleFlow).via(simpleFlow2).to(simpleSink).run()
+
+  // async boundary. async breaks operations fusions.
+    simpleSource.via(complexFlow).async // runs on one actor
+      .via(complexFlow2).async  // runs on another actor
+      .to(simpleSink) // runs on a third actor
+      .run()
+
+
+=== Backpressure
+
+val fastSource = Source(1 to 1000)
+  val slowSink = Sink.foreach[Int] { x =>
+    // simulate a long processing
+    Thread.sleep(1000)
+    println(s"Sink: $x")
+  }
+
+  //  fastSource.to(slowSink).run() // fusing?!
+  // not backpressure
+
+  //    fastSource.async.to(slowSink).run()
+  // backpressure
+
+-Using buffer
+  val bufferedFlow = simpleFlow.buffer(10, overflowStrategy = OverflowStrategy.dropHead)
+  fastSource.async
+    .via(bufferedFlow).async
+    .to(slowSink)
+    .run()
+
+-Throttling
+  import scala.concurrent.duration._
+  import scala.language.postfixOps
+  fastSource.throttle(10, 1 second).runWith(Sink.foreach(println))
+
+=== Graphs
+
+	Non-linear components
+	Fan-out - One input multiple outputs
+	Fan-in - Multiple inputs one output
+
+
+  // STEP 1 - setting up the fundamentals for the graph
+  val graph = RunnableGraph.fromGraph(
+    GraphDSL.create() { implicit builder: GraphDSL.Builder[NotUsed] => // builder = MUTABLE data structure
+      import GraphDSL.Implicits._ // brings some nice operators into scope
+
+      // STEP 2 - add the necessary components of this graph
+      val broadcast = builder.add(Broadcast[Int](2)) // fan-out operator
+      val zip = builder.add(Zip[Int, Int]) // fan-in operator
+
+      // STEP 3 - tying up the components
+      input ~> broadcast
+
+      broadcast.out(0) ~> incrementer ~> zip.in0
+      broadcast.out(1) ~> multiplier  ~> zip.in1
+
+      zip.out ~> output
+
+      // STEP 4 - return a closed shape
+      ClosedShape // FREEZE the builder's shape
+      // shape
+    } // graph
+  ) // runnable graph
+
+  graph.run()
+
+=== Open Graph
+
+-Source
+  /*
+    A composite source that concatenates 2 sources
+    - emits ALL the elements from the first source
+    - then ALL the elements from the second
+   */
+
+  val firstSource = Source(1 to 10)
+  val secondSource = Source(42 to 1000)
+
+  // step 1
+  val sourceGraph = Source.fromGraph(
+    GraphDSL.create() { implicit builder =>
+      import GraphDSL.Implicits._
+
+      // step 2: declaring components
+      val concat = builder.add(Concat[Int](2))
+
+      // step 3: tying them together
+      firstSource ~> concat
+      secondSource ~> concat
+
+      // step 4
+      SourceShape(concat.out)
+    }
+  )
+    sourceGraph.to(Sink.foreach(println)).run()
+
+-Sink
+  val sink1 = Sink.foreach[Int](x => println(s"Meaningful thing 1: $x"))
+  val sink2 = Sink.foreach[Int](x => println(s"Meaningful thing 2: $x"))
+
+  // step 1
+  val sinkGraph = Sink.fromGraph(
+    GraphDSL.create() { implicit builder =>
+      import GraphDSL.Implicits._
+
+      // step 2 - add a broadcast
+      val broadcast = builder.add(Broadcast[Int](2))
+
+      // step 3 - tie components together
+      broadcast ~> sink1
+      broadcast ~> sink2
+
+      // step 4 - return the shape
+      SinkShape(broadcast.in)
+    }
+  )
+
+  firstSource.to(sinkGraph).run()
+
+-Flow
+  /**
+    * Challenge - complex flow?
+    * Write your own flow that's composed of two other flows
+    * - one that adds 1 to a number
+    * - one that does number * 10
+    */
+
+  val incrementer = Flow[Int].map(_ + 1)
+  val multiplier = Flow[Int].map(_ * 10)
+
+  // step 1
+  val flowGraph = Flow.fromGraph(
+    GraphDSL.create() { implicit builder =>
+      import GraphDSL.Implicits._
+
+      // everything operates on SHAPES
+
+      // step 2 - define auxiliary SHAPES
+      val incrementerShape = builder.add(incrementer)
+      val multiplierShape = builder.add(multiplier)
+
+      // step 3 - connect the SHAPES
+      incrementerShape ~> multiplierShape
+
+      FlowShape(incrementerShape.in, multiplierShape.out) // SHAPE
+    } // static graph
+  ) // component
+
+  firstSource.via(flowGraph).to(Sink.foreach(println)).run()
+
+=== Graph Materializer value
+
+  val wordSource = Source(List("Akka", "is", "awesome", "rock", "the", "jvm"))
+  val printer = Sink.foreach[String](println)
+  val counter = Sink.fold[Int, String](0)((count, _) => count + 1)
+
+  /*
+    A composite component (sink)
+    - prints out all strings which are lowercase
+    - COUNTS the strings that are short (< 5 chars)
+   */
+
+  // step 1
+  val complexWordSink = Sink.fromGraph(
+    GraphDSL.create(printer, counter)((printerMatValue, counterMatValue) => counterMatValue) { implicit builder => (printerShape, counterShape) =>
+      import GraphDSL.Implicits._
+
+      // step 2 - SHAPES
+      val broadcast = builder.add(Broadcast[String](2))
+      val lowercaseFilter = builder.add(Flow[String].filter(word => word == word.toLowerCase))
+      val shortStringFilter = builder.add(Flow[String].filter(_.length < 5))
+
+      // step 3 - connections
+      broadcast ~> lowercaseFilter ~> printerShape
+      broadcast ~> shortStringFilter ~> counterShape
+
+      // step 4 - the shape
+      SinkShape(broadcast.in)
+    }
+  )
+
+  import system.dispatcher
+  val shortStringsCountFuture = wordSource.toMat(complexWordSink)(Keep.right).run()
+  shortStringsCountFuture.onComplete {
+    case Success(count) => println(s"The total number of short strings is: $count")
+    case Failure(exception) => println(s"The count of short strings failed: $exception")
+  }
+
+/*
+ Suspicious transactions
+*/
+
+case class Transaction(id: String, source: String, recipient: String, amount: Int, date: Date)
+
+  val transactionSource = Source(List(
+    Transaction("5273890572", "Paul", "Jim", 100, new Date),
+    Transaction("3578902532", "Daniel", "Jim", 100000, new Date),
+    Transaction("5489036033", "Jim", "Alice", 7000, new Date)
+  ))
+
+  val bankProcessor = Sink.foreach[Transaction](println)
+  val suspiciousAnalysisService = Sink.foreach[String](txnId => println(s"Suspicious transaction ID: $txnId"))
+
+  // step 1
+  val suspiciousTxnStaticGraph = GraphDSL.create() { implicit builder =>
+    import GraphDSL.Implicits._
+
+    // step 2 - define SHAPES
+    val broadcast = builder.add(Broadcast[Transaction](2))
+    val suspiciousTxnFilter = builder.add(Flow[Transaction].filter(txn => txn.amount > 10000))
+    val txnIdExtractor = builder.add(Flow[Transaction].map[String](txn => txn.id))
+
+    // step 3 - tie SHAPES
+    broadcast.out(0) ~> suspiciousTxnFilter ~> txnIdExtractor
+
+    // step 4
+    new FanOutShape2(broadcast.in, broadcast.out(1), txnIdExtractor.out)
+  }
+
+  // step 1
+  val suspiciousTxnRunnableGraph = RunnableGraph.fromGraph(
+    GraphDSL.create() { implicit builder =>
+      import GraphDSL.Implicits._
+
+      // step 2
+      val suspiciousTxnShape = builder.add(suspiciousTxnStaticGraph)
+
+      // step 3
+      transactionSource ~> suspiciousTxnShape.in
+      suspiciousTxnShape.out0 ~> bankProcessor
+      suspiciousTxnShape.out1 ~> suspiciousAnalysisService
+
+      // step 4
+      ClosedShape
+    }
+  )
+
+  suspiciousTxnRunnableGraph.run()
+
+
+=== Bidirectional Flows
+
+  /*
+    Example: cryptography
+   */
+  def encrypt(n: Int)(string: String) = string.map(c => (c + n).toChar)
+  def decrypt(n: Int)(string: String) = string.map(c => (c - n).toChar)
+
+  // bidiFlow
+  val bidiCryptoStaticGraph = GraphDSL.create() { implicit builder =>
+    val encryptionFlowShape = builder.add(Flow[String].map(encrypt(3)))
+    val decryptionFlowShape = builder.add(Flow[String].map(decrypt(3)))
+
+    //    BidiShape(encryptionFlowShape.in, encryptionFlowShape.out, decryptionFlowShape.in, decryptionFlowShape.out)
+    BidiShape.fromFlows(encryptionFlowShape, decryptionFlowShape)
+  }
+
+  val unencryptedStrings = List("akka", "is", "awesome", "testing", "bidirectional", "flows")
+  val unencryptedSource = Source(unencryptedStrings)
+  val encryptedSource = Source(unencryptedStrings.map(encrypt(3)))
+
+  val cryptoBidiGraph = RunnableGraph.fromGraph(
+    GraphDSL.create() { implicit builder =>
+      import GraphDSL.Implicits._
+
+      val unencryptedSourceShape = builder.add(unencryptedSource)
+      val encryptedSourceShape = builder.add(encryptedSource)
+      val bidi = builder.add(bidiCryptoStaticGraph)
+      val encryptedSinkShape = builder.add(Sink.foreach[String](string => println(s"Encrypted: $string")))
+      val decryptedSinkShape = builder.add(Sink.foreach[String](string => println(s"Decrypted: $string")))
+
+      unencryptedSourceShape  ~> bidi.in1   ;   bidi.out1 ~> encryptedSinkShape
+      decryptedSinkShape      <~ bidi.out2  ;   bidi.in2  <~ encryptedSourceShape
+
+      ClosedShape
+    }
+  )
+
+  cryptoBidiGraph.run()
+
+=== Graph Cycle
+  val accelerator = GraphDSL.create() { implicit builder =>
+    import GraphDSL.Implicits._
+
+    val sourceShape = builder.add(Source(1 to 100))
+    val mergeShape = builder.add(Merge[Int](2))
+    val incrementerShape = builder.add(Flow[Int].map { x =>
+      println(s"Accelerating $x")
+      x + 1
+    })
+
+    sourceShape ~>  mergeShape ~> incrementerShape
+                    mergeShape <~ incrementerShape
+
+    ClosedShape
+  }
+
+  //  RunnableGraph.fromGraph(accelerator).run()
+  // graph cycle deadlock!
+
+  /*
+    Solution 1: MergePreferred
+   */
+  val actualAccelerator = GraphDSL.create() { implicit builder =>
+    import GraphDSL.Implicits._
+
+    val sourceShape = builder.add(Source(1 to 100))
+    val mergeShape = builder.add(MergePreferred[Int](1))
+    val incrementerShape = builder.add(Flow[Int].map { x =>
+      println(s"Accelerating $x")
+      x + 1
+    })
+
+    sourceShape ~>  mergeShape ~> incrementerShape
+    mergeShape.preferred <~ incrementerShape
+
+    ClosedShape
+  }
+
+  //  RunnableGraph.fromGraph(actualAccelerator).run()
+
+
+  /*
+    Solution 2: buffers
+   */
+  val bufferedRepeater = GraphDSL.create() { implicit builder =>
+    import GraphDSL.Implicits._
+
+    val sourceShape = builder.add(Source(1 to 100))
+    val mergeShape = builder.add(Merge[Int](2))
+    val repeaterShape = builder.add(Flow[Int].buffer(10, OverflowStrategy.dropHead).map { x =>
+      println(s"Accelerating $x")
+      Thread.sleep(100)
+      x
+    })
+
+    sourceShape ~>  mergeShape ~> repeaterShape
+    mergeShape <~ repeaterShape
+
+    ClosedShape
+  }
+
+=== Integrating with Actors
+-As a Flow
+  class SimpleActor extends Actor with ActorLogging {
+    override def receive: Receive = {
+      case s: String =>
+        log.info(s"Just received a string: $s")
+        sender() ! s"$s$s"
+      case n: Int =>
+        log.info(s"Just received a number: $n")
+        sender() ! (2 * n)
+      case _ =>
+    }
+  }
+
+  val simpleActor = system.actorOf(Props[SimpleActor], "simpleActor")
+
+  val numbersSource = Source(1 to 10)
+
+  // actor as a flow
+  implicit val timeout = Timeout(2 seconds)
+  val actorBasedFlow = Flow[Int].ask[Int](parallelism = 4)(simpleActor)
+
+  numbersSource.via(actorBasedFlow).to(Sink.ignore).run()
+
+-As source
+  val actorPoweredSource = Source.actorRef[Int](bufferSize = 10, overflowStrategy = OverflowStrategy.dropHead)
+  val materializedActorRef = actorPoweredSource.to(Sink.foreach[Int](number => println(s"Actor powered flow got number: $number"))).run()
+  materializedActorRef ! 10
+  // terminating the stream
+  materializedActorRef ! akka.actor.Status.Success("complete")
+
+-As a Sink
+case object StreamInit
+  case object StreamAck
+  case object StreamComplete
+  case class StreamFail(ex: Throwable)
+
+  class DestinationActor extends Actor with ActorLogging {
+    override def receive: Receive = {
+      case StreamInit =>
+        log.info("Stream initialized")
+        sender() ! StreamAck
+      case StreamComplete =>
+        log.info("Stream complete")
+        context.stop(self)
+      case StreamFail(ex) =>
+        log.warning(s"Stream failed: $ex")
+      case message =>
+        log.info(s"Message $message has come to its final resting point.")
+        sender() ! StreamAck
+    }
+  }
+  val destinationActor = system.actorOf(Props[DestinationActor], "destinationActor")
+
+  val actorPoweredSink = Sink.actorRefWithAck[Int](
+    destinationActor,
+    onInitMessage = StreamInit,
+    onCompleteMessage = StreamComplete,
+    ackMessage = StreamAck,
+    onFailureMessage = throwable => StreamFail(throwable) // optional
+  )
+
+  Source(1 to 10).to(actorPoweredSink).run()
+
+=== Integration with external services
+
+  case class PagerEvent(application: String, description: String, date: Date)
+
+  val eventSource = Source(List(
+    PagerEvent("AkkaInfra", "Infrastructure broke", new Date),
+    PagerEvent("FastDataPipeline", "Illegal elements in the data pipeline", new Date),
+    PagerEvent("AkkaInfra", "A service stopped responding", new Date),
+    PagerEvent("SuperFrontend", "A button doesn't work", new Date)
+  ))
+
+
+  val infraEvents = eventSource.filter(_.application == "AkkaInfra")
+  val pagedEngineerEmails = infraEvents.mapAsync(parallelism = 1)(event => PagerService.processEvent(event))
+  // guarantees the relative order of elements
+  val pagedEmailsSink = Sink.foreach[String](email => println(s"Successfully sent notification to $email"))
+  // pagedEngineerEmails.to(pagedEmailsSink).run()
+
+  class PagerActor extends Actor with ActorLogging {
+    private val engineers = List("Daniel", "John", "Lady Gaga")
+    private val emails = Map(
+      "Daniel" -> "daniel@rockthejvm.com",
+      "John" -> "john@rockthejvm.com",
+      "Lady Gaga" -> "ladygaga@rtjvm.com"
+    )
+
+    private def processEvent(pagerEvent: PagerEvent) = {
+      val engineerIndex = (pagerEvent.date.toInstant.getEpochSecond / (24 * 3600)) % engineers.length
+      val engineer = engineers(engineerIndex.toInt)
+      val engineerEmail = emails(engineer)
+
+      // page the engineer
+      log.info(s"Sending engineer $engineerEmail a high priority notification: $pagerEvent")
+      Thread.sleep(1000)
+
+      // return the email that was paged
+      engineerEmail
+    }
+
+    override def receive: Receive = {
+      case pagerEvent: PagerEvent =>
+        sender() ! processEvent(pagerEvent)
+    }
+  }
+
+  import akka.pattern.ask
+
+  import scala.concurrent.duration._
+  implicit val timeout = Timeout(3 seconds)
+  val pagerActor = system.actorOf(Props[PagerActor], "pagerActor")
+  val alternativePagedEngineerEmails = infraEvents.mapAsync(parallelism = 4)(event => (pagerActor ? event).mapTo[String])
+  alternativePagedEngineerEmails.to(pagedEmailsSink).run()
+
+=== Advanced Backpressure
+Buffering technic
+val controlledFlow = Flow[Int].map(_ * 2).buffer(10, OverflowStrategy.dropHead)
+
+-conflate 
+It combines several events in one.
+val aggregateNotificationFlow = Flow[PagerEvent]
+    .conflate((event1, event2) =>{
+      val nInstances = event1.nInstances + event2.nInstances
+      PagerEvent(s"You have $nInstances events that require your attention", new Date, nInstances)
+    })
+    .map(resultingEvent => Notification(oncallEngineer, resultingEvent))
+
+-slow produce
+With slow producer you can extrapolate
+
+  import scala.concurrent.duration._
+  val slowCounter = Source(Stream.from(1)).throttle(1, 1 second)
+  val hungrySink = Sink.foreach[Int](println)
+
+  // extrapolate only when there is demand
+  //val extrapolator = Flow[Int].extrapolate(element => Iterator.from(element))
+  val repeater = Flow[Int].extrapolate(element => Iterator.continually(element))
+
+  //slowCounter.via(repeater).to(hungrySink).run()
+
+  //expand extrapolate all the time
+  val expander = Flow[Int].expand(element => Iterator.from(element))
+
+  slowCounter.via(expander).to(hungrySink).run()
+
+=== Fault Tolerance
+  // 1 - logging
+  val faultySource = Source(1 to 10).map(e => if (e == 6) throw new RuntimeException else e)
+  faultySource.log("trackingElements").to(Sink.ignore)
+    // .run()
+
+  // 2 - gracefully terminating a stream
+  faultySource.recover {
+    case _: RuntimeException => Int.MinValue
+  } .log("gracefulSource")
+    .to(Sink.ignore)
+    //    .run()
+
+  // 3 - recover with another stream
+  faultySource.recoverWithRetries(3, {
+    case _: RuntimeException => Source(90 to 99)
+  })
+    .log("recoverWithRetries")
+    .to(Sink.ignore)
+    //    .run()
+
+  // 4 - backoff supervision
+  val restartSource = RestartSource.onFailuresWithBackoff(
+    minBackoff = 1 second,
+    maxBackoff = 30 seconds,
+    randomFactor = 0.2,
+  )(() => {
+    val randomNumber = new Random().nextInt(20)
+    Source(1 to 10).map(elem => if (elem == randomNumber) throw new RuntimeException else elem)
+  })
+
+  restartSource
+    .log("restartBackoff")
+    .to(Sink.ignore)
+    // .run()
+
+
+  // 5 - supervision strategy
+  val numbers = Source(1 to 20).map(n => if (n == 13) throw new RuntimeException("bad luck") else n).log("supervision")
+  val supervisedNumbers = numbers.withAttributes(ActorAttributes.supervisionStrategy {
+    /*
+     Resume = skips the faulty element
+     Stop = stop the stream
+     Restart = resume + clears internal state
+    */
+    case _: RuntimeException => {
+      println("There was an exception, continuing ...")
+      Resume
+    }
+    case _ => Stop
+  })
+
+  supervisedNumbers.to(Sink.ignore).run()
+
+=== Testing Akka Streams
+    "satisfy basic assertions" in {
+      // describe our test
+
+      val simpleSource = Source(1 to 10)
+      val simpleSink = Sink.fold(0)((a: Int, b: Int) => a + b)
+
+      val sumFuture = simpleSource.toMat(simpleSink)(Keep.right).run()
+      val sum = Await.result(sumFuture, 2 seconds)
+      assert(sum == 55)
+    }
+
+=== Dynamic Stream Handling
+-Kill Switch. This is to stop a stream
+  val killSwitchFlow = KillSwitches.single[Int]
+  val counter = Source(Stream.from(1)).throttle(1, 1 second).log("counter")
+  val sink = Sink.ignore
+
+    val killSwitch = counter
+      .viaMat(killSwitchFlow)(Keep.right)
+      .to(sink)
+      .run()
+
+    system.scheduler.scheduleOnce(4 seconds) {
+      killSwitch.shutdown()
+    }
+
+-Shared kill Switch
+  // shared kill switch
+  val anotherCounter = Source(Stream.from(1)).throttle(2, 1 second).log("anotherCounter")
+  val sharedKillSwitch = KillSwitches.shared("oneButtonToRuleThemAll")
+
+  counter.via(sharedKillSwitch.flow).runWith(Sink.ignore)
+  anotherCounter.via(sharedKillSwitch.flow).runWith(Sink.ignore)
+
+  system.scheduler.scheduleOnce(3 seconds) {
+    sharedKillSwitch.shutdown()
+  }
+
+-How to add fan-in and fan-out ports to the graph elements
+
+-Fan-in
+  // MergeHub
+  val dynamicMerge = MergeHub.source[Int]
+  val materializedSink = dynamicMerge.to(Sink.foreach[Int](println)).run()
+
+  // use this sink any time we like
+  Source(100 to 120).runWith(materializedSink)
+ counter1.runWith(materializedSink)
+
+-Fan-out
+  // BroadcastHub
+
+  val dynamicBroadcast = BroadcastHub.sink[Int]
+  val materializedSource = Source(1 to 100).runWith(dynamicBroadcast)
+
+  materializedSource.runWith(Sink.ignore)
+  materializedSource.runWith(Sink.foreach[Int](println))
+
+  /**
+    * Challenge - combine a mergeHub and a broadcastHub.
+    *
+    * A publisher-subscriber component
+    */
+  val merge = MergeHub.source[String]
+  val bcast = BroadcastHub.sink[String]
+  val (publisherPort, subscriberPort) = merge.toMat(bcast)(Keep.both).run()
+
+  subscriberPort.runWith(Sink.foreach(e => println(s"I received: $e")))
+  subscriberPort.map(string => string.length).runWith(Sink.foreach(n => println(s"I got a number: $n")))
+
+  Source(List("Akka", "is", "amazing")).runWith(publisherPort)
+  Source(List("I", "love", "Scala")).runWith(publisherPort)
+  Source.single("STREEEEEEAMS").runWith(publisherPort)
+
+
+=== Substreams
+
+-substreams groupBy creates them
+
+ val wordsSource = Source(List("Akka", "is", "amazing", "learning", "substreams"))
+  //groupBy will create substreams. If you attach a consumer every substream will
+  //have an sinatcne of that consumer
+  val groups = wordsSource.groupBy(30, word => if(word.isEmpty) '\0' else word.toLowerCase().charAt(0))
+
+  //Every consumer will have its own instance of a sink
+  groups.to(Sink.fold(0)((count, word) => {
+    val newCount = count + 1
+    println(s"I just received $word, count is $newCount")
+    newCount
+  }))
+    .run()
+
+-mergeback substreams
+  val textSource = Source(List(
+    "I love Akka Streams",
+    "this is amazing",
+    "learning from Rock the JVM"
+  ))
+
+  val totalCharCountFuture = textSource
+    .groupBy(2, string => string.length % 2)
+    .map(_.length) // do your expensive computation here
+    .mergeSubstreams//WithParallelism(2)
+    .toMat(Sink.reduce[Int](_ + _))(Keep.right)
+    .run()
+
+  totalCharCountFuture.onComplete {
+    case Success(value) => println(s"Total char count: $value")
+    case Failure(ex) => println(s"Char computation failed: $ex")
+  }
+
+-split
+  val text =
+    "I love Akka Streams\n" +
+    "this is amazing\n" +
+    "learning from Rock the JVM\n"
+
+  val anotherCharCountFuture = Source(text.toList)
+    .splitWhen(c => c == '\n')
+    .filter(_ != '\n')
+    .map(_ => 1)
+    .mergeSubstreams
+    .toMat(Sink.reduce[Int](_ + _))(Keep.right)
+    .run()
+
+  anotherCharCountFuture.onComplete {
+    case Success(value) => println(s"Total char count alternative: $value")
+    case Failure(ex) => println(s"Char computation failed: $ex")
+  }
+
+-flattening
+  val simpleSource = Source(1 to 5)
+  simpleSource.flatMapConcat(x => Source(x to (3 * x))).runWith(Sink.foreach(println))
+  simpleSource.flatMapMerge(2, x => Source(x to (3 * x))).runWith(Sink.foreach(println))
+
+=== Custom Graph Shapes
+Create components with arbitrary inputs and outputs
+case class BalanceMxN[T](override val inlets: List[Inlet[T]], override val outlets: List[Outlet[T]]) extends Shape {
+    override def deepCopy(): Shape = BalanceMxN(inlets.map(_.carbonCopy()), outlets.map(_.carbonCopy()))
+  }
+
+  object BalanceMxN {
+    def apply[T](inputCount: Int, outputCount: Int): Graph[BalanceMxN[T], NotUsed] =
+      GraphDSL.create() { implicit builder =>
+        import GraphDSL.Implicits._
+
+        val merge = builder.add(Merge[T](inputCount))
+        val balance = builder.add(Balance[T](outputCount))
+
+        merge ~> balance
+
+        BalanceMxN(merge.inlets.toList, balance.outlets.toList)
+      }
+  }
+
+  val balanceMxNGraph = RunnableGraph.fromGraph(
+    GraphDSL.create() { implicit builder =>
+      import GraphDSL.Implicits._
+
+      val slowSource = Source(Stream.from(1)).throttle(1, 1 second)
+      val fastSource = Source(Stream.from(1)).throttle(2, 1 second)
+
+      def createSink(index: Int) = Sink.fold(0)((count: Int, element: Int) => {
+        println(s"[sink $index] Received $element, current count is $count")
+        count + 1
+      })
+
+      val sink1 = builder.add(createSink(1))
+      val sink2 = builder.add(createSink(2))
+      val sink3 = builder.add(createSink(3))
+
+      val balance2x3 = builder.add(BalanceMxN[Int](2, 3))
+
+      slowSource ~> balance2x3.inlets(0)
+      fastSource ~> balance2x3.inlets(1)
+
+      balance2x3.outlets(0) ~> sink1
+      balance2x3.outlets(1) ~> sink2
+      balance2x3.outlets(2) ~> sink3
+
+      ClosedShape
+    }
+  )
+
+  balanceMxNGraph.run()
+
+
+==== Custom Operators
+GraphStage API
+
+-Custom source
+  class RandomNumberGenerator(max: Int) extends GraphStage[/*step 0: define the shape*/SourceShape[Int]] {
+
+    // STEP 1: define the ports and the component-specific members
+    val outPort = Outlet[Int]("randomGenerator")
+    val random = new Random()
+
+    // STEP 2: construct a new shape
+    override def shape: SourceShape[Int] = SourceShape(outPort)
+
+    // STEP 3: create the logic
+    override def createLogic(inheritedAttributes: Attributes): GraphStageLogic = new GraphStageLogic(shape) {
+      // STEP 4:
+      // define mutable state
+      // implement my logic here
+
+      setHandler(outPort, new OutHandler {
+        // when there is demand from downstream
+        override def onPull(): Unit = {
+          // emit a new element
+          val nextNumber = random.nextInt(max)
+          // push it out of the outPort
+          push(outPort, nextNumber)
+        }
+      })
+    }
+  }
+
+  val randomGeneratorSource = Source.fromGraph(new RandomNumberGenerator(100))
+  //  randomGeneratorSource.runWith(Sink.foreach(println))
+
+-Custom sink
+  // 2 - a custom sink that prints elements in batches of a given size
+
+  class Batcher(batchSize: Int) extends GraphStage[SinkShape[Int]] {
+
+    val inPort = Inlet[Int]("batcher")
+
+    override def shape: SinkShape[Int] = SinkShape[Int](inPort)
+
+    override def createLogic(inheritedAttributes: Attributes): GraphStageLogic = new GraphStageLogic(shape) {
+
+      override def preStart(): Unit = {
+        pull(inPort)
+      }
+
+      // mutable state
+      val batch = new mutable.Queue[Int]
+
+      setHandler(inPort, new InHandler {
+        // when the upstream wants to send me an element
+        override def onPush(): Unit = {
+          val nextElement = grab(inPort)
+          batch.enqueue(nextElement)
+
+          // assume some complex computation
+          Thread.sleep(100)
+
+          if(batch.size >= batchSize) {
+            println("New batch: " + batch.dequeueAll(_ => true).mkString("[", ", ", "]"))
+          }
+
+          pull(inPort) // send demand upstream
+        }
+
+        override def onUpstreamFinish(): Unit = {
+          if (batch.nonEmpty) {
+            println("New batch: " + batch.dequeueAll(_ => true).mkString("[", ", ", "]"))
+            println("Stream finished.")
+          }
+        }
+      })
+    }
+  }
+
+  val batcherSink = Sink.fromGraph(new Batcher(10))
+  // randomGeneratorSource.to(batcherSink).run()
+
+-Custom Flow
+ class SimpleFilter[T](predicate: T => Boolean) extends GraphStage[FlowShape[T, T]] {
+
+    val inPort = Inlet[T]("filterIn")
+    val outPort = Outlet[T]("filterOut")
+
+    override def shape: FlowShape[T, T] = FlowShape(inPort, outPort)
+
+    override def createLogic(inheritedAttributes: Attributes): GraphStageLogic = new GraphStageLogic(shape) {
+      setHandler(outPort, new OutHandler {
+        override def onPull(): Unit = pull(inPort)
+      })
+
+      setHandler(inPort, new InHandler {
+        override def onPush(): Unit = {
+          try {
+            val nextElement = grab(inPort)
+
+            if (predicate(nextElement)) {
+              push(outPort, nextElement) // pass it on
+            } else {
+              pull(inPort) // ask for another element
+            }
+          } catch {
+            case e: Throwable => failStage(e)
+          }
+        }
+      })
+    }
+  }
+
+  val myFilter = Flow.fromGraph(new SimpleFilter[Int](_ > 50))
+  randomGeneratorSource.via(myFilter).to(batcherSink).run()
+
+
+
+
