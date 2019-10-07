@@ -815,6 +815,23 @@ Don't use the request-level API
     .runForeach(println)
 
 
+-Q&A
+In Akka Essentials we have a dedicated lecture on Dispatchers, which implement the ExecutionContext trait. You can configure a Dispatcher in application.conf, and then refer to it in your code as an implicit value.
+
+Example - in application.conf you can define and configure a dispatcher like this:
+
+my-dispatcher {
+  type = Dispatcher
+  executor = "thread-pool-executor"
+  thread-pool-executor {
+    fixed-pool-size = 1
+  }
+  throughput = 30
+}
+and then you can use it in your code as
+
+implicit val executionContext: ExecutionContext = system.dispatchers.lookup("my-dispatcher")
+Daniel
 
 
 
