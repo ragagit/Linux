@@ -7,7 +7,7 @@ import akka.stream.ActorMaterializer
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{MethodRejection, MissingQueryParamRejection, Rejection, RejectionHandler}
 
-object HandlingRejections extends App {
+object HandlingRejectionsSix extends App {
 
   implicit val system = ActorSystem("HandlingRejections")
   implicit val materializer = ActorMaterializer()

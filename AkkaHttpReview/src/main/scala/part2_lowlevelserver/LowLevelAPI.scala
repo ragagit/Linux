@@ -18,7 +18,7 @@ object LowLevelAPI extends App {
   implicit val materializer = ActorMaterializer()
   import system.dispatcher
 
-  val serverSource = Http().bind("localhost", 8000)
+  val serverSource = Http().bind("localhost", 7878)
   val connectionSink = Sink.foreach[IncomingConnection] { connection =>
     println(s"Accepted incoming connection from: ${connection.remoteAddress}")
   }
@@ -27,7 +27,8 @@ object LowLevelAPI extends App {
   serverBindingFuture.onComplete {
     case Success(binding) =>
       println("Server binding successful.")
-      binding.terminate(2 seconds)
+      //binding.unbind //this will keep existing connections
+      //binding.terminate(2 seconds)
     case Failure(ex) => println(s"Server binding failed: $ex")
   }
 
@@ -74,7 +75,7 @@ object LowLevelAPI extends App {
   //  Http().bind("localhost", 8080).runWith(httpSyncConnectionHandler)
 
   // shorthand version:
-  // Http().bindAndHandleSync(requestHandler, "localhost", 8080)
+   Http().bindAndHandleSync(requestHandler, "localhost", 8080)
 
 
   /*

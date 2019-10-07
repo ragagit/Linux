@@ -6,7 +6,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpRequest, StatusCodes}
 import akka.stream.ActorMaterializer
 
-object DirectivesBreakdown extends App {
+object DirectivesBreakdownTwo extends App {
 
   implicit val system = ActorSystem("DirectivesBreakdown")
   implicit val materializer = ActorMaterializer()
@@ -43,7 +43,7 @@ object DirectivesBreakdown extends App {
     } // /api/myEndpoint
 
   val dontConfuse =
-    path("api/myEndpoint") {
+    path("api/myEndpoint") {// this includes the / be careful api%2myEndpoint
       complete(StatusCodes.OK)
     }
 
@@ -181,5 +181,5 @@ object DirectivesBreakdown extends App {
       }
     }
 
-  Http().bindAndHandle(getOrPutPath, "localhost", 8081)
+  //Http().bindAndHandle(getOrPutPath, "localhost", 8081)
 }

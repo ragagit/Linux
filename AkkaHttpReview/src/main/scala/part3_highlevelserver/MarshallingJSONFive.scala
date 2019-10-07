@@ -109,9 +109,12 @@ object MarshallingJSON extends App
           }
       } ~
         post {
-          entity(implicitly[FromRequestUnmarshaller[Player]]) { player =>
-            complete((rtjvmGameMap ? AddPlayer(player)).map(_ => StatusCodes.OK))
+          entity(as[Player]){ player =>
+            complete(((rtjvmGameMap ? AddPlayer(player)).map(_ => StatusCodes.OK)))
           }
+//          entity(implicitly[FromRequestUnmarshaller[Player]]) { player =>
+//            complete((rtjvmGameMap ? AddPlayer(player)).map(_ => StatusCodes.OK))
+//          }
         } ~
         delete {
           entity(as[Player]) { player =>

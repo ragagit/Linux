@@ -12,7 +12,7 @@ object AkkaStreamsRecap extends App {
   implicit val materializer = ActorMaterializer()
   import system.dispatcher
 
-  val source = Source(1 to 100)
+  val source = Source(1 to 10)
   val sink = Sink.foreach[Int](println)
   val flow = Flow[Int].map(x => x + 1)
 
@@ -21,16 +21,17 @@ object AkkaStreamsRecap extends App {
     // .run() // materialization
 
   // MATERIALIZED VALUE
-  val sumSink = Sink.fold[Int, Int](0)((currentSum, element) => currentSum + element)
-//  val sumFuture = source.runWith(sumSink)
-//
-//  sumFuture.onComplete {
-//    case Success(sum) => println(s"The sum of all the numbers from the simple source is: $sum")
-//    case Failure(ex) => println(s"Summing all the numbers from the simple source FAILED: $ex")
-//  }
+  // In the fold the first Int is the returned value type, the second is the type that goes in
+  val sumSink = Sink.fold[Int, Int](0)((currentSum, element) => {currentSum + element})
+  val sumFuture = source.runWith(sumSink)
+
+  sumFuture.onComplete {
+    case Success(sum) => println(s"The sum of all the numbers from the simple source is: $sum")
+    case Failure(ex) => println(s"Summing all the numbers from the simple source FAILED: $ex")
+  }
 
   val anotherMaterializedValue = source.viaMat(flow)(Keep.right).toMat(sink)(Keep.left)
-    // .run()
+     .run()
   /*
     1 - materializing a graph means materializing ALL the components
     2 - a materialized value can be ANYTHING AT ALL

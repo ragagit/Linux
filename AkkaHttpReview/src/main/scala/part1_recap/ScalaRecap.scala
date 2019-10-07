@@ -1,5 +1,9 @@
 package part1_recap
 
+import akka.actor.ActorSystem
+import akka.stream.ActorMaterializer
+import akka.stream.scaladsl.{Flow, Sink, Source}
+
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
@@ -123,6 +127,14 @@ object ScalaRecap extends App {
 
   List(Person("Bob"), Person("Alice")).sorted // (Person.personOrdering)
   // => List(Person("Alice"), Person("Bob"))
+
+  implicit val system = ActorSystem("FirstPrinciples")
+  implicit val materializer = ActorMaterializer()
+
+  val myFlow = Flow[Int].fold(0)((a,b) => a+b)
+  Source(1 to 3).via(myFlow).to(Sink.foreach(println)).run()
+
+  //Source(1 to 5).via(myFlow).to(Sink(println)).
 
 
 }

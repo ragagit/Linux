@@ -11,7 +11,7 @@ import akka.http.scaladsl.server.Directives._
 
 import scala.concurrent.duration._
 
-object WebsocketsDemo extends App {
+object WebsocketsDemoNine extends App {
 
   implicit val system = ActorSystem()
   implicit val materializer = ActorMaterializer()
@@ -29,7 +29,7 @@ object WebsocketsDemo extends App {
       |    <head>
       |        <script>
       |            var exampleSocket = new WebSocket("ws://localhost:8080/greeter");
-      |            console.log("starting websocket...");
+      |            console.log("starting again websocket....");
       |
       |            exampleSocket.onmessage = function(event) {
       |                var newChild = document.createElement("div");
@@ -41,7 +41,11 @@ object WebsocketsDemo extends App {
       |                exampleSocket.send("socket seems to be open...");
       |            };
       |
-      |            exampleSocket.send("socket says: hello, server!");
+      |            waitForSocketConnection(exampleSocket, function(){
+      |               console.log("message sent!!!");
+      |               exampleSocket.send("socket says: hello, server!");
+      |             });
+      |
       |        </script>
       |    </head>
       |
@@ -73,7 +77,8 @@ object WebsocketsDemo extends App {
       )
     } ~
     path("greeter") {
-      handleWebSocketMessages(socialFlow)
+      //handleWebSocketMessages(socialFlow)
+      handleWebSocketMessages(websocketFlow)
     }
 
   Http().bindAndHandle(websocketRoute, "localhost", 8080)

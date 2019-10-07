@@ -4,32 +4,27 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.{Sink, Source}
+import akka.stream.scaladsl.Source
 
 import scala.util.{Failure, Success}
-
 import spray.json._
 
-object ConnectionLevel extends App with PaymentJsonProtocol {
+object RequestLevelThree extends App with PaymentJsonProtocol {
 
-  implicit val system = ActorSystem("ConnectionLevel")
+  implicit val system = ActorSystem("RequestLevelAPI")
   implicit val materializer = ActorMaterializer()
   import system.dispatcher
 
+  val responseFuture = Http().singleRequest(HttpRequest(uri = "http://www.google.com"))
 
-  val connectionFlow = Http().outgoingConnection("www.google.com")
-
-  def oneOffRequest(request: HttpRequest) =
-    Source.single(request).via(connectionFlow).runWith(Sink.head)
-
-  oneOffRequest(HttpRequest()).onComplete {
-    case Success(response) => println(s"Got successful response: $response")
-    case Failure(ex) => println(s"Sending the request failed: $ex")
+  responseFuture.onComplete {
+    case Success(response) =>
+      // VERY IMPORTANT
+      response.discardEntityBytes()
+      println(s"The request was successful and returned: $response")
+    case Failure(ex) =>
+      println(s"The request failed with: $ex")
   }
-
-  /*
-    A small payments system
-   */
 
   import PaymentSystemDomain._
 
@@ -43,7 +38,7 @@ object ConnectionLevel extends App with PaymentJsonProtocol {
   val serverHttpRequests = paymentRequests.map(paymentRequest =>
     HttpRequest(
       HttpMethods.POST,
-      uri = Uri("/api/payments"),
+      uri = "http://localhost:8080/api/payments",
       entity = HttpEntity(
         ContentTypes.`application/json`,
         paymentRequest.toJson.prettyPrint
@@ -52,9 +47,9 @@ object ConnectionLevel extends App with PaymentJsonProtocol {
   )
 
   Source(serverHttpRequests)
-    .via(Http().outgoingConnection("localhost", 8080))
-    .to(Sink.foreach[HttpResponse](println))
-    .run()
+    .mapAsyncUnordered(10)(request => Http().singleRequest(request))
+    .runForeach(println)
+
 
 
 }

@@ -1,2 +1,822 @@
 Akka Http
 
+-Repository
+https://github.com/rockthejvm/udemy-akka-http
+
+-Dependencies
+
+scalaVersion := "2.12.8"
+
+val akkaVersion = "2.5.25"
+val akkaHttpVersion = "10.1.10"
+val scalaTestVersion = "3.0.8"
+
+libraryDependencies ++= Seq(
+  // akka streams
+  "com.typesafe.akka" %% "akka-stream" % akkaVersion,
+  // akka http
+  "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
+  "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion,
+  "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion,
+  // testing
+  "com.typesafe.akka" %% "akka-testkit" % akkaVersion,
+  "org.scalatest" %% "scalatest" % scalaTestVersion,
+  
+  // JWT
+  "com.pauldijou" %% "jwt-spray-json" % "2.1.0"
+
+)
+
+-Tools
+
+brew install httpie
+
+http GET localhost:8080
+
+curl -XGET localhost:8080
+
+=== Akka HTTP basics
+Akka Http is 
+A suite of libraries
+Focused on HTTP integration of an application
+Designed for both server /client
+Based on Akka actors and Akka Streams
+Akka Http is not a framework
+Strengths stream-based, with back pressure for free
+Multiple API levels for control vs ease of use
+Core concepts, HttpRequest, HttpResponse, HttpEntity, marshalling
+
+Akka Server
+Gets HTTP request, sen HTTP response
+synchronously via a function HttpRequest => HttpResponse
+async via a function HttpRequest => Future[HttpResponse]
+async via streams, with a Flow[HttpRequest, HttpResponse,_]
+
+All of the above turn into flows sooner or later
+Under the hood the requests go through the flow we write
+
+=== Handling requests
+
+-Basic
+  val serverSource = Http().bind("localhost", 7878)
+  val connectionSink = Sink.foreach[IncomingConnection] { connection =>
+    println(s"Accepted incoming connection from: ${connection.remoteAddress}")
+  }
+
+  val serverBindingFuture = serverSource.to(connectionSink).run()
+  serverBindingFuture.onComplete {
+    case Success(binding) =>
+      println("Server binding successful.")
+      //binding.unbind //this will keep existing connections
+      //binding.terminate(2 seconds)
+    case Failure(ex) => println(s"Server binding failed: $ex")
+  }
+
+-Synchronously
+  val requestHandler: HttpRequest => HttpResponse = {
+    case HttpRequest(HttpMethods.GET, _, _, _, _) =>
+      HttpResponse(
+        StatusCodes.OK, // HTTP 200
+        entity = HttpEntity(
+          ContentTypes.`text/html(UTF-8)`,
+          """
+            |<html>
+            | <body>
+            |   Hello from Akka HTTP!
+            | </body>
+            |</html>
+          """.stripMargin
+        )
+      )
+
+    case request: HttpRequest =>
+   ....
+
+  val httpSyncConnectionHandler = Sink.foreach[IncomingConnection] { connection =>
+    connection.handleWithSyncHandler(requestHandler)
+  }
+  //Short
+  //  Http().bind("localhost", 8080).runWith(httpSyncConnectionHandler)
+
+-Asynchronously
+  val asyncRequestHandler: HttpRequest => Future[HttpResponse] = {
+    case HttpRequest(HttpMethods.GET, Uri.Path("/home"), _, _, _) =>  // method, URI, HTTP headers, content and the protocol (HTTP1.1/HTTP2.0)
+      Future(HttpResponse(
+        StatusCodes.OK, // HTTP 200
+        entity = HttpEntity(
+          ContentTypes.`text/html(UTF-8)`,
+          """
+            |<html>
+            | <body>
+            |   Hello from Akka HTTP!
+            | </body>
+            |</html>
+          """.stripMargin
+        )
+      ))
+
+    case request: HttpRequest =>
+
+val httpAsyncConnectionHandler = Sink.foreach[IncomingConnection] { connection =>
+    connection.handleWithAsyncHandler(asyncRequestHandler)
+  }
+
+  // streams-based "manual" version
+  //  Http().bind("localhost", 8081).runWith(httpAsyncConnectionHandler)
+
+  // shorthand version
+  Http().bindAndHandleAsync(asyncRequestHandler, "localhost", 8081)
+
+
+-Streams
+  val streamsBasedRequestHandler: Flow[HttpRequest, HttpResponse, _] = Flow[HttpRequest].map {
+    case HttpRequest(HttpMethods.GET, Uri.Path("/home"), _, _, _) =>  // method, URI, HTTP headers, content and the protocol (HTTP1.1/HTTP2.0)
+      HttpResponse(
+        StatusCodes.OK, // HTTP 200
+        entity = HttpEntity(
+          ContentTypes.`text/html(UTF-8)`,
+          """
+            |<html>
+            | <body>
+            |   Hello from Akka HTTP!
+            | </body>
+            |</html>
+          """.stripMargin
+        )
+      )
+
+    case request: HttpRequest =>
+      request.discardEntityBytes()
+      HttpResponse(
+
+  // "manual" version
+  //  Http().bind("localhost", 8082).runForeach { connection =>
+  //    connection.handleWith(streamsBasedRequestHandler)
+  //  }
+
+  // shorthand version
+  Http().bindAndHandle(streamsBasedRequestHandler, "localhost", 8082)
+
+-Shutdown
+  val bindingFuture = Http().bindAndHandleSync(syncExerciseHandler, "localhost", 8388)
+
+  // shutdown the server:
+  bindingFuture
+    .flatMap(binding => binding.unbind())
+    .onComplete(_ => system.terminate())
+
+=== JSON
+
+Step 1
+import spray.json._
+
+Step 2
+// step 2
+trait GuitarStoreJsonProtocol extends DefaultJsonProtocol {
+  // step 3
+  implicit val guitarFormat = jsonFormat3(Guitar)
+}
+
+Step 3
+  // JSON -> marshalling
+  val simpleGuitar = Guitar("Fender", "Stratocaster")
+  println(simpleGuitar.toJson.prettyPrint)
+
+  // unmarshalling
+  val simpleGuitarJsonString =
+    """
+      |{
+      |  "make": "Fender",
+      |  "model": "Stratocaster",
+      |  "quantity": 3
+      |}
+    """.stripMargin
+  println(simpleGuitarJsonString.parseJson.convertTo[Guitar])
+
+-?
+To include the ask 
+
+import akka.pattern.ask
+
+-Time
+import akka.util.Timeout
+import scala.concurrent.duration._
+
+implicit val timeout = Timeout(3 seconds)
+
+-entity
+    case HttpRequest(HttpMethods.POST, Uri.Path("/api/guitar"), _, entity, _) =>
+      // entities are a Source[ByteString]
+      val strictEntityFuture = entity.toStrict(3 seconds)
+      strictEntityFuture.flatMap { strictEntity =>
+
+        val guitarJsonString = strictEntity.data.utf8String
+        val guitar = guitarJsonString.parseJson.convertTo[Guitar]
+
+        val guitarCreatedFuture: Future[GuitarCreated] = (guitarDb ? CreateGuitar(guitar)).mapTo[GuitarCreated]
+        guitarCreatedFuture.map { _ =>
+          HttpResponse(StatusCodes.OK)
+        }
+      }
+
+=== Handling parameters
+case HttpRequest(HttpMethods.GET, uri@Uri.Path("/api/guitar"), _, _, _) =>
+
+val query = uri.query() // query object <=> Map[String, String]
+
+  def getGuitar(query: Query): Future[HttpResponse] = {
+    val guitarId = query.get("id").map(_.toInt) // Option[Int]
+
+http POST "localhost:8080/api/guitar/inventory?id=2&quantity=4"
+
+=== High Level API
+Routing DSL
+Routes
+-Directives
+
+To build our server logic we use directives 
+import akka.http.scaladsl.server.Directives._
+
+val chainedRoute: Route =
+    path("myEndpoint") {
+      get {
+        complete(StatusCodes.OK)
+      } /* VERY IMPORTANT ---> */ ~
+      post {
+        complete(StatusCodes.Forbidden)
+      }
+    } ~
+    path("home") {
+      complete(
+        HttpEntity(
+          ContentTypes.`text/html(UTF-8)`,
+          """
+            |<html>
+            | <body>
+            |   Hello from the high level Akka HTTP!
+            | </body>
+            |</html>
+          """.stripMargin
+        )
+      )
+    } // Routing tree
+
+
+  Http().bindAndHandle(chainedRoute, "localhost", 8080)
+
+
+=== Most popular directives
+Filtering, chaining, extraction and transformation
+
+Type Route = RequestContext => Future[RouteResult]
+
+A RequestContext contains
+the actor system
+The actor materializer
+The logging adapter
+routing settings
+
+-Filters
+  val complexPathRoute =
+    path("api" / "myEndpoint") {
+      complete(StatusCodes.OK)
+    } // /api/myEndpoint
+
+  val dontConfuse =
+    path("api/myEndpoint") {// this includes the / be careful api%2myEndpoint
+      complete(StatusCodes.OK)
+    }
+
+  val pathEndRoute =
+    pathEndOrSingleSlash { // localhost:8080 OR localhost:8080/
+      complete(StatusCodes.OK)
+    }
+
+-Extractions
+  // GET on /api/item/42
+  val pathExtractionRoute =
+    path("api" / "item" / IntNumber) { (itemNumber: Int) =>
+      // other directives
+      println(s"I've got a number in my path: $itemNumber")
+      complete(StatusCodes.OK)
+    }
+
+  val pathMultiExtractRoute =
+    path("api" / "order" / IntNumber / IntNumber) { (id, inventory) =>
+      println(s"I've got TWO numbers in my path: $id, $inventory")
+      complete(StatusCodes.OK)
+    }
+
+  val queryParamExtractionRoute =
+    // /api/item?id=45
+    path("api" / "item") {
+      parameter('id.as[Int]) { (itemId: Int) => //'id is called symbol and instead of comparing by string it compare s by reference which improves performance
+        println(s"I've extracted the ID as $itemId")
+        complete(StatusCodes.OK)
+      }
+    }
+
+  val extractRequestRoute =
+    path("controlEndpoint") {
+      extractRequest { (httpRequest: HttpRequest) =>
+        extractLog { (log: LoggingAdapter) =>
+          log.info(s"I got the http request: $httpRequest")
+          complete(StatusCodes.OK)
+        }
+      }
+    }
+-Composite directives
+  // /about and /aboutUs
+  val repeatedRoute =
+    path("about") {
+      complete(StatusCodes.OK)
+    } ~
+    path("aboutUs") {
+      complete(StatusCodes.OK)
+    }
+
+  val dryRoute =
+    (path("about") | path("aboutUs")) {
+      complete(StatusCodes.OK)
+    }
+
+  // yourblog.com/42 AND yourblog.com?postId=42
+
+  val blogByIdRoute =
+    path(IntNumber) { (blogpostId: Int) =>
+      // complex server logic
+      complete(StatusCodes.OK)
+    }
+
+  val blogByQueryParamRoute =
+    parameter('postId.as[Int]) { (blogpostId: Int) =>
+      // the SAME server logic
+      complete(StatusCodes.OK)
+    }
+
+  val combinedBlodByIdRoute =
+    (path(IntNumber) | parameter('postId.as[Int])) { (blogpostId: Int) =>
+      // your original server logic
+      complete(StatusCodes.OK)
+    }
+
+-Actionable
+val completeOkRoute = complete(StatusCodes.OK)
+  val failedRoute =
+    path("notSupported") {
+      failWith(new RuntimeException("Unsupported!")) // completes with HTTP 500
+    }
+
+  val routeWithRejection =
+//    path("home") {
+//      reject
+//    } ~
+    path("index") {
+      completeOkRoute
+    }
+
+-Reject
+  val routeWithRejection =
+//    path("home") {
+//      reject
+//    } ~
+    path("index") {
+      completeOkRoute
+    }
+=== JSON Marshalling
+// step 1
+import spray.json._
+
+// step 2
+trait PlayerJsonProtocol extends DefaultJsonProtocol {
+  implicit val playerFormat = jsonFormat3(Player)
+}
+
+object MarshallingJSON extends App
+  // step 3
+  with PlayerJsonProtocol
+  // step 4
+  with SprayJsonSupport {
+
+  /*
+    - GET /api/player, returns all the players in the map, as JSON
+    - GET /api/player/(nickname), returns the player with the given nickname (as JSON)
+    - GET /api/player?nickname=X, does the same
+    - GET /api/player/class/(charClass), returns all the players with the given character class
+    - POST /api/player with JSON payload, adds the player to the map
+    - (Exercise) DELETE /api/player with JSON payload, removes the player from the map
+   */
+
+  implicit val timeout = Timeout(2 seconds)
+  val rtjvmGameRouteSkel =
+    pathPrefix("api" / "player") {
+      get {
+        path("class" / Segment) { characterClass =>
+          val playersByClassFuture = (rtjvmGameMap ? GetPlayersByClass(characterClass)).mapTo[List[Player]]
+          complete(playersByClassFuture)
+
+        } ~
+          (path(Segment) | parameter('nickname)) { nickname =>
+            val playerOptionFuture = (rtjvmGameMap ? GetPlayer(nickname)).mapTo[Option[Player]]
+            complete(playerOptionFuture)
+          } ~
+          pathEndOrSingleSlash {
+            complete((rtjvmGameMap ? GetAllPlayers).mapTo[List[Player]])
+          }
+      } ~
+        post {
+          entity(as[Player]){ player =>
+            complete(((rtjvmGameMap ? AddPlayer(player)).map(_ => StatusCodes.OK)))
+          }
+//          entity(implicitly[FromRequestUnmarshaller[Player]]) { player =>
+//            complete((rtjvmGameMap ? AddPlayer(player)).map(_ => StatusCodes.OK))
+//          }
+        } ~
+        delete {
+          entity(as[Player]) { player =>
+            complete((rtjvmGameMap ? RemovePlayer(player)).map(_ => StatusCodes.OK))
+          }
+        }
+    }
+
+  Http().bindAndHandle(rtjvmGameRouteSkel, "localhost", 8080)
+
+}
+
+=== Rejections
+ val badRequestHandler: RejectionHandler = { rejections: Seq[Rejection] =>
+    println(s"I have encountered rejections: $rejections")
+    Some(complete(StatusCodes.BadRequest))
+  }
+
+  val forbiddenHandler: RejectionHandler = { rejections: Seq[Rejection] =>
+    println(s"I have encountered rejections: $rejections")
+    Some(complete(StatusCodes.Forbidden))
+  }
+
+  val simpleRouteWithHandlers =
+    handleRejections(badRequestHandler) { // handle rejections from the top level
+      // define server logic inside
+      path("api" / "myEndpoint") {
+        get {
+          complete(StatusCodes.OK)
+        } ~
+        post {
+          handleRejections(forbiddenHandler) { // handle rejections WITHIN
+            parameter('myParam) { _ =>
+              complete(StatusCodes.OK)
+            }
+          }
+        }
+      }
+    }
+
+  // list(method rejection, query param rejection)
+  implicit val customRejectionHandler = RejectionHandler.newBuilder()
+    .handle {
+      case m: MissingQueryParamRejection =>
+        println(s"I got a query param rejection: $m")
+        complete("Rejected query param!")
+    }
+    .handle {
+      case m: MethodRejection =>
+        println(s"I got a method rejection: $m")
+        complete("Rejected method!")
+    }
+    .result()
+
+  // sealing a route
+
+  Http().bindAndHandle(simpleRoute, "localhost", 8080)
+
+=== Exceptions
+-Implicit
+  val simpleRoute =
+    path("api" / "people") {
+      get {
+        // directive that throws some exception
+        throw new RuntimeException("Getting all the people took too long")
+      } ~
+      post {
+        parameter('id) { id =>
+          if (id.length > 2)
+            throw new NoSuchElementException(s"Parameter $id cannot be found in the database, TABLE FLIP!")
+
+          complete(StatusCodes.OK)
+        }
+      }
+    }
+
+  implicit val customExceptionHandler: ExceptionHandler = ExceptionHandler {
+    case e: RuntimeException =>
+      complete(StatusCodes.NotFound, e.getMessage)
+    case e: IllegalArgumentException =>
+      complete(StatusCodes.BadRequest, e.getMessage)
+  }
+
+-Explicit
+  val runtimeExceptionHandler: ExceptionHandler = ExceptionHandler {
+    case e: RuntimeException =>
+      complete(StatusCodes.NotFound, e.getMessage)
+  }
+
+  val noSuchElementExceptionHandler: ExceptionHandler = ExceptionHandler {
+    case e: NoSuchElementException =>
+      complete(StatusCodes.BadRequest, e.getMessage)
+  }
+
+  val delicateHandleRoute =
+    handleExceptions(runtimeExceptionHandler) {
+      path("api" / "people") {
+        get {
+          // directive that throws some exception
+          throw new RuntimeException("Getting all the people took too long")
+        } ~
+        handleExceptions(noSuchElementExceptionHandler) {
+          post {
+            parameter('id) { id =>
+              if (id.length > 2)
+                throw new NoSuchElementException(s"Parameter $id cannot be found in the database, TABLE FLIP!")
+
+              complete(StatusCodes.OK)
+            }
+          }
+        }
+      }
+    }
+
+  Http().bindAndHandle(delicateHandleRoute, "localhost", 8080)
+
+=== Testing Routes
+  "A digital library backend" should {
+    "return all the books in the library" in {
+      // send an HTTP request through an endpoint that you want to test
+      // inspect the response
+      Get("/api/book") ~> libraryRoute ~> check {
+        // assertions
+        status shouldBe StatusCodes.OK
+        entityAs[List[Book]] shouldBe books
+      }
+    }
+
+    "return a book by hitting the query parameter endpoint" in {
+      Get("/api/book?id=2") ~> libraryRoute ~> check {
+        status shouldBe StatusCodes.OK
+        responseAs[Option[Book]] shouldBe Some(Book(2, "JRR Tolkien", "The Lord of the Rings"))
+      }
+    }
+
+=== Websockets
+Websocket is a modern protocol that allows bi-directional communication between client/frontend and server
+Upgraded HTTP/HTTPS connections
+	Connection: Upgrade
+	Upgrade: websocket
+This is established by the exchange of special headers, once the server gets this headers the connection will be
+upgraded to websocket and a bidirectional channel gets stablished. 
+
+=== Uploading files
+  def websocketFlow: Flow[Message, Message, Any] = Flow[Message].map {
+    case tm: TextMessage =>
+      TextMessage(Source.single("Server says back:") ++ tm.textStream ++ Source.single("!"))
+    case bm: BinaryMessage =>
+      bm.dataStream.runWith(Sink.ignore)
+      TextMessage(Source.single("Server received a binary message..."))
+  }
+
+  val websocketRoute =
+    (pathEndOrSingleSlash & get) {
+      complete(
+        HttpEntity(
+          ContentTypes.`text/html(UTF-8)`,
+          html
+        )
+      )
+    } ~
+    path("greeter") {
+      //handleWebSocketMessages(socialFlow)
+      handleWebSocketMessages(websocketFlow)
+    }
+
+  Http().bindAndHandle(websocketRoute, "localhost", 8080)
+
+=== Uploads file
+
+  val filesRoute =
+
+    (pathEndOrSingleSlash & get) {
+      complete(
+        HttpEntity(
+          ContentTypes.`text/html(UTF-8)`,
+          """
+            |<html>
+            |  <body>
+            |    <form action="http://localhost:8080/upload" method="post" enctype="multipart/form-data">
+            |      <input type="file" name="myFile">
+            |      <button type="submit">Upload</button>
+            |    </form>
+            |  </body>
+            |</html>
+          """.stripMargin
+        )
+      )
+    } ~
+    (path("upload") & extractLog) { log =>
+      // handle uploading files
+      // multipart/form-data
+
+      entity(as[Multipart.FormData]) { formdata =>
+        // handle file payload
+        val partsSource: Source[Multipart.FormData.BodyPart, Any] = formdata.parts
+
+        val filePartsSink: Sink[Multipart.FormData.BodyPart, Future[Done]] = Sink.foreach[Multipart.FormData.BodyPart] { bodyPart =>
+          if (bodyPart.name == "myFile") {
+            // create a file
+            val filename = "src/main/resources/download/" + bodyPart.filename.getOrElse("tempFile_" + System.currentTimeMillis())
+            val file = new File(filename)
+
+            log.info(s"Writing to file: $filename")
+
+            val fileContentsSource: Source[ByteString, _] = bodyPart.entity.dataBytes
+            val fileContentsSink: Sink[ByteString, _] = FileIO.toPath(file.toPath)
+
+            // writing the data to the file
+            fileContentsSource.runWith(fileContentsSink)
+          }
+        }
+
+        val writeOperationFuture = partsSource.runWith(filePartsSink)
+        onComplete(writeOperationFuture) {
+          case Success(_) => complete("File uploaded.")
+          case Failure(ex) => complete(s"File failed to upload: $ex")
+        }
+      }
+    }
+
+  Http().bindAndHandle(filesRoute, "localhost", 8080)
+
+
+=== JWT JSON Web Token
+Encoded JSON strings that represent 
+	authorization
+	exchange of data
+-Principles
+You authenticate to the server (usr/password, OAuth. Etc.)
+Server sends you back a string aka token
+You then use that string for secure endpoints
+	special HTTP header Authorization: (token)
+	the endpoint will check the token for permissions
+	your called is allow/reject
+
+-JWT Structure
+Three parts separated by .
+
+First part Header
+{
+	"typ": "JWT",
+	"alg": "HS256" //hashing algorithm = HMAC SHA256
+}
+This is Base64 encoded
+
+Second part payload (claims)
+{
+	// Registered claims
+	"iss": "rockthejvm.com", //issuer
+	"exp": 1300819380,       //expiration date
+	// Public claims (custom)
+	"name": "Danile Ciocirlan" // name
+	"admin": true		   // any kind of permissions
+}
+
+Part three Signature
+Take encoded header + "." + encoded claims
+Sign with the algorithm in the header and a secret key
+Encode base54
+
+https://github.com/pauldijou/jwt-scala
+
+http POST localhost:8080 < src/main/json/login.json
+
+http GET localhost:8080/secureEndpoint "Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJyb2NrdGhlanZtLmNvbSIsInN1YiI6ImRhbmllbCIsImV4cCI6MTU3MDM4ODA2MSwiaWF0IjoxNTcwMzAxNjYxfQ.YKslKgRJh5u3PtE2pgnzRppqgwY6tnQdrcgKwwZ_UYo"
+
+==== Akka Client
+Multiple client API levels
+	connection-level API
+	host-level API
+	request-level API
+
+-Connection Level
+val creditCards = List(
+    CreditCard("4242-4242-4242-4242", "424", "tx-test-account"),
+    CreditCard("1234-1234-1234-1234", "123", "tx-daniels-account"),
+    CreditCard("1234-1234-4321-4321", "321", "my-awesome-account")
+  )
+
+  val paymentRequests = creditCards.map(creditCard => PaymentRequest(creditCard, "rtjvm-store-account", 99))
+  val serverHttpRequests = paymentRequests.map(paymentRequest =>
+    HttpRequest(
+      HttpMethods.POST,
+      uri = Uri("/api/payments"),
+      entity = HttpEntity(
+        ContentTypes.`application/json`,
+        paymentRequest.toJson.prettyPrint
+      )
+    )
+  )
+
+  Source(serverHttpRequests)
+    .via(Http().outgoingConnection("localhost", 8080))
+    .to(Sink.foreach[HttpResponse](println))
+    .run()
+
+-Host level
+	Benefits
+	Freedom from managing individual connections
+	The ability to attach data to requests (aside from payloads)
+	Used for High volume and low latency 
+
+	Don't use
+	one-off requests (use the request-level API)
+	long-lived requests (use the connections-level API)
+
+ val creditCards = List(
+    CreditCard("4242-4242-4242-4242", "424", "tx-test-account"),
+    CreditCard("1234-1234-1234-1234", "123", "tx-daniels-account"),
+    CreditCard("1234-1234-4321-4321", "321", "my-awesome-account")
+  )
+
+  val paymentRequests = creditCards.map(creditCard => PaymentRequest(creditCard, "rtjvm-store-account", 99))
+  val serverHttpRequests = paymentRequests.map(paymentRequest =>
+    (
+      HttpRequest(
+        HttpMethods.POST,
+        uri = Uri("/api/payments"),
+        entity = HttpEntity(
+          ContentTypes.`application/json`,
+          paymentRequest.toJson.prettyPrint
+        )
+      ),
+      UUID.randomUUID().toString
+    )
+  )
+
+  Source(serverHttpRequests)
+    .via(Http().cachedHostConnectionPool[String]("localhost", 8080))
+    .runForeach { // (Try[HttpResponse], String)
+      case (Success(response@HttpResponse(StatusCodes.Forbidden, _, _, _)), orderId) =>
+        println(s"The order ID $orderId was not allowed to proceed: $response")
+      case (Success(response), orderId) =>
+        println(s"The order ID $orderId was successful and returned the response: $response")
+        // do something with the order ID: dispatch it, send a notification to the customer, etc
+      case (Failure(ex), orderId) =>
+        println(s"The order ID $orderId could not be completed: $ex")
+    }
+
+
+-Request level
+Best for 
+	Low-volume, low-latency requests
+Don't use the request-level API
+	high volume (use host-level API)
+	long-live requests (use the connection-level API)
+
+ val responseFuture = Http().singleRequest(HttpRequest(uri = "http://www.google.com"))
+
+  responseFuture.onComplete {
+    case Success(response) =>
+      // VERY IMPORTANT
+      response.discardEntityBytes()
+      println(s"The request was successful and returned: $response")
+    case Failure(ex) =>
+      println(s"The request failed with: $ex")
+  }
+
+  import PaymentSystemDomain._
+
+  val creditCards = List(
+    CreditCard("4242-4242-4242-4242", "424", "tx-test-account"),
+    CreditCard("1234-1234-1234-1234", "123", "tx-daniels-account"),
+    CreditCard("1234-1234-4321-4321", "321", "my-awesome-account")
+  )
+
+  val paymentRequests = creditCards.map(creditCard => PaymentRequest(creditCard, "rtjvm-store-account", 99))
+  val serverHttpRequests = paymentRequests.map(paymentRequest =>
+    HttpRequest(
+      HttpMethods.POST,
+      uri = "http://localhost:8080/api/payments",
+      entity = HttpEntity(
+        ContentTypes.`application/json`,
+        paymentRequest.toJson.prettyPrint
+      )
+    )
+  )
+
+  Source(serverHttpRequests)
+    .mapAsyncUnordered(10)(request => Http().singleRequest(request))
+    .runForeach(println)
+
+
+
+
+
+
+

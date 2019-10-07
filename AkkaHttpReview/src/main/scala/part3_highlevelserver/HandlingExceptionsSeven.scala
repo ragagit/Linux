@@ -7,7 +7,7 @@ import akka.stream.ActorMaterializer
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.ExceptionHandler
 
-object HandlingExceptions extends App {
+object HandlingExceptionsSeven extends App {
 
   implicit val system = ActorSystem("HandlingExceptions")
   implicit val materializer = ActorMaterializer()

@@ -11,7 +11,7 @@ import akka.stream.scaladsl.{Sink, Source}
 import scala.util.{Failure, Success, Try}
 import spray.json._
 
-object HostLevel extends App with PaymentJsonProtocol {
+object HostLevelTwo extends App with PaymentJsonProtocol {
 
   implicit val system = ActorSystem("HostLevel")
   implicit val materializer = ActorMaterializer()

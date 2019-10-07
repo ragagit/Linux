@@ -14,7 +14,7 @@ import akka.util.ByteString
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-object UploadingFiles extends App {
+object UploadingFilesTen extends App {
 
   implicit val system = ActorSystem()
   implicit val materializer = ActorMaterializer()

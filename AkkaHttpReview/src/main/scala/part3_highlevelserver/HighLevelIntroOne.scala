@@ -7,7 +7,7 @@ import akka.http.scaladsl.server.Route
 import akka.stream.ActorMaterializer
 import part2_lowlevelserver.HttpsContext
 
-object HighLevelIntro extends App {
+object HighLevelIntroOne extends App {
 
   implicit val system = ActorSystem("HighLevelIntro")
   implicit val materializer = ActorMaterializer()
@@ -55,7 +55,7 @@ object HighLevelIntro extends App {
     } // Routing tree
 
 
-  Http().bindAndHandle(pathGetRoute, "localhost", 8080)
+  Http().bindAndHandle(chainedRoute, "localhost", 8080)
 
 
 }

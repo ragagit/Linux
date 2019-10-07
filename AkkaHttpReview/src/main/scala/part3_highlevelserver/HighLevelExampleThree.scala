@@ -16,7 +16,7 @@ import scala.concurrent.Future
 // step 1
 import spray.json._
 
-object HighLevelExample extends App with GuitarStoreJsonProtocol {
+object HighLevelExampleThree extends App with GuitarStoreJsonProtocol {
 
   implicit val system = ActorSystem("HighLevelExample")
   implicit val materializer = ActorMaterializer()
