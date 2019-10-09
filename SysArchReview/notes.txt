@@ -1,0 +1,869 @@
+Systems Architect 
+
+Reasons to be a Software Architect
+Interesting
+Career Path & Visibility
+Money
+
+=== Types of Architects
+-Infrastructure Architect
+	Designs the Infrastructure, Servers, VMs, Network, Storage, etc.
+	Familiar with requirements
+
+-Software Architect. Sometimes called solution architect, system architect
+	Responsible for the architecture of the software.
+	Developer knows what CAN be done.
+	Architect knows what SHOULD be done.
+
+	Baseline requiremnts
+	Fast
+	Secure
+	Reliable
+	Easy to maintain
+
+	Technology should server the requirements.
+
+	Software Architect design the software to be fas, secure, reliable and easy to maintain. And
+	selects proper technology, platform and patterns to achieve this goals.
+
+-Enterprise Architect
+	Works with top Level Management, CEO, CIO
+	Streamlines the IT to Support Business
+	No Development-oriented tasks
+	Career Path: Senior Software Architect, Project manager
+
+-Why an architect should code
+	Architecture's trustworthiness. He should be able to test that the technology actually works.
+	Support the developer.
+	Respect. If a developer sees that that SA doesn't know what he is talking about they will lose respect. 
+
+-Architects & the Academy
+	No dedicated degree.
+	CS won't hurt
+	TOGFA more towards Enterprise Architecture
+
+=== Architect's Mindset
+
+-Understand the business before starting the architecture.
+	Make yourself familiar with:
+	Weaknesses
+	Strengths
+	Competition
+	Growth Strategy
+
+-System's goals
+	Goals are NOT requirements. Not what system should do.
+	Goals describe the effect on the organization
+	Usually described by the client but not always
+
+-Your client's clients
+	Think what would be the effect of your client's clients
+
+-Talk to the right people with the right language.
+	Always keep in mind what is the thing that really matters to the person you are talking to.
+
+	Sophie, project manager
+	Avoid: This is the latest and greatest pattern and we'll be the first to test it out.
+	Use: This new technology can help us write the code twice as fast, so we can cut our schedule and budget accordingly.
+
+	Dave, the Team Leader cares about programming.
+	Use: Have you heard about the latest Angular version? We're going to use it.
+
+	Shelly, the CEO cares about Financial Bottom Line
+	Avoid: Technical Buzzwords, such as microservices, Java
+	Use: The Architecture I've design will ensure the continuity of the business and will be able to cope with
+	the demand.
+
+	Put yourself in the other person's shoes and talk about the things that matters to them.
+
+=== The Architecture Process
+	-Understand the System's requirements
+	Right after setting the goals
+	Requirements=What the system should do
+	Usually define by the system Analyst
+	Much more important that regular requirements
+
+	-Understand the Non-Functional requirements
+	non-functional requirement (NFR) is a requirement that specifies criteria that can be used to judge the operation of a system, 
+	rather than specific behaviours
+	Users, Loads, Volumes, Performance
+	Not always known to the client or analyst
+
+	-Map the components
+	Represents the moving parts of the system
+	It helps you to understand the system functionality
+	It helps to communicate your understanding to the client.
+	Non-technical. 
+
+	-Select the technology stack
+	Select with the development system what technology the system would be based..
+	Usually back end, front end, data store.
+	A lot of factors, choose wisely.
+
+	-Design the Architecture
+	You already have the requirements, on-functional requirements, technology stack
+	All what is left is to glue all those components together and results in a system that is
+	fast, secure, reliable and easy to maintain.
+	Qualities of a well designed system such as: loosely coupled, stateless, scaling, caching, messaging
+
+	-Write Architecture Document
+
+	-Support the Team
+
+=== Working with system requirements
+	Two types of requirements
+
+	-Functional Requirements. What the system SHOULD DO. Defined by the System Analyst.
+	Business Flows
+	Business Services
+	User Interfaces
+
+	-Non-Functional Requirements. What the system SHOULD DEAL WITH.
+	Performance
+		Always talk in numbers. Talk to the client but < 1 sec is human acceptable
+		Latency. How much time does it take to perform a single task?
+			for example, how much time will it take the API to save the user data in the db?
+			or how much time will it take to read a single file from the system
+		Throughput. How many tasks can be performed in a given time unit?
+			for example how many users can be saved in the db per minute.
+			how many files can be read in a second.
+
+	Load
+		Quantity of work without crashing
+		example how many concurrent requests without crashing.
+		While the throughput defines the time unit, load defines the availability of the system
+		example Throughput 100 requests/sec Load 500 requests without crashing
+		Always plan for extreme cases!
+		
+		 
+	Data Volume
+		How much data the system will accumulate over time.
+		This helps with:
+		Deciding on database type
+		Designing queries
+
+	Concurrent Users
+		How many users will be using the system simultaneously. Similar to load but with a big difference current users using the 
+		system but without making requests.
+		Rule of thumb:
+		Concurrent = Load x 10
+	SLA (Service Level Agreement)
+		Availability during a period of time, like a year for example.
+
+	-Defining Non-Functional Requirements
+		Architect's Roles:
+		Framing the requirements' boundaries. SLA of 99.99% might not be feasible and probably not necessary
+		Discuss numbers.
+		Client won't be able to define them.
+		NEVER begin working on a system without Non-Functional requirements in place.
+
+=== Application Types
+	Decided after requirements are set.
+
+	Common types:
+	Web Apps
+		Web sites
+		There is a web server and the browser.
+		Best suited for systems that require:
+		User Interface
+		User Initiated Actions
+		Large scale
+		Short, focused actions
+		Request-Response based.
+	
+	Web API
+		They don't render we pages but data usually JSON.
+		Its clients are not web browser but Java Scripts or other type of clients.
+		The most popular REST based combination of:
+			URL
+			Parameters
+			HTTP Verb (GET)
+		Best suited for systems that require:
+			Data Retrieval and Store
+			Client Initiated Actions
+			Large Scale
+			Short focused actions.
+			Request-Response based.
+			Not good for long running processes.
+			
+	Mobile
+		Run on mobile
+		Usually works with Web API
+		Requires user location.
+		
+	Console
+		CLI Command Line Interface
+		No fancy UI
+		Require technical knowledge
+		Limited interaction
+		Long or Short running processes
+
+	Service
+		No UI at all
+		Managed by Service Manager, like in Windows
+		Long-running processes (monitoring folders and processing files)
+		
+	Desktop
+		Has all its resources on the PC
+		Might connect to the web
+		Great UI
+
+	Function as a service 
+		Implemented as AWS Lambda
+		Azure Functions
+		Allows developer to write a short focused code segments and not to worry about scale or SLA
+
+	Many application can be more than one
+
+
+=== Selecting Technology Stack
+	Determine Language, platform and tools are going to be used during system development and skills required by the development team.
+	Super important because:
+		Irreversible, microservices gives some flexibility but still
+		Emotional. Technology looks charming, some other company is using it, etc.
+		Decision must be:
+			Made with clear mind
+			Heavily documented
+			Group effort
+		Front End
+		Back End
+		Data Store
+
+	-Consideration
+		Can perform the task?
+		Community. In case you need support and Q&A. stackoverflow.com and look for Tags
+		Popularity. Less popular small community less support. To check use google trends.
+			https://trends.google.com/trends/?geo=US
+
+-Backend
+	.NET Classic
+		Founded in 2001 by Microsoft
+		General purpose
+		Object Iriented
+		Statically types
+		IDE Visual studio
+		Windows only
+		Performance - OK
+		Very mature
+		Blurred roadmap
+	.NEt Core
+		.NET vNext
+		Cross platform
+		Great performance
+		Not fully baked yet
+		IDE - Visual Studio, VS Code
+		Vocal, growing community
+
+	Java
+		Founded in 1995 by Sun Microsystems
+		Very popular
+		General purpose
+		Object Oriented
+		Statically typed
+		Huge community
+		Multiplatform
+		 
+	node.js
+		Founded in 2009 by Ryan Dahl
+		Optimized for highly-concurrent Web Apps
+		JavaScript based
+		Dynamically typed
+		Large community
+		Great performance
+		Not for long running processes
+		Good for short concurrent IO operations
+		
+	PHP
+		Founded in 1994 by Rasmus Lerdorf
+		A little messy
+		Very easy to learn
+		Not polished
+		Large community
+		Focused on Web Apps and Web API
+
+	Python
+		Founded in 1989 by Guido van Rossum
+		Scripting language
+		Very popular
+		Very easy to learn
+		Huge, supportive community
+		Supports any type of application
+
+-Frontend
+	Web Apps
+		HTML, CSS & JavaScript
+		Which JavaScript framework?
+			Angular, 2010, Full-blown framework, long learning curve
+			React, 2013 UI centric library, short learning curve
+	
+	Mobile
+		Native
+			iOS - Objective-C, Swift with X-Code & iOS SDK
+			Android - Java with Android Studio & Android SDK
+			Full control, no limits.
+			Exceptional user experience.
+
+		Hybrid
+			Thin wrapper around HTML, JavaScript, CSS
+			Very limited to phone features
+			User experience inferior
+			Keep an eye on PWA (Progressive Web App)
+
+		Cross-Platform
+			The development is done in a special environment not linked to specific mobile platforms
+			Xamarin (C# Visual Studio)
+			React Native (JavaScript). It will compile to iOS or Android without writing a single line of Java or Objective -C
+			Catch-ip with latest versions
+			Good, with limitations like graphs
+		Dev Time vs Capabilities
+
+	Desktop
+		WinForms
+		WPF
+		UWP
+-Data store 
+	SQL
+		MS SQL, Oracle, MySQL
+		Stores data in tables
+		Tables have concrete set of columns
+		There is a relationship between tables
+		Atomic set of actions. transaction it has to complete or not, no partial operation.
+		ACID
+			Atomic. Transaction all or nothing
+			Consistency. All the data will be valid.
+			Isolation. No transaction will be affected by other transactions
+			Durability. Once the transaction is committed it will remain in the system even after a crash.
+		Querying using SQL
+		Problem with performance as the db grows
+
+	NoSQL
+		Emphasis on scale and performance.
+		Often distributed in many servers
+		Schema-less
+		Data usually stored in JSON format.
+		Transactions 
+			Eventual Consistency. It guaranties that the transaction will be performed but not when.
+			data can be temporarily inconsistent. Each db defines its transaction support.
+		Querying
+			No standard
+			Can be frustrating.
+	-Summary
+		if your data is not going to be huge in the order of terabytes use SQL
+		if consistency is important and data is structured.
+		if data is huge and not structured or semi structured use NoSQL.
+
+=== Quality Attributes
+
+	Technical capabilities that should be used in order to fulfill the non-functional requirements
+		Example
+		Non-functional requirement:
+		The system must work under heavy load but should not waste money on unused resources
+		Required Quality Attribute
+		Scalability
+	Non-Functional requirement -> (map to) -> Quality Attributes -> (map to) -> Architecture
+
+	-Scalability 
+		Adding computing resources without any interruption
+		Non-Scalable system (scale up)
+			Look for non-scalable code
+			Rewrite non-scalable code
+			Reinforce VM
+			These last three are long and problematic
+		Scalable system (scale out)
+			Add VM
+			Notify the Load Balancer
+			This is preferred for two reasons:		
+				Redundancy. if one of the VMS fail you have more.
+				No limits. As there are limitation on the CPU, Memory.
+	-Manageability
+		Ability to manage the application. To know what's is going on and take action
+		accordingly.
+		Is your system manageable? Who reports the problems? the client or the system.
+
+	-Modularity
+		A system that is built from building blocks that can be changed or replaced without
+		affecting the whole system.
+
+	-Extensibility
+		A system that its functionality can be extended without modifying its existing code.
+		For instance code support XML and JSON but later needs to support CSV. Dependency injection could be a solution.
+
+	-Testability
+		Manual
+		Unit Test. It tests specific methods for example using assertions
+		Integration Testing. We test the whole module. We execute a method that will trigger a chain of actions that will result in 			specific output, for example a new record in the db.
+		Characteristics:
+			Independent modules and methods
+			Single responsibility
+
+=== Components Architecture
+
+	-Software Component
+		A piece of code that runs in a single process. It is not distributed.
+	
+	-Distributed System
+		Composed of independent Software Components
+		Deployed on separate processes, containers or servers.
+
+	-Two levels of software architecture
+		Components Architecture
+			Inner components
+			Interaction between them
+			Make the code fast and easy to maintain
+		System Architecture
+			Bigger Picture
+			Scalable. Reliable, Fast, Easy to maintain
+
+	-Layers
+		Represent horizontal functionality
+		Software component
+			Expose User Interface 	-> UI/SI			Expose API, JSON Handling, Auth
+			Execute Logic		-> Business Logic (BL)		Validation, Enrichment, Computations
+			Save/Retrieve Data	-> Data Access Layer (DAL)	Connection Handling, Query Saving Data, Transaction Handling.
+		Forces well formed and focused code
+		-Code Flow
+			Modules can only call the layer below, UI -> BL,  UI X-> BL
+			Modules can't call layer above
+		-Loose Coupling. Use interfaces or Dependency Injection.
+		-Exception Handling. Each layer is encapsulated and it doesn't expose info about its inner workings.
+			For example if  MySQL throws an exception it shouldn't pass a MySQL exception to the BL rather analyze the problem, log a 			message and throw a DataException.
+		-Layer vs Tier. Layer is a software component running a single process and communicate and share the same resources.
+				Tier is in a distributed piece of code, it is deployed independently and communicate with a protocol such as 					HTTP.
+		
+	-Interfaces
+		A contract
+		Declares the signature of an implementation
+		new is glue
+		A better mechanism to communicate classes and make the code more modular and flexible
+
+	-Dependency Injection
+		A technique whereby one object supplies the dependencies of another object.
+		One way for implementing it is with a factory method.
+		The other way is by constructor, which is a bit easier to test.
+		Not trivial, but makes the code modular, flexible and easy to maintain
+
+	-SOLID
+		Coined by Bob Martin in 2000
+		Single Responsibility. For instance a logger, what should be written(one method)? What should be written (another method)
+		Open/Closed. Open for extension closed for modifications. It can be implemented using Inheritance, plug-in mechanism
+		Liskov substitution. If S is a subtype of T, then T should be replaced by S without altering the behaviour of the system.
+		Interface Segregation. Many client-specific interfaces are better than one general-purpose interface
+		Dependency Inversion
+
+	-Naming Conventions
+		Define naming rules of code elements
+		Makes the code more readable and easy to understand
+		Not enforced by compiler
+		Two types:
+			Structure (casing, underscore, camelCase, Hungarian)
+			Content
+		Class represents a Noun, methods verbs
+
+	-Exception handling
+		Catch exception only if you have something to do with it. Logging doesn't count.
+			Examples Rolling back a transaction, Retry, Wrap the exception.
+		Catch only specific exceptions
+		Make sure you handle the right exception
+		Use try ... catch on the smallest code fragments possible
+		Locate the code fragments that may raise exceptions and try ... catch them
+	-Logging
+		To track errors
+		To gather data
+			Which module is most visited
+			Performance
+			User's flow
+		Storage 
+			Files
+			Database
+			Event Log
+			Kibana
+			
+=== Design Patterns
+	A collection of general, reusable solutions to common problems in software design
+	Tested and used by other developers
+	Make your code more readable and easy to modify
+	Introduced in 1987
+	Patterns are micro-architecture
+	-Factory.
+		Creating objects without specifying the exact class of the object.
+		Avoid strong coupling between classes
+		For instance for a weather class we declare an interface and specific class will implement it.
+		Then you can use a switch statement or configuration file to return the proper instance. 
+	-Repository
+		Modules not handling the actual work with the datastore should be oblivious to the datastore type
+		For example there is a db we need access to, we write the queries, later on, the table column names change
+		The application should implement and interface that expose the methods of the db, any change should be localized on the repo.
+		More advanced implementations are Generic classes, Inheritance, Extension Frameworks.
+
+	-Facade
+		Creating a layer of abstraction to mask complex actions.
+		For example Banking Application
+			Make sure accounts exist
+			Make sure the first account has enough money
+			Withdraw money from first account
+			Deposit money in second account
+			Add event in account log
+		We would have five methods. With the Facade pattern would would have only one method called "TransferMoney" that
+		would use the separate methods.
+
+	-Command
+		All the action's information is encapsulated within an object.
+		For example Undo mechanism, with a naive implementation would have
+			DeleteLetter
+			ChangeFont
+			RemovePage
+		With a command pattern 
+		interface ICommand{ void Execute(); }
+		Command classes
+		class DeleteWord : ICommand, class ChangeFont : ICommand
+		Document is the Receiver, DeleteWord is the Command Object
+		In the implementation Undo is the Invoker
+		class Undo{
+			Queue<ICommand> undos
+		Use only the patterns you need.
+		
+=== System Architecture (Architecture Patterns)
+	The big picture
+	Answers the questions:
+		How will the system work under heavy load?
+		What will happen if the system crashes at this exact moment in the business flow
+		How complicated can be the update process.
+	Includes:
+		Defining the software components (Services)
+		Defining the way these components communicate
+		Designing the system's capabilities (scalability, manageability, performance, etc.)
+
+	-Loose coupling
+		Making sure the services are not strongly tied to other services
+		For instance if a service exposes JavaRMI the client needs to implement in Java
+		Then we use REST. If we are in a Spider Web configuration what happens if one of the URL changes?
+		One solution would be using a Yellow Pages = Consul
+		One more is to have a Gateway in the middle that knows about the other services.
+
+	-Stateless
+		The application's state is stored only in two places - the data store and the user interface
+		No state is stored in the application code. For example if we cache an user info for future login
+		That is no good affects
+		Scalability. Scale up and out, grow and shrink as needed.
+		Redundancy that allows the system to function properly when resource is not working.
+
+					UI
+
+				   Load Balancer
+
+		Service 1	     Service 2		Service 3
+
+					DB
+
+	-Caching
+		Brings data closer to its consumer so that its retrieval will be faster
+		Database is reliable with good performance. Cache is not very reliable but performance is excelent.
+		What to cache?
+			Cache should hold data that is frequently accessed and rarely modified
+		Cache Types:
+			In-Memory, In-Process Cache. It is part of the service process
+				Existing libraries
+				Can be easily implemented using static concurrent collection
+				Great performance
+				Size is limited to the process's memory.
+				Store complex objects
+			Distributed Cache
+				External product
+				Data is stored in separate process
+				Provides interface for accessing the data
+				Size virtually unlimited
+				Auto nodes syncing
+				Failover capabilities
+				Not the best performance
+				Stores only primitive types
+				Requires training and setup
+
+	-Messaging
+		Means of communication between the various services
+		Not just REST API, Not Exclusive
+		Messaging Criteria
+			Performance
+			Message Size
+			Execution Model
+			Feedback & Reliability
+			Complexity
+		REST API
+			De-Facto standard for HTTP-based systems
+			Very fast
+			GET ~ 8KB, POST ~ dozens MB
+			Execution Model: Request-Response
+			Immediate feedback via Response codes
+			Easy to implement
+			Useful for traditional Web Apps
+
+		HTTP Push Notifications
+			SignalIR
+			socket.io
+			They use websockets
+			Very popular in chats
+			Great performance
+			Limited message size no more than a few KB
+			Fire and Forget
+			Easy to implement
+			
+		Queue
+			When a service wants to pass a message to another service it places
+			the message in the queue such as RabbitQ or MQSeries, the other message gets a notification and 
+			pulls the message from the queue.
+			Message will be handled once and only once
+			Messages will be handled in order
+			Performance is not so good specially if polling is involved
+			Message size almost not limited but small size id recommended
+			Polling as execution model
+			Very reliable
+			Requires training and setup
+			When to use them: Complex system with lots of data, when order and
+			reliability are top priority.
+
+		File-base & Database-based
+			Performance not so good
+			Message size unlimited
+			Execution model Polling
+			Very reliable
+			Requires training and setup
+			Complex system with lots of data.
+			Problems: File lock
+
+	-Logging and Monitoring
+		This should allow diagnostic and monitoring the system
+		Create a logging service
+			API
+			Watch folders like log stash
+			The logs of the whole system have to be centralized and accessible
+			Correlation ID which log belongs to which service
+			
+
+=== External Considerations
+	-Deadlines
+		How long will it take to develop
+		Consult team leads
+	-Developers' skillset
+		Selecting unknown skillset
+			Delay
+			Low Quality
+		Migration	
+	-IT support
+		Queue engines
+		Business flow
+		NoSQL db
+		Always prefer a product that you department understands and support
+	-Cost
+		Buy vs Build
+		Rule of thumb use an existing tool but not always if there is a product with 100 features but you need only ten.
+
+=== Architecture Document
+	For Project Manager, CTO, CEO
+	Requirements reflect the essence of the system
+	Executive Summary describes best practices and modern patterns
+	Architecture geared towards business goals
+	Management's section appear first
+	You can use UML although the document is for many people who might not know UML
+	Doc should be simple, plain English
+	Doc Structure
+		Background < page
+			System's role
+			Reasons for replacing the old system
+			Expected business impact
+		Requirements < page
+			Functional SHOULD DO
+			Non-Functional SHOULD BE DEALING WITH
+			Bullet list
+		Executive Summary < 3 pages
+			Use charts and diagrams
+			Write AFTER writing the rest of the document
+			Use well known technical terms - sparsely
+			Don't repeat yourself
+		Architecture Overview < 10 pages
+			High-level view of the architecture
+			General Description
+			Type Web-Bases, MicroServices, REST API
+			Major NF-Req 50 regs/sec
+			No formal visualization standard
+			Describes various parts of their role
+			Uses simple words
+			Includes all relevant
+		Components drill-down Unlimited
+			Component's Role
+				Recap of the components's description from the Architecture overview
+			Technology Stack
+				Technology used in developing the component
+				Data Store
+				Back End
+				Front End
+				Describe API
+			Components Architecture
+				Describe the layers
+			Development Instructions
+				Include important considerations
+	
+
+
+		
+=== Example
+
+	-Define the requirements
+		Functional
+			Receive status updates from IOT Devices
+			Store the updates for future use
+			Query the updates
+		Non-Functional
+
+			What we ask?
+				How many concurrent messages in peak time? 500
+				Total messages per month? 15 000 000
+				What is the average size of a message? 300 kb
+				How many users? 2 000 000
+				How many concurrent users? 40
+				What is the maximum downtime allowed (SLA) ?
+			Data Volume: 54 GB annually
+			540 concurrent requests
+			1% message loss
+			2 000 000 users
+			Load: 500 concurrent messages
+			SLA Silver, Gold, Platinum (Fully Stateless, Easily Scaled Out, Logging & Monitoring)
+
+ 
+	-Mapping the components
+		From the Functional specs we have two main components
+			Receiver
+				Receives
+				Validate
+				Parse
+				Save
+			Info provider
+			
+	Receiver 	Handler 	Info
+		
+				  DB
+
+		Logging
+
+	-Messaging Queue is the best option for this case
+	-Logging service
+		Application type
+			Console
+			Service
+		Technology Stack
+			Code 
+				Access Queue's API. .NET
+				Ask developer which technology they are familiar with
+			Store Data SQL Server
+
+		Three layers
+			Polling (instead of UI)
+			Business Logic
+			Data Access
+
+	-Receiver
+		Application Type: Web API
+		Technology Stack .NET
+		Three Layers
+			Service Interface
+			Business Logic
+			Queue Handler (instead of storage layer)
+			Logging cross-cutting concerns
+
+	-Handler
+		Validate messages
+		Parse messages
+		Stores messages in db
+		App Type
+			Service
+		Three layers
+			Polling
+			BL
+			DAL
+
+	-Info server
+		App Type: Web API
+		Three layers
+			UI, BL. DAL
+		
+
+=== Advanced Topics
+	-Microservice
+		An architecture in which various functionalities are implemented as separate,
+		loosely coupled services that interact with each other using standard, 
+		lightweight protocol.
+
+		Monolithic
+			A single exception may crash the whole system
+			Updates impact all the components
+			Limited to one dev platform
+			Unoptimized compute resources
+		Microservices resolve the above issues but has the following problems:
+			Complex monitoring
+			Complex architecture
+			Complex testing
+
+	-Event sourcing
+		In traditional db entity attributes are accessed and modified its value
+		With event sourcing we don't modify attributes in the entity, we track events related to
+		the entity 
+		When history matters, when it is important how you got there.
+		Pros
+			Tracing
+			Simple data model
+			performance
+			reporting
+		Cons
+			No unified event
+			Storage Usage
+			
+
+	-CQRS
+		Command 
+		Query
+		Responsibility
+		Segregation
+		While in traditional applications the same database is used for reading and writing
+		in cqrs we have a db for storage and one more for retrieval and some sync process
+		This resolves the issue with event sourcing performance
+		Useful with high frequency updates that require near real time query capabilities.
+
+
+=== Soft skill
+	-Listen
+	-Dealing with criticism
+	-Be smart not right
+	-Organization Politics
+	-Public Speaking
+		Define a clear goal
+		Know you audience
+		Be confident
+		Don't read
+		Eye contact to everyone
+	-Learning
+		Adapt or Die
+		Blogs DZOne, O'Reilly
+		InfoQ
+		Conferences
+			Software Architecture
+			QCon
+			NDC Conferences
+			//build/   from Microsoft
+
+		
+
+
+
+			 
+	
+
+		
+		
+		
+
+ 
+
+
+	
+		
+
+
+
