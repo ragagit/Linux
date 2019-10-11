@@ -1,0 +1,546 @@
+Apache Spark
+
+=== Installation
+Install IntelliJ Community Editions
+Install Scala Plugin
+
+=== Scala
+	Designed by Martin Odersky
+	Compiles to Java byte code and runs on the JVM
+	Scala = "Scalable Language"
+	Combines Object Oriented and Functional Programming
+	OO makes it simple to design complex systems and to adopt them to new demands
+	Functional Programming makes it simple to create things rapidly from simple parts
+	JVM Languages
+		Clojure
+		Groovy
+		JRuby
+		Jython
+		Kotlin
+		Scala
+	REPL
+		:help
+		:quit
+		:javap //to see metadata of the compiled classes
+		:paste //to come up with multi line code
+		You can type some commands then
+		:save path/filename
+		:load path/filename
+	val
+		immutable
+	var 	
+		mutable
+
+	Data types
+		Byte, Short, Int, Long, Float, Double, Char, String, Boolean, Unit
+
+	Type Inference
+		val s = "Message" // this is inferred as string
+	
+	Flow Control
+		if else
+		while
+		do while
+		for
+			for( a <- 1 to 10 )
+			for( a <- 1 until 10 )
+			val numList = List( 1, 2, 3, 4 )
+			for( a <- numList if a != 3 ). //filter
+		yield	//return values in the for loop
+
+	-Functions and Operators
+		Functions are complete objects that can be assigned to variables
+		Functions defined inside other functions are called local functions
+
+	-Anonymous Functions
+		val my = (x: Int) => x * x
+	
+	-Functions with Named arguments
+		def printInt( a: Int, b: Int)
+		printInt( b = 2, a = 5 )
+
+	-Functions with variable arguments
+		def printStrings(args: String*) = {
+			for( args <- args )
+		}
+
+	-Default parameters
+		def addInt( a: Int = 5, b: Int = 2)
+
+	-High Order Functions
+		Functions that take functions or return functions
+		def takeFunc(func: Int => Int, x: Int ) = {
+     			println(func(x))
+     		}
+		def myFun = (x: Int) => x * x
+		takeFunc(myFun, 2)
+	-Operators
+		Arithmetic +,-,*,/,%
+		Relational ==, !=, >, <, >=, <=
+		Logical &&, ||, !
+		Bitwise &,|, ^,~,<<,>>,>>>
+
+	-Class
+		A template or a blueprint
+		class Student(id: Int, name: String){
+			def show(){ ... }
+		}
+		var s = new Student(100, "Mohan")
+
+	-Object 
+		An instance of a class
+		State and behaviour
+		abstract class DatabaseDriver {
+  		// some database stuff
+		}
+
+		object DatabaseDriver {
+  			def apply(config: Configuration) = config.dbType match {
+    			case "MYSQL" => new MySqlDriver()
+    			case "PSQL" => new PostgresDriver()
+   			case _ => new GenericDriver()
+  		}
+		}
+
+		// now I get the right version!
+		val mydatabase = DatabaseDriver(dbConfig)
+
+	-Singleton Object
+		Declared using object
+		No instance required to call methods declared inside
+		No concept of static variables or methods. Use object instead
+
+	-Companion Object
+		Singleton object has the same name as Class
+		It should be defined inside same source as the Class
+
+	-case class
+		scala adds toString(), hashCode(), equals()
+
+		case class Student(name: String, age: Int)
+		val student = Student("Mary", 17) // no need for new
+		println(student.name) // attributes are public
+		
+		case classes are compared by structure not reference
+		val p1 = Person("Tom", 15)
+		val p2 = Person("Tom", 15)
+		p1 == p2 //true
+
+	-constructor
+		default constructor. If no constructor is defined scala will create one
+		primary constructor. You define it
+		secondary constructor 
+			class Student(id:Int, name:String){
+				var age: Int = 0
+				def this(id:Int, name:String, age: Int){
+					this(id,name)
+					this.age = age
+				}
+			}
+
+ 	-method overloading
+		def add(x: Int, b: Int)
+		def add(x: Double, b: Double)
+
+	-inheritance
+		class Programmer extends Employee{
+		}
+
+	-traits
+		An interface with a partial implementation
+		is a collection of abstract and non-abstract methods
+		it can have all or some abstract methods
+		you can extends several traits
+
+		trait Flyable{
+			def fly() 
+		}
+		class Bird extends Flyable { ... }
+
+		trait Speakable{ ... }
+		trait Quackable extends Speakable { ... }
+
+		class Duck extends Quackable with Flyable
+
+	-Arrays
+		They are immutable
+		var myArray: Array[String] = new Array[String][10]
+		var str = myArray(0)
+		myArray(1) = "Some string"
+
+		var myArray1 = new ArrayBuffer[String]()
+
+	-Collections
+		Collections are the containers of a random number of elements
+		scala.collection.mutable, scala.collection.immutable
+		
+		-List
+			LIFO last-in-first-out (LIFO) stack-like
+			They can contain duplicates
+			:: (cons) to concatenate elements
+			head first element
+			tail all elements except the first
+		-Map
+			scala.collection.mutable
+			scala.collection.immutable
+			var myMap: Map[Int, String] = Map()
+			myMap += ( 1 -> "One")
+			+ to add lements
+			++ to concatenate 2 or more maps
+		
+		-Set
+			No duplicates
+			mutable and immutable
+			var mySet = Set(1,2,3,4,5)
+			++, min, max, intersect, &
+
+		-Tuples
+			A collection of heterogeneous types
+			Elements can be accessed using ._ 
+			val t = (1,2,3,4)
+			t.toString()
+			t.swap
+
+=== Introduction to Apache Spark
+	-Big Data Analytics
+		It is the process of examining large data set to uncover hidden patterns
+		unknown correlations, market trends, customer preferences and other useful business information.
+		
+		Two types of Big Data Analytics
+			Batch Analysis. Hadoop
+			Real-Time Analysis. Spark
+			Spark is faster because the process are done in memory unlike hadoop that uses disk
+
+	-What is Spark
+		Apache Spark is an open-source cluster-computing framework for real time
+		processing.
+		Spark provides an interface for programming entire cluster with implicit parallelism and fault tolerance.
+		It was built on top of Hadoop MapReduce and it extends the MapReduce model
+		to efficiently use more types of computations
+
+	-Features
+		100x faster than MapReduce
+		Polygot, Scala, Java, Python, R
+		Lazy evaluation
+		Realtime computation and low latency
+		Machine Learning
+
+	-Spark EcoSystem
+		Spark SQL
+		Spark Streaming
+		MLib
+		GraphX
+
+	-Spark Architecture
+		Your program gets converted to a SparkContext by the Driver Program
+		then this is move to a Worker Node to get executed. Worker nodes are
+		managed by the Cluster Manager.
+
+	-Spark Buzzwords
+		Application Jar. Program and its dependencies
+		Driver Program. The process to start the execution
+		Cluster Manager. External process to manage resources.
+		Deploy Mode:
+			cluster: Driver inside the cluster
+			client: Driver outside of cluster
+		Worker Node:
+			Node that run application program in cluster
+		Executor. Process launched in a worker node, that runs the Task
+			Keep data in memory or disk storage
+		Task. A unit of work that will be sent to the executor
+		Job
+			Consists of multiple tasks
+			Created based on an Action
+		Spark Context. Represents the connection to a Spark cluster and can be 	used to create 	RDDs, accumulators and 			broadcasts vars in the cluster
+		Direct Acyclic Graph(DAG)
+			Graph representing tasks to be performed.
+
+		
+=== RDD 
+
+	-What is RDD?
+		RDD Resilient Distributed Dataset
+		Distributed collection of Objects
+		Resilient - if data is lost it can be recreated
+		Distributed - Broken into multiple pieces called partitions and this distributed accrosed the clusters
+		Dataset can contain any type of elements
+		RDD are immutable
+		Fundamental unit of data in spark
+
+	-Creating RDD
+		Text Files
+		JSON
+		Parallelize 
+		Sequence files
+		RDBMS
+		Very large data
+
+	-Storing RDSs
+		Text Files
+		JSON
+		Seq Files
+		saveAsTextFile()
+		RDBMS
+	-RDD Operations
+		Two types:
+			Transformations
+				Operate on an RDD and return a new RDD
+				Are lazy evaluated
+				map, flatmap, filter, union, intersection, groupByKey
+				reduceByKey, join, sample
+			Actions
+				Returns a value after running a computation on an RDD
+
+		filter()
+			val numbers = List(1, 2, 3, 4)
+			val evenNumbers = numbers.filter(number => number % 2 == 0)
+
+		map()
+			Use when 1 to 1 relationship
+			val lengths = lines.map(line => line.length)
+
+		flatMap()
+			similar to map but each input can be mapped to 0 or more output items
+			Use 1 to many relationships
+
+		union
+			Returns a new dataset that contains the union of the elements in the source dataset 
+			and the argument
+
+		intersection
+			Returns a new dataset with the intersection of two datasets
+
+	-Actions
+		reduce()
+			Does an operation with each element in the RDD
+		collect()
+			Useful when small data size and want to deal with it locally. Not for large dataset
+		count()
+			counts the number of lines
+		countByValue()
+			counts unique values
+		take()
+			takes n number of elemnts
+		saveAsTextFile()
+			saves a RDD to a file
+
+=== Aggregating Data with Pair RDDs
+	It is a particular type of RDD that can store key-value pairs
+	We can use parallelize
+	map
+		val inputStrings = List("Lily 23", "Jack 29", "Mary 29", "James 8")
+		val regularRDDs = sc.parallelize(inputStrings)
+    		val pairRDD = regularRDDs.map(s => (s.split(" ")(0), s.split(" ")(1))) 
+
+	-Transformation
+		groupByKey()
+			The data is shuffled according to the key value K in another RDD
+		reduceByKey()
+			The pairs on the same machine with the same key are combined before the data is shuffled.
+		sortByKey()
+			The data is sorted according to the key
+		mapValues()
+			It will be applied to each key value pair and will convert the values based on mapValues func
+		countByKey()
+			Returns a hashmap of (K,Int) pairs with the count of each key.
+		join()
+			It allows you to join multiple RDD with same key. If we have (K,V) and (K,W) returns (K,(V,W))
+			LEFT OUTER JOIN
+			RIGHT OUTER JOIN
+			FULL OUTER JOIN
+
+=== Advanced Spark Concepts
+	-Broadcast Variables
+		It is a mechanism for sharing variables across executors
+		Without broadcast variables these would be shipped to each executor for every transformation and
+		action and this can cause network overhead.
+		These are shipped once to all executors and are cached for future reference.
+		When to use broadcast variables:
+			You have read-only reference data that does not change throughout the life of Spark Application
+			The data is used across multiple stages of application execution and would benefit from being
+			locally cached on the worker nodes
+			The data is small enough to fit in memory on your workers nodes but large enough that the overhead
+			of serializing and deserializing it multiple times is impacting your performance.
+
+	-Accumulator
+		A shared variable across nodes that can be updated by each node
+		Helps compute items not done through reduce operations
+		What can we do using accumulators?
+			Calculate how many records are processed.
+			Find invalid records.
+
+	-Persistence and Caching 
+		Spark RDD persistence is an optimization technique in which saves the result of RDD evaluation.
+		Using this we save the intermediate result so that we can use it further if required
+		It reduces the computation overhead.
+		RDDs by default is recomputed each time an action is run on them.
+		We can make persisted RDD through cache() and persist() methods
+		When we use the cache() method we can store all the RDD in-memory
+		The difference between cache() and persist(), cache() default storage is MEMORY_ONLY while persist():
+			MEMORY_ONLY
+			MEMORY_AND_DISK
+			MEMORY_ONLY_SER
+			MEMORY_AND_DISK_SER
+			DISK_ONLY
+			MEMORY_ONLY_2
+			MEMORY_AND_DISK_2
+			OFF_HEAP
+
+			val lines = sc.textFile("words.txt")
+			lines.persist(StorageLevel.MEMORY_ONLY)
+			val firstVal = lines.first()
+			val totalCount = lines.count()
+
+		We use unpersist() to unpersist RDD
+		When the cached data exceeds the Memory capacity, Spark automatically evicts the old partitions.
+
+	-Partitioning
+		The data within an RDD is split into several partitions.
+		Properties of partitions:	
+			Partitions never span multiple machine
+			Each machine in a cluster contains one or more partitions
+			The number of partitions is configurable. By default is the number of cores x worker nodes.
+		Two kind of partitions available in Spark
+			Hash partitioning
+				Uses Java's Object.hashCode
+				partition = key.hashCode() % numPartitions
+			Range partitioning
+				This partitioning is applied when Keys have ordering
+		Customizing a partition is only possible on Pair RDDs
+		Set partitioning using partitionBy
+			val pairRDD = purchaseRDD.map(p => (p.customerId, p.price))
+			val tunedPartitioner = new RangePartitioner(8, pairsRDD)
+			val partitioned = pairs.partitionBy(tunedPartitioner).persist()
+
+=== Spark SQL
+
+	-What is it?
+		Spark SQL is a Spark module for structured data processing
+		SQL like operations
+		Seamlessly mix SQL queries with Spark programs
+		Support JDBC
+
+	-SparkSession
+		Entry point in SparkSQL
+		All functionality for Spark SQL accessed through a Spark Session
+		Use SparkSession.builder() to create a SparkSession
+		import sparkSession.implicits._ allows converting RDDs to DataFrames
+
+	-DataFrame
+		A DataFrame is a distributed collection of data organized into named columns
+		It is equivalent to a table in a relational db
+		Has a schema-column names, data types
+		Can be created from different data sources
+			RDDs, files, JSON data sets, Hive tables, db's
+	-How to create?
+		val df = sparkSession.read.json("in/people.json")
+		df.show()
+
+	-Running SQL Queries programmatically
+		df.createOrReplaceTempView("people")
+		val sqlDF = sparkSession.sql("SELECT * FROM people")
+		sqlDF.show()
+
+	-Global Temporary View
+		Temporary views are session-scoped and will disappear when the session ends.
+		If you want a temporary view that is shared and keep alive until Spark
+		application terminates, you can create a global temporary view
+		df.createGlobalTempView("people")
+		spark.sql("SELECT * FROM global_temp.people").show()
+
+	-Datasets
+		A Dataset is a distributed collection of data
+		Provides the benefits of RDDs with the benefits of Spark SQL optimized execution engine.
+		Creating Datasets
+		case class Person(name: String, age: Long)
+
+		val caseClassDS = Seq(Person("Andy", 32)).toDS()
+		caseClassDS.show()
+
+		val primitiveDS = Seq(1 ,2, 3).toDS()
+		prinitiveDS
+			.map(_ + 1)
+			.collect()
+
+		val peopleDS = sparkSession.read.json(path).as[Person]
+		peopleDS.show()
+
+	-Interoperating with RDDs
+		Two methods for converting existing RDDs into Datsets
+			Reflection
+				works well when you already know the schema while writing you Spark app
+			Programmatic Interface
+				Works well when columns and their types are not known until runtime
+
+=== Spark Streaming
+
+	An extension of the core Spark API that enables scalable, high-thoughput, fault-tolerant stream processing of live data 	streams.
+	Data can be ingested from nay sources:
+		Kafka
+		Flume
+		Kinesis
+		Tcp sockets
+	Data will be processed using complex algorithms expressed with high level functions like map, reduce, join and window
+	Processed data can be pushed out to:
+		File systems
+		Databases
+		Dashboards
+	Applications
+		Uber
+		Pinterset
+		Netflix
+	Use cases
+		Credit Card Fraud Detection
+		Spam Filtering
+		Network Intrusion Detection
+		Real time social media analytics
+		Click Stream analytics and recommendations
+		Stock Market analytics
+	Discretized Stream Processing
+		Chop up live stream into batches of X seconds
+		Spark treats each batch of data as RDDs
+		Finally the process results of the RDD operations are returned in batches.
+	DStreams
+		It is the basic abstraction provided by Spark Streaming
+		Internally, a DStream is represented by a continuous series of RDD's which is Spark's abstraction of an immutable
+		distributed dataset.
+		Each RDD in a DStream contains data from a certain interval.
+	Window Operations
+		A collection of DStreams
+		Spark streaming provides windowed computations, which allow you to apply transformations over a sliding window of
+		data.
+		Every time the window slides over a source DStream the source RDDs that fall within the window are combined and
+		operated upon to produce the RDDs of the windowed DStream.
+		Operations:
+			Transformations:
+				map, countByValue, reduceByKey
+			Window Operations:
+				countByWindow, reduceByWindow, reduceByKeyAndWindow	 
+			Join operations:
+				union, intersection	
+			Output operations:	
+				print, saveAsTestFiles(), saveAsHaddopFiles(), foreachRDD()
+
+
+
+
+
+
+
+
+
+
+		
+
+
+			
+
+
+
+
+
+
+		
+
+
+			
