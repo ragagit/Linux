@@ -18,96 +18,96 @@ from mysql.connector import errorcode
 # import matplotlib.pyplot as plt
 
 
-if __name__ == "__main__":
-
-    # Printing something
-    def Print():
-        print("Hello Python")
 
 
-    # Getting User Input
-    def getUserInput():
-        name = input("What is your name:")
-        print("Hello", name)
-        age = input("How old are you:")
-        print("You are ", age, " years old")
+# Printing something
+def Print():
+    print("Hello Python")
 
 
-    # if conditional
-    def ifCondition():
-        if True:
-            print("\ntrue\n")
-        else:
-            print("\nfalse\n")
+# Getting User Input
+def getUserInput():
+    name = input("What is your name:")
+    print("Hello", name)
+    age = input("How old are you:")
+    print("You are ", age, " years old")
 
 
-    # String elements
-    def strElements():
-        str = "Hello Olympics Rio 2016"
-
-        print(str)
-        print(str[0] + "\n")
-        print(str[2:5] + "\n")
-        print(str[2:] + "\n")
-        print(str * 2 + "\n")
-        print(str + "TEST" + "\n")
+# if conditional
+def ifCondition():
+    if True:
+        print("\ntrue\n")
+    else:
+        print("\nfalse\n")
 
 
-    # lists
-    def listExample():
-        list = ["One", 111, "Two", 2]
-        tinylist = [123, "john"]
+# String elements
+def strElements():
+    str = "Hello Olympics Rio 2016"
 
-        print(list)
-        print(list[0])
-        print(list[1:2])
-        print(list + tinylist)
-
-
-    # Dictionary
-    def dictionary():
-        dict = {}
-
-        dict["One"] = "First Element"
-        dict["Two"] = "Second Value"
-        print(dict["Two"])
+    print(str)
+    print(str[0] + "\n")
+    print(str[2:5] + "\n")
+    print(str[2:] + "\n")
+    print(str * 2 + "\n")
+    print(str + "TEST" + "\n")
 
 
-    # Evaluate
-    def evaluate():
-        x = "7"
-        print(int(x))
-        y = "9+7"
-        print(eval(y))
+# lists
+def listExample():
+    list = ["One", 111, "Two", 2]
+    tinylist = [123, "john"]
+
+    print(list)
+    print(list[0])
+    print(list[1:2])
+    print(list + tinylist)
 
 
-    # While loop
-    def whileLoop():
-        count = 0
+# Dictionary
+def dictionary():
+    dict = {}
 
-        while (count < 9):
-            print("The count is:", count)
-            count += 1;
-
-        print("That's all folks")
+    dict["One"] = "First Element"
+    dict["Two"] = "Second Value"
+    print(dict["Two"])
 
 
-    # for loop
-    def forLoop():
-        seq = ["one", "two", 5, 8]
+# Evaluate
+def evaluate():
+    x = "7"
+    print(int(x))
+    y = "9+7"
+    print(eval(y))
 
-        for var in seq:
-            print(var)
+
+# While loop
+def whileLoop():
+    count = 0
+
+    while (count < 9):
+        print("The count is:", count)
+        count += 1;
+
+    print("That's all folks")
 
 
-    # iterator
-    def iterator():
-        list = [1, 2, 3, 4, 5]
+# for loop
+def forLoop():
+    seq = ["one", "two", 5, 8]
 
-        it = iter(list)
+    for var in seq:
+        print(var)
 
-        print(next(it))
-        print(next(it))
+
+# iterator
+def iterator():
+    list = [1, 2, 3, 4, 5]
+
+    it = iter(list)
+
+    print(next(it))
+    print(next(it))
 
 
 # Function param
@@ -123,105 +123,109 @@ def myFunc(n):
         count += 1
         yield count
 
-    # Exeption
-    # Exception, SystemExit, ArithmeticError, OverflowError, ZeroDivisonError, EOFError, IOError, etc
-    def exception():
-        f = myFunc(3)
-        for j in f:
-            print(j)
+# Exeption
+# Exception, SystemExit, ArithmeticError, OverflowError, ZeroDivisonError, EOFError, IOError, etc
+def exception():
+    f = myFunc(3)
+    for j in f:
+        print(j)
 
-        while True:
-            try:
-                print(next(f))
-            except StopIteration:
-                print('Exception caught')
-                sys.exit(0)
+    while True:
+        try:
+            print(next(f))
+        except StopIteration:
+            print('Exception caught')
+            sys.exit(0)
 
-    # Number Convertion
-    def numConvert():
-        ############### int, float, complex
-        # conversion int(x) float(x) complex(x)
-        # math functions: abs(x) ceil(x) exp(x) .....
-        a = 4
-        b = 1.3
-        c = 2 + 5j
-        print(a)
-        print(b)
-        print(c)
-        d = "4"
-        e = "3"
-        print(float(4))
-        print(int(d) + int(e))
+# Number Convertion
+def numConvert():
+    ############### int, float, complex
+    # conversion int(x) float(x) complex(x)
+    # math functions: abs(x) ceil(x) exp(x) .....
+    a = 4
+    b = 1.3
+    c = 2 + 5j
+    print(a)
+    print(b)
+    print(c)
+    d = "4"
+    e = "3"
+    print(float(4))
+    print(int(d) + int(e))
 
-    # String
-    def doString():
-        ################ Strings
-        # escape \a \r \t
-        # + ,* ,[] ,in ,not in
-        # string formatting %
-        # use """ for long paragraphs
-        # capitalize,center, count. decode, encode, find, isalnum
+# String
+def doString():
+    ################ Strings
+    # escape \a \r \t
+    # + ,* ,[] ,in ,not in
+    # string formatting %
+    # use """ for long paragraphs
+    # capitalize,center, count. decode, encode, find, isalnum
 
-        str = "Hello World!"
-        print(str[5:7])
+    str = "Hello World!"
+    name = "Joe"
+    age = 17
+    print(str[5:7])
 
-        str1 = "Wo"
+    str1 = "Wo"
 
-        if str1 in str:
-            print("Found!")
-        else:
-            print("Not Found!")
+    if str1 in str:
+        print("Found!")
+    else:
+        print("Not Found!")
 
-        print("My name is: %s and age is:%d" % ("John", 21))
+    print("My name is: %s and age is:%d" % ("John", 21))
+    print("My name is: {} and age: {}".format(name, age))
+    print(f'My Name is: {name} and my age is: {age}')
 
-        para_str = """This is a long string
-                    and tere is no need to use 
-                    continuation cgaracters"""
+    para_str = """This is a long string
+                and there is no need to use 
+                continuation characters"""
 
-        print(para_str)
-        # raw strings
-        print(r"C:\\nowhere")
+    print(para_str)
+    # raw strings
+    print(r"C:\\nowhere")
 
-    # List
-    def doList():
-        list = ["uno", "dos", "tres"]
-        print("list[0] is:", list[0])
-        list[0] = "cinco"
-        print("list[0]", list[0])
-        del list[2]
-        print("After deleting", list)
-        # Operations len, +, *
-        list1 = [1, 2, 3, 4]
-        list2 = [7, 8, 9, 0]
-        print(list1 + list2)
-        print(list1 * 2)
+# List
+def doList():
+    list = ["uno", "dos", "tres"]
+    print("list[0] is:", list[0])
+    list[0] = "cinco"
+    print("list[0]", list[0])
+    del list[2]
+    print("After deleting", list)
+    # Operations len, +, *
+    list1 = [1, 2, 3, 4]
+    list2 = [7, 8, 9, 0]
+    print(list1 + list2)
+    print(list1 * 2)
 
-    # Dictionary
-    def doDict():
-        dict = {'Name': 'Zara', 'Age': 7}
-        print(dict['Name'])
-        # cmp(), len(), str(), type(), dict.clear(), dict.copy, dict.get
+# Dictionary
+def doDict():
+    dict = {'Name': 'Zara', 'Age': 7}
+    print(dict['Name'])
+    # cmp(), len(), str(), type(), dict.clear(), dict.copy, dict.get
 
-    # Time
+# Time
 
-    def doTime():
-        print(time.localtime())
-        print(time.localtime(time.time()))
-        print(time.asctime(time.localtime(time.time())))
-        # time.altzone(), time.clock(), time.sleep(secs)
+def doTime():
+    print(time.localtime())
+    print(time.localtime(time.time()))
+    print(time.asctime(time.localtime(time.time())))
+    # time.altzone(), time.clock(), time.sleep(secs)
 
-    # Calendar
-    def doCalendar():
-        cal = calendar.month(2016, 8)
-        print(cal)
-        # calendar.firstweekday(), calendar.isleap()
+# Calendar
+def doCalendar():
+    cal = calendar.month(2016, 8)
+    print(cal)
+    # calendar.firstweekday(), calendar.isleap()
 
-    # Functions
-    # All parameters are passed by reference
-    def Myref(alist):
-        alist[0] = "diez"
-        for i in alist:
-            print(i)
+# Functions
+# All parameters are passed by reference
+def Myref(alist):
+    alist[0] = "diez"
+    for i in alist:
+        print(i)
 
 
 # Arguments keywords
@@ -237,7 +241,7 @@ def DefName(name, age=15):
 
 
 # Variable args
-def printinfo(arg1, *var):
+def printinfo(*var):
     for i in var:
         print(i)
     return
@@ -322,7 +326,7 @@ def func(level):
 # Documentation can be accessed ClassName.__doc__
 # issubclass(sub, sup), isinstance(obj, Class)
 # You can override methods and overload operators
-# Data hiding can be done by adding __ at the beginnin of the variable
+# Data hiding can be done by adding __ at the beginning of the variable
 class Employee:
     'Common base class for all employees'
     empCount = 0
@@ -362,12 +366,14 @@ def doClass():
 class SubEmployee(Employee):
 
     def __init__(self, name, salary, position):
-        self.__position = position
+        # self.__position = position
+        self.position = position
         Employee.__init__(self, name, salary)
 
+    def showPosition(self):
+        # print(self.__position)
+        print(self.position)
 
-# def showPosition(self):
-#     print(self.__position)
 
 def doInhe():
     subemp = SubEmployee("John", 37, "Accountant")
@@ -375,7 +381,7 @@ def doInhe():
     subemp.showPosition()
 
 
-# Data hiding can be done by adding __ at the beginnin of the variable
+# Data hiding can be done by adding __ at the beginning of the variable
 # This makes the attribute private. However you can access it with (see below)
 class JustCounter:
     __secretCount = 7
@@ -427,6 +433,11 @@ def doRegExp():
     print("Phone:", num)
 
 
+# docker pull mysql
+# docker run --name springmysql -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=springmicro mysql
+# docker ps
+# docker exec -it springmysql mysql -uroot -p  //this is to open a shell
+
 # pip install mysql-connector-python
 # from mysql.connector import errorcode
 # yum install mariadb mariadb-server
@@ -442,9 +453,9 @@ def doRegExp():
 def doDBVer():
     # Open database connection
     # db = mysql.connector.connect("localhost", "root", "P4ssw0rd", "ragadb");
-
+    print("In doDBVer()")
     try:
-        db = mysql.connector.connect(user='root', password='P4ssw0rd', host='127.0.0.1', database='ragadb')
+        db = mysql.connector.connect(user='root', password='springmicro', host='127.0.0.1', database='ragadb')
 
         # Prepare a cusror object using cursor() method
         cursor = db.cursor()
@@ -472,7 +483,7 @@ def doDBVer():
 
 
 def doDBTables():
-    db = mysql.connector.connect(user='root', password='P4ssw0rd', host='127.0.0.1', database='ragadb')
+    db = mysql.connector.connect(user='root', password='springmicro', host='127.0.0.1', database='ragadb')
 
     # Prepare a cusror object using cursor() method
     cursor = db.cursor()
@@ -547,7 +558,7 @@ def doQuery():
     print("Hello pyhton")
 
 
-Print()
+# Print()
 # getUserInput()
 # ifCondition()
 # strElements()
@@ -560,7 +571,7 @@ Print()
 # myFunc(3)
 # exception()
 # numConvert()
-# doString()
+doString()
 # doList()
 # doDict()
 # doTime()
