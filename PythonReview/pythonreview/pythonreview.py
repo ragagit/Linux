@@ -6,6 +6,11 @@ import sys
 import time
 import calendar
 import re
+import numpy as np
+import matplotlib.pyplot as plt
+import mysql.connector
+from mysql.connector import errorcode
+
 #import mysql.connector
 #from mysql.connector import errorcode
 
@@ -18,15 +23,15 @@ if __name__ == "__main__":
     
 #Printing something
     def Print():
-        print "Hello Python"
+        print ("Hello Python")
 
 
 #Getting User Input
     def getUserInput():
-        name = raw_input("What is your name:")
-        print "Hello", name
+        name = input("What is your name:")
+        print ("Hello", name)
         age = input("How old are you:")
-        print "You are ", age, " years old"
+        print ("You are ", age, " years old")
         
 #if conditional
     def ifCondition():
@@ -111,14 +116,14 @@ if __name__ == "__main__":
     def exception():
         f = myFunc(3)
         for j in f:
-            print j
+            print (j)
 
         while True:
             try:
 		print( next(f) )
             except StopIteration:
 		print("Exception caught!")
-                sys.exit()
+                sys.exit(0)
                 
 #Number Convertion
     def numConvert():
@@ -401,7 +406,8 @@ def doRegExp():
     num = re.sub(r'\D', "", phone )
     print("Phone:", num)
 
- 
+# pip install mysql-connector-python
+# from mysql.connector import errorcode
 # yum install mariadb mariadb-server
 # systemctl start mariadb.service
 # /usr/bin/mysql_secure_installation
@@ -494,6 +500,7 @@ def doDBTables():
 
     # disconnect from server
     db.close()
+# pip3 install matplotlib
 
 class NeuralNetwork():
     def __init__(self):
@@ -512,7 +519,7 @@ def doNN():
     
 def doQuery():
     #models = "|".join([str(m) for m in get_modelId(name="|".join([d.modelName for d in dg]))])
-    print "Hello pyhton"
+    print ("Hello pyhton")
     
 Print()
 #getUserInput()
