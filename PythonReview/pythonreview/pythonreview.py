@@ -104,12 +104,17 @@ if __name__ == "__main__":
         print( next(it) )
  
 #Function param
-    def myFunc(n):
-	count= 0
-	while count < n:
-            #print(count)
-            count +=1
-            yield count
+    # def myFunc(n):
+    #     count=0
+	#     while count < n :
+    #         count +=1
+    #         yield count
+
+def myFunc(n):
+    count=0
+    while count < n:
+        count +=1
+        yield count
             
 #Exeption
 #Exception, SystemExit, ArithmeticError, OverflowError, ZeroDivisonError, EOFError, IOError, etc
@@ -120,9 +125,9 @@ if __name__ == "__main__":
 
         while True:
             try:
-		print( next(f) )
+                print(next(f))
             except StopIteration:
-		print("Exception caught!")
+                print('Exception caught')
                 sys.exit(0)
                 
 #Number Convertion
@@ -207,9 +212,9 @@ if __name__ == "__main__":
 #Functions
 #All parameters are passed by reference
     def Myref( alist ):
-	alist[0] = "diez"
-	for i in alist:
-		print(i)
+	    alist[0] = "diez"
+	    for i in alist:
+		    print(i)
 
 #Arguments keywords
 def NameAge( name, age ):
@@ -256,25 +261,25 @@ def doFile():
     fd = open("foo.txt", "r")
 
     for line in fd:
-	if "Exception" in line:
-		print(line)
+	    if "Exception" in line:
+		    print(line)
 
     fd.close()
     print("end of file")
     
     try:
-	fh = open("somefile.txt", "r" )
-	fh.readline()
+	    fh = open("somefile.txt", "r" )
+	    fh.readline()
     except IOError:
-	print("Unable to open file")
+	    print("Unable to open file")
     else:
-	print("File successfully opened")
+	    print("File successfully opened")
 
 #Assertion
 def Temperature(temp):
     #assert(temp >=0),"Colder than Zero"
     res = ((temp-273)*1.8)+32   
-    print res
+    print(res)
     return res
 
 def tempExc(var):
@@ -289,13 +294,13 @@ def tempExc(var):
 def func(level):
     if( level < 1):
         raise Exception(level)
-	return level
+    return level
 
     try:
-	l=func(-1)
-	print("level", l)
+	    l=func(-1)
+	    print("level", l)
     except Exception as e:
-	print("error in level", e)
+	    print("error in level", e)
 
 # Classes
 # class ClassName:
@@ -313,7 +318,7 @@ class Employee:
 		self.name = name
 		self.salary = salary              
 		Employee.empCount +=1
-                print("Employee %d created" % Employee.empCount)
+        #print("Employee %d created" % Employee.empCount)
 
 	def __del__(self):
 		class_name = self.__class__.__name__
@@ -343,10 +348,10 @@ class SubEmployee(Employee):
 	def __init__(self, name, salary, position):
             self.__position = position
             Employee.__init__(self, name, salary )
-            print("Calling child")
-            
-        def showPosition(self):
-            print(self.__position)
+
+
+    # def showPosition(self):
+    #     print(self.__position)
                 
 def doInhe():
     subemp = SubEmployee("John", 37, "Accountant")
@@ -388,16 +393,16 @@ def doRegExp():
     #match search at the beginning
     matchObj = re.match(r'dogs', line, re.M|re.I)
     if matchObj:
-	print("Found match:", matchObj.group())
+	    print("Found match:", matchObj.group())
     else:
-	print("No match")
+	    print("No match")
     
     #search look for anywhere
     searchObj = re.search(r'dogs', line, re.M|re.I)
     if searchObj:
-	print("Search found:", searchObj.group())
+	    print("Search found:", searchObj.group())
     else:
-	print("No search found:")
+	    print("No search found:")
     
     #re.sub(pattern, repl,string,max=0)
     phone="2004-955-567 # This is my number"
@@ -473,27 +478,27 @@ def doDBTables():
 
     try:
         cursor.execute(sql2)
-	db.commit()
+        db.commit()
 
     except:
-	db.rollback()
-	print("DB has been rolled back")
+	    db.rollback()
+	    print("DB has been rolled back")
 
     sql3 = "SELECT * FROM EMPLOYEE WHERE INCOME > '%d'" % (1000)
 
     try:
-	cursor.execute(sql3)
-	results = cursor.fetchall()
-	for row in results:
-            fname = row[0]
-            lname = row[1]
-            age = row[2]
-            sex = row[3]
-            income = row[4]
+	    cursor.execute(sql3)
+	    results = cursor.fetchall()
+	    for row in results:
+                fname = row[0]
+                lname = row[1]
+                age = row[2]
+                sex = row[3]
+                income = row[4]
+                print("fname=%s, lname=%s, age=%d, sex=%s, income=%d" % (fname, lname, age, sex, income ))
 
-            print("fname=%s, lname=%s, age=%d, sex=%s, income=%d" % (fname, lname, age, sex, income ))
     except:
-	print("Error: unable to fetch data")
+	    print("Error: unable to fetch data")
 
     #sql4 = "UPDATE EMPLOYEE SET AGE = AGE + 1 WHERE SEX = '%c'" % ('M')
     #sql5 = "DELETE FROM EMPLOYEE WHERE AGE > '%d'" % (20)
