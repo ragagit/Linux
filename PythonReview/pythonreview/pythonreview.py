@@ -109,13 +109,11 @@ def iterator():
     print(next(it))
     print(next(it))
 
-
-# Function param
-# def myFunc(n):
-#     count=0
-#     while count < n :
-#         count +=1
-#         yield count
+def doArray():
+    ar_count = int(input())
+    ar = list(map(int, input().rstrip().split()))
+    print(ar_count)
+    print(ar)
 
 def myFunc(n):
     count = 0
@@ -571,7 +569,7 @@ def doQuery():
 # myFunc(3)
 # exception()
 # numConvert()
-doString()
+# doString()
 # doList()
 # doDict()
 # doTime()
@@ -592,3 +590,4 @@ doString()
 # doDBVer()
 # doDBTables()
 # doNN()
+doArray()
