@@ -1,0 +1,55 @@
+
+Spark SQL
+
+-To start in silent mode
+	spark-sql -S
+
+-db
+	show databases;
+-Create db
+	create database ragadb location '/Users/raga/tmp/';
+	describe database ragadb
+
+-Spark SQL commands
+	https://docs.databricks.com/spark/latest/spark-sql/index.html
+
+-To see current directory
+	set spark.sql.warehouse.dir;
+
+import org.apache.spark.sql._
+import org.apache.spark.sql.types._
+
+object SparkTestApp{
+	def main(args: Array[String]) = {
+		val spark = SparkSession.builder()
+				.appName("SparkTestApp")
+				.enableHiveSupport()
+				.getOrCreate()
+		val df = spark.read.json(args(0))
+		df.createTempView("surveys")
+		spark.sql("""select age, count(*) from surveys
+		where age between 20 and 65 group by age""")
+			.write
+			.saveAsTable("survey_frequency")
+
+		spark.stop()
+	}
+}
+
+To create a jar file (it should be in the target directory)
+ 	sbt package
+
+To submit the application
+	spark-submit --master local --class name_of_application location_of_jar/file.jar command_line_args.json
+
+The check the table
+spark-sql 
+select * from survey_frequency
+
+
+
+
+
+
+
+
