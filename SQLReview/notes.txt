@@ -1,0 +1,126 @@
+MySQL
+
+Data Types
+
+- Numeric
+
+ TINYINT	A very small integer
+ SMALLINT	A small integer
+ MEDIUMINT	A medium-sized integer
+ INT		A standard integer
+ BIGINT		A large integer
+ DECIMAL	A fixed-point number
+ FLOAT		A single-precision floating point number
+ DOUBLE		A double-precision floating point number
+ BIT		A bit field
+
+ 		NOTE: For BOOL use TINYINT as MySQL doesn't have it.
+
+- String
+
+ CHAR		A fixed-length nonbinary (character) string
+ VARCHAR	A variable-length non-binary string
+ BINARY		A fixed-length binary string
+ VARBINARY	A variable-length binary string
+ TINYBLOB	A very small BLOB (binary large object)
+ BLOB		A small BLOB
+ MEDIUMBLOB	A medium-sized BLOB
+ LONGBLOB	A large BLOB
+ TINYTEXT	A very small non-binary string
+ TEXT		A small non-binary string
+ MEDIUMTEXT	A medium-sized non-binary string
+ LONGTEXT	A large non-binary string
+ ENUM		An enumeration; each column value may be assigned one enumeration member
+ SET		A set; each column value may be assigned zero or more SET members 
+
+- Json
+
+  JSON		JSON Data type
+
+- Comments
+	You can use /* */
+	or
+	--
+
+- Installation
+
+# docker pull mysql
+# docker run --name springmysql -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=springmicro mysql
+# docker ps
+# docker exec -it springmysql mysql -uroot -p  //this is to open a shell
+
+- Connecting
+
+shell> mysql -h host -u user -p
+Enter password: ********
+
+- Disconnecting 
+ quit
+
+- DB
+
+ show databases;
+ use dbname;
+ GRANT ALL ON menagerie.* TO 'your_mysql_name'@'your_client_host';
+
+- Which database is selected?
+  select database();
+
+- Tables
+
+  show tables; 
+  describe tablename;
+
+  CREATE TABLE pet (name VARCHAR(20), owner VARCHAR(20),
+       species VARCHAR(20), sex CHAR(1), birth DATE, death DATE);
+
+  drop table tablename;
+
+- To load a file
+   SOURCE path_to_sql_file;
+
+- Select
+
+  SELECT name, birth FROM pet ORDER BY birth DESC;
+
+  SELECT * FROM pet WHERE name LIKE 'b%';
+
+  SELECT * FROM pet WHERE name REGEXP '^b';
+
+  
+- Primary Key
+  
+
+ CREATE TABLE table_name(
+    primary_key_column datatype PRIMARY KEY,
+    ...
+ );
+
+
+ CREATE TABLE users(
+   user_id INT AUTO_INCREMENT PRIMARY KEY,
+   username VARCHAR(40),
+   password VARCHAR(255),
+   email VARCHAR(255)
+ );
+
+- Join
+
+SELECT p1.name, p1.sex, p2.name, p2.sex, p1.species
+       FROM pet AS p1 INNER JOIN pet AS p2
+         ON p1.species = p2.species
+         AND p1.sex = 'f' AND p1.death IS NULL
+         AND p2.sex = 'm' AND p2.death IS NULL;
+
+INNER JOIN 	− returns rows when there is a match in both tables.
+
+LEFT JOIN	 − returns all rows from the left table, even if there are no matches in the right table.
+
+RIGHT JOIN	 − returns all rows from the right table, even if there are no matches in the left table.
+
+FULL JOIN 	− returns rows when there is a match in one of the tables.
+
+SELF JOIN 	− is used to join a table to itself as if the table were two tables, temporarily renaming at least one table in 			the SQL statement.
+
+CARTESIAN JOIN 	− returns the Cartesian product of the sets of records from the two or more joined tables.
+ 
